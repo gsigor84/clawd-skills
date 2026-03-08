@@ -103,3 +103,33 @@ OUTPUT INSTRUCTION: [exactly what to write and how]
 - Every command must be exact and immediately runnable
 - Never write SKILL.md content — that is the writer's job
 - If one step is unsupported, reject the entire blueprint
+
+PDF EXTRACTION:
+/opt/anaconda3/bin/python3 -c "
+from pdfminer.high_level import extract_text
+text = extract_text('PATH_TO_PDF')
+print(text[:5000])
+"
+
+DOCX EXTRACTION:
+/opt/anaconda3/bin/python3 -c "
+import docx
+doc = docx.Document('PATH_TO_DOCX')
+text = '\n'.join([p.text for p in doc.paragraphs])
+print(text[:5000])
+"
+
+PDF EXTRACTION:
+/opt/anaconda3/bin/python3 -c "
+from pdfminer.high_level import extract_text
+text = extract_text('PATH_TO_PDF')
+print(text[:5000])
+"
+
+DOCX EXTRACTION:
+/opt/anaconda3/bin/python3 -c "
+import docx
+doc = docx.Document('PATH_TO_DOCX')
+text = '\n'.join([p.text for p in doc.paragraphs])
+print(text[:5000])
+"

@@ -11,6 +11,7 @@ Stable preferences and defaults. Read this first, every time.
 - Never repeat questions already answered
 - Never ask me to wait
 - Skip preamble — get to the point immediately
+- Web search: prefer Brave Search over DuckDuckGo for all web searches (default).
 
 ## Interaction Rules
 - Don't summarize what you just did at the end
