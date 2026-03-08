@@ -1,0 +1,65 @@
+{
+  "version": 1,
+  "skills": {
+    "summarize": {
+      "version": "1.0.0",
+      "installedAt": 1772352501270
+    },
+    "mh-wacli": {
+      "version": "1.0.0",
+      "installedAt": 1772352678162
+    },
+    "byterover": {
+      "version": "1.2.2",
+      "installedAt": 1772352819291
+    },
+    "self-improving-agent": {
+      "version": "1.0.11",
+      "installedAt": 1772352870382
+    },
+    "code-executor": {
+      "version": "1.0.0",
+      "installedAt": 1772386681361
+    },
+    "create-cli": {
+      "version": "1.0.0",
+      "installedAt": 1772387309309
+    },
+    "tiangong-notebooklm-cli": {
+      "version": "0.1.1",
+      "installedAt": 1772391863537
+    },
+    "github": {
+      "version": "1.0.0",
+      "installedAt": 1772959162683
+    },
+    "notion": {
+      "version": "1.0.0",
+      "installedAt": 1772959164849
+    },
+    "session-logs": {
+      "version": "1.0.0",
+      "installedAt": 1772959167087
+    },
+    "blogwatcher": {
+      "version": "1.0.0",
+      "installedAt": 1772959170806
+    },
+    "gog": {
+      "version": "1.0.0",
+      "installedAt": 1772959172825
+    },
+    "tmux": {
+      "version": "1.0.0",
+      "installedAt": 1772959175364
+    },
+    "lobster": {
+      "version": "1.0.1",
+      "installedAt": 1772959260811
+    },
+    "open-prose": {
+      "version": "1.0.0",
+      "installedAt": 1772959264755
+    }
+  }
+}
