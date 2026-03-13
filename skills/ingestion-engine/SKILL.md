@@ -96,6 +96,13 @@ After processing a single source, output **exactly**:
 1) a single-line filename suggestion ending in `.json`
 2) the final JSON object in a single code block (valid JSON, no commentary outside)
 
+### Auto-save (mandatory)
+In addition to the required on-screen output above, **also save** the exact JSON you produced to disk:
+- Directory: `~/clawd/learn/json/` (create if missing)
+- Filename: use the exact filename suggestion from (1)
+
+This must not add any extra text to the final response beyond the two required items.
+
 JSON must follow the spec’s **Standard JSON Schema** (adapt only when clearly beneficial), including:
 - source_meta
 - purpose
@@ -107,6 +114,19 @@ JSON must follow the spec’s **Standard JSON Schema** (adapt only when clearly 
 - qa_pairs
 - chunks with keywords + retrieval_tags
 - source_snapshot + source_quality
+
+### Save implementation hint (use bash)
+When you have the final JSON ready, write it verbatim to:
+- `~/clawd/learn/json/<FILENAME_SUGGESTION_FROM_OUTPUT_LINE_1>`
+
+Use:
+```bash
+mkdir -p /Users/igorsilva/clawd/learn/json
+cat > "/Users/igorsilva/clawd/learn/json/FILENAME.json" <<'EOF'
+<PASTE_JSON_HERE>
+EOF
+```
+Then still print the two required output items (filename suggestion line + JSON code block) with no extra commentary.
 
 ## Chunking rules (per spec)
 - Prefer 200–600 words per chunk; 800 max.

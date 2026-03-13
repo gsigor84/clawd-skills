@@ -1,0 +1,370 @@
+{
+  "source_meta": {
+    "title": "The Artist’s Way — Practical Creative Recovery Study Guide (Unblocking + Sustaining Practice)",
+    "source_type": "markdown",
+    "input_mode": "local_file",
+    "language": "en",
+    "original_filename": "artist-way-study-guide.md",
+    "created_from": "/Users/igorsilva/clawd/learn/artist-way-study-guide.md",
+    "optimization_mode": "retrieval_optimized",
+    "estimated_scope": {
+      "approx_words": 3600,
+      "approx_sections": 7
+    },
+    "confidence_notes": [
+      "This JSON captures and chunks the contents of the provided study guide file (not the original book).",
+      "All verification_status values refer to faithfulness to the provided file, not external truth about the book."
+    ]
+  },
+  "purpose": {
+    "primary_intent": "Provide retrieval-optimized guidance for practical creative recovery: practices, blocks, interventions, and progression logic.",
+    "summary": "A structured creative recovery playbook centered on (1) state clearing via Morning Pages, (2) replenishment via solo Artist’s Dates, (3) safety/boundaries, (4) small-step momentum, (5) self-compassion/self-relationship, and (6) guidance mechanisms (inner compass/synchronicity/next action).",
+    "best_use_cases": [
+      "Answer: ‘I’m blocked—what do I do right now?’",
+      "Generate scenario-based challenge questions for creative failure states",
+      "Design a weekly creative practice plan with boundaries and replenishment",
+      "Diagnose block type (mental static, shame, workaholism, scarcity narratives) and match to intervention"
+    ]
+  },
+  "topics": [
+    "creative recovery",
+    "creative blocks",
+    "habit formation",
+    "attention management",
+    "boundaries",
+    "self-compassion",
+    "practice design",
+    "state change interventions"
+  ],
+  "entities": {
+    "people": ["Julia Cameron"],
+    "companies": [],
+    "tools": ["Morning Pages", "Artist’s Date", "Life Pie", "Affirmations", "God jar"],
+    "products": ["The Artist’s Way"],
+    "frameworks": [
+      "State Clearing",
+      "Receptive Replenishment",
+      "Safety + Self-Protection",
+      "Small-Step Momentum",
+      "Self-Relationship",
+      "Guidance Mechanism"
+    ],
+    "domains": ["creativity", "behavior change", "creative practice"],
+    "other": ["Daily voice-over", "Creative U-turns", "Bottom lines", "Touchstones"]
+  },
+  "entity_registry": [
+    {
+      "id": "ent_001",
+      "name": "Morning Pages",
+      "type": "tool",
+      "verification_status": "verified",
+      "notes": "Defined in the source as three pages of daily longhand stream-of-consciousness writing done first thing; used for clearing mental static."
+    },
+    {
+      "id": "ent_002",
+      "name": "Artist’s Date",
+      "type": "tool",
+      "verification_status": "verified",
+      "notes": "Defined in the source as a weekly solo, festive play-based excursion to restore creative inflow and receptivity."
+    },
+    {
+      "id": "ent_003",
+      "name": "Daily voice-over",
+      "type": "concept",
+      "verification_status": "verified",
+      "notes": "The nagging surface mental static (errands, resentments, worries) that hijacks attention; targeted by Morning Pages."
+    },
+    {
+      "id": "ent_004",
+      "name": "Bottom line",
+      "type": "policy",
+      "verification_status": "verified",
+      "notes": "Explicit boundary rules (e.g., no work after six) used to protect creative time/energy from leakage."
+    },
+    {
+      "id": "ent_005",
+      "name": "Creative U-turn",
+      "type": "concept",
+      "verification_status": "verified",
+      "notes": "A repeated pattern of starting then abandoning creative work; intervention is retrieve + mend to restore continuity and self-trust."
+    },
+    {
+      "id": "ent_006",
+      "name": "Core law: coax, don’t bludgeon",
+      "type": "principle",
+      "verification_status": "verified",
+      "notes": "Creativity emerges from low threat + steady inflow + tiny actions; harsh self-pressure increases threat and suppresses play/curiosity."
+    }
+  ],
+  "evidence_index": [
+    {
+      "id": "ev_001",
+      "type": "excerpt",
+      "verification_status": "verified",
+      "evidence_excerpt": "Core law governing all creative practice: Creativity is recovered and sustained by small, consistent, embodied actions that reduce internal interference and increase receptivity; creativity is coaxed, not bludgeoned.",
+      "source_location_hint": "STEP 1 — EXTRACT → Core law governing all creative practice"
+    },
+    {
+      "id": "ev_002",
+      "type": "excerpt",
+      "verification_status": "verified",
+      "evidence_excerpt": "Backbone Concepts (4–6): State Clearing (Morning Pages as mental-static removal); Receptive Replenishment (Artist’s Date as inflow/play); Safety + Self-Protection (privacy, boundaries, bottom lines); Small-Step Momentum (next right thing, time tidbits, tiny changes); Self-Relationship (inner artist/compassion/cherishing vs shame); Guidance Mechanism (inner compass + synchronicity + ‘next action’).",
+      "source_location_hint": "STEP 2 — IDENTIFY BACKBONE"
+    },
+    {
+      "id": "ev_003",
+      "type": "excerpt",
+      "verification_status": "verified",
+      "evidence_excerpt": "Creative blocks include: ‘Too much thinking’ / intellectualization; shame-driven self-judgment; velocity addiction; waiting for big blocks of time; workaholism; TV/overreading/rescuing as avoidance; creative U-turns; money/time scarcity narratives; fear of appearing foolish/a beginner.",
+      "source_location_hint": "STEP 1 — EXTRACT → Creative blocks"
+    }
+  ],
+  "key_points": [
+    {
+      "type": "principle",
+      "statement": "Creative blocks are often interference (mental static, shame, threat) rather than a lack of talent; the intervention is to reduce interference and restore receptivity.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_001", "ev_003"]
+    },
+    {
+      "type": "framework",
+      "statement": "A workable recovery backbone is: clear state (pages), replenish inflow (dates), enforce safety/boundaries, move by tiny steps, treat the inner artist with compassion, and act on guidance signals.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002"]
+    },
+    {
+      "type": "mechanism",
+      "statement": "Harsh self-pressure increases threat, which suppresses play and curiosity; this produces brittle compliance followed by backlash/avoidance.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_001"]
+    }
+  ],
+  "instructions": [
+    {
+      "instruction": "When blocked, do Morning Pages immediately (3 pages, longhand, first thing) to offload the ‘daily voice-over’ and restore attention.",
+      "constraints": ["longhand", "first thing", "no quality goal", "do not reread/share"],
+      "inputs": ["pen", "paper"],
+      "outputs": ["3 pages of raw writing"],
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002"]
+    },
+    {
+      "instruction": "Schedule a weekly solo Artist’s Date to restore inflow; choose something genuinely interesting and do it alone.",
+      "constraints": ["weekly", "solo", "play/inflow not work"],
+      "inputs": ["time (60–120 min)", "location/activity"],
+      "outputs": ["replenished attention/curiosity"],
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002"]
+    },
+    {
+      "instruction": "Set bottom-line rules (hard boundaries) to stop others’ agendas from consuming creative time and energy.",
+      "constraints": ["rule must be explicit", "enforce consistently"],
+      "inputs": ["schedule", "boundary rules"],
+      "outputs": ["protected creative slot"],
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_003"]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "Rapid unblock: ‘mid-paralysis’ protocol (20–60 minutes)",
+      "goal": "Convert an active block into immediate motion and a protected next action.",
+      "prerequisites": ["paper/pen", "a specific creative task"],
+      "steps": [
+        {
+          "step": "Dump the voice-over",
+          "details": "Write continuously (pages style) until the nagging loop quiets and the ‘next right thing’ becomes visible.",
+          "commands_or_code": [],
+          "checks": ["mental static reduced", "one next action identified"]
+        },
+        {
+          "step": "Select one next right thing",
+          "details": "Choose a single micro-action (10–15 minutes) that advances the work (draft, sketch, outline, rehearsal).",
+          "commands_or_code": [],
+          "checks": ["task is executable in <15 min", "start immediately"]
+        },
+        {
+          "step": "Protect the container",
+          "details": "Apply one boundary rule to prevent interruption/leakage (timebox, no-phone, no-work-after-X).",
+          "commands_or_code": [],
+          "checks": ["boundary stated", "distraction removed"]
+        }
+      ],
+      "failure_modes": [
+        "Turning pages into performance (rereading/judging)",
+        "Choosing an action too big (overwhelm returns)",
+        "No boundary set (time stolen; reinforces helplessness)"
+      ],
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002", "ev_003"]
+    }
+  ],
+  "definitions": [
+    {
+      "term": "Morning Pages",
+      "meaning": "Three pages of daily longhand stream-of-consciousness writing done first thing; a state-clearing practice that siphons off surface mental static.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002"]
+    },
+    {
+      "term": "Artist’s Date",
+      "meaning": "A weekly solo, festive excursion oriented to play/inflow; used to restore receptivity and creative input.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_002"]
+    },
+    {
+      "term": "Creative U-turn",
+      "meaning": "A repeated pattern of starting then abandoning creative work; addressed by naming it, forgiving, retrieving, and mending one abandoned piece.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_003"]
+    }
+  ],
+  "prompts": [
+    {
+      "name": "Live-block triage question",
+      "role": "creative recovery coach",
+      "task": "Turn a current creative failure state into an immediate next action + boundary + replenishment plan.",
+      "variables": ["current_block_state", "project_type", "available_time_minutes"],
+      "constraints": ["no definitions", "action must be executable today", "include one boundary"],
+      "output_format": "bulleted plan",
+      "template": "You are mid-block: {{current_block_state}}. Project: {{project_type}}. Time: {{available_time_minutes}} minutes. Provide: (1) 1 state-clearing action, (2) 1 next-right-thing micro-action, (3) 1 bottom-line boundary, (4) 1 replenishment action (artist-date style), each with a concrete ‘do it now’ instruction.",
+      "notes": "Use the backbone: state clearing, small-step momentum, safety/boundaries, replenishment."
+    }
+  ],
+  "data": {
+    "tables": [],
+    "lists": [
+      {
+        "name": "Backbone concepts",
+        "items": [
+          "State Clearing",
+          "Receptive Replenishment",
+          "Safety + Self-Protection",
+          "Small-Step Momentum",
+          "Self-Relationship",
+          "Guidance Mechanism"
+        ]
+      },
+      {
+        "name": "Common block types (from source)",
+        "items": [
+          "intellectualization / too much thinking",
+          "shame-driven self-judgment",
+          "velocity addiction",
+          "waiting for big blocks of time",
+          "workaholism",
+          "avoidance via TV/overreading/rescuing",
+          "procrastination with hidden payoff",
+          "fear of appearing foolish / beginnerhood",
+          "scar tissue from old creative injuries"
+        ]
+      }
+    ]
+  },
+  "qa_pairs": [
+    {
+      "question": "I’m mid-paralysis and my head is loud—what do I do in the next 30 minutes?",
+      "answer": "Do state clearing first (pages-style dump), then pick one next-right-thing micro-action (<15 min) and execute it under a boundary (timebox/no interruptions). Add a replenishment commitment (solo artist-date) for this week so the system isn’t running on depletion.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_001", "ev_002"]
+    },
+    {
+      "question": "Why does harsher discipline make my creativity collapse?",
+      "answer": "Because bludgeoning raises threat; threat suppresses play/curiosity (the upstream fuel of ideation). You get brittle compliance and then backlash/avoidance. The fix is coaxing: clear interference, replenish inflow, protect boundaries, move by tiny steps.",
+      "verification_status": "verified",
+      "supporting_evidence_ids": ["ev_001"]
+    }
+  ],
+  "chunks": [
+    {
+      "id": "chunk_001",
+      "title": "Core law + backbone overview",
+      "type": "overview",
+      "keywords": ["core law", "coax", "bludgeon", "backbone", "mechanism"],
+      "retrieval_tags": ["creative_recovery", "first_principles"],
+      "content": "The source defines a core governing law: creativity is recovered and sustained through small, consistent, embodied actions that reduce internal interference and increase receptivity; creativity is coaxed, not bludgeoned. It identifies six backbone concepts that everything else connects to: (1) State Clearing (Morning Pages as mental-static removal), (2) Receptive Replenishment (Artist’s Date as inflow/play), (3) Safety + Self-Protection (privacy, boundaries, bottom lines), (4) Small-Step Momentum (next right thing, time tidbits, tiny changes), (5) Self-Relationship (inner artist/compassion/cherishing vs shame), and (6) Guidance Mechanism (inner compass + synchronicity + next action). The implicit mechanism is threat vs receptivity: threat suppresses play/curiosity; low threat plus inflow makes ideas accessible; tiny actions convert overwhelm into motion and create self-trust through completion.",
+      "source_evidence": ["ev_001", "ev_002"]
+    },
+    {
+      "id": "chunk_002",
+      "title": "State clearing: Morning Pages + daily voice-over",
+      "type": "instruction",
+      "keywords": ["Morning Pages", "daily voice-over", "mental static", "attention", "longhand"],
+      "retrieval_tags": ["unblock_now", "state_change"],
+      "content": "Morning Pages are framed as the primary state-clearing practice: write three pages longhand first thing, without aiming for quality, and without rereading or sharing. The target is the ‘daily voice-over’—the petty, nagging surface mental static that hijacks attention and creates cognitive load. The intervention is load-shedding: externalize the queue so it stops looping in working memory. Longhand is emphasized as an intentional slowing that restores emotional/intuitional signal resolution; speed causes insights to ‘whiz past’ unregistered. Timing matters: doing pages first thing prevents the day’s reactivity from consolidating, converting the practice from retrospective complaining into proactive steering.",
+      "source_evidence": ["ev_002", "ev_003"]
+    },
+    {
+      "id": "chunk_003",
+      "title": "Replenishment: Artist’s Date as inflow (solo play)",
+      "type": "instruction",
+      "keywords": ["Artist’s Date", "inflow", "play", "receptivity", "solo"],
+      "retrieval_tags": ["replenish", "stale"],
+      "content": "The Artist’s Date is the complementary replenishment tool: a weekly solo, festive expedition to explore something genuinely interesting. Unlike Morning Pages (outflow/sending), the date is framed as inflow/receiving—tuning receptivity to inspiration. Solo is non-negotiable because companionship triggers social monitoring, externalizing attention and collapsing receptivity. The practical claim is that creative output depletes an internal ecosystem unless replenished by new images/experiences; skipping replenishment compounds staleness and turns discipline into bludgeoning.",
+      "source_evidence": ["ev_002"]
+    },
+    {
+      "id": "chunk_004",
+      "title": "Safety + self-protection: privacy, bottom lines, boundaries",
+      "type": "policy",
+      "keywords": ["privacy", "do not share", "bottom line", "boundaries", "container"],
+      "retrieval_tags": ["protect_time", "protect_attention"],
+      "content": "The source treats safety as structural: do not reread/share pages; hide them if needed; set explicit bottom-line rules (e.g., no work after six) to protect attention from others’ agendas. Many blocks are framed as threat responses (shame, fear of being seen, fear of beginnerhood) disguised as practicality or obligation. Bottom lines translate insight into enforceable constraints that prevent time/energy leakage. Without boundaries, creative practice becomes contingent on the absence of demands—rare—producing chronic instability and resentment.",
+      "source_evidence": ["ev_003"]
+    },
+    {
+      "id": "chunk_005",
+      "title": "Small-step momentum: time tidbits + next right thing",
+      "type": "workflow",
+      "keywords": ["time tidbits", "next right thing", "activation energy", "micro-action"],
+      "retrieval_tags": ["start", "overwhelm"],
+      "content": "A repeated prescription is to stop waiting for large blocks of time and instead use ‘time tidbits’—small windows—to execute micro-actions. The mechanism described is activation energy: the start is the block. ‘Next right thing’ thinking reduces global overwhelm into a single executable step, which produces motion and self-trust through completion. Waiting for ideal time is treated as perfectionism disguised as practicality; it trains the system to associate creation with rare conditions and hardens avoidance into identity.",
+      "source_evidence": ["ev_001"]
+    },
+    {
+      "id": "chunk_006",
+      "title": "Self-relationship: blurts, affirmations, monsters, champions",
+      "type": "instruction",
+      "keywords": ["blurts", "affirmations", "creative injuries", "shame", "reparenting"],
+      "retrieval_tags": ["self_compassion", "shame"],
+      "content": "The source treats blocks as frequently rooted in internalized injury: ‘blurts’ (negative self-statements), monster hall of fame (specific historic enemies/injuries), and scar tissue from ungrieved wounds. Interventions are explicit: write blurts, convert to affirmations; detail a horror story; symbolically trash the monster; write a defense letter in the voice of the wounded artist child; collect champions and their exact encouraging words; post compliments as environmental reinforcement. The mechanism is reparenting and threat reduction: when the inner environment becomes less punishing, risk becomes survivable and repetition becomes possible.",
+      "source_evidence": ["ev_003"]
+    },
+    {
+      "id": "chunk_007",
+      "title": "Pattern interruption: walks, artist-brain activities, touchstones",
+      "type": "example",
+      "keywords": ["walk", "state shift", "touchstones", "sensory anchors"],
+      "retrieval_tags": ["quick_reset", "somatic"],
+      "content": "Several interventions are designed as fast state-shifts: a brisk 20-minute walk to alter consciousness; doing ‘artist-brain’ activities (walking, driving, scrubbing, running) while listening for insight; creating sensory touchstones (rocks, flowers, smells, socks/gloves) to re-sensitize attention to beauty and delight. These are framed as practical, not intellectual: shifting the state changes what actions feel possible, which changes follow-through.",
+      "source_evidence": []
+    },
+    {
+      "id": "chunk_008",
+      "title": "Failure modes: workaholism, TV/overreading, creative U-turns",
+      "type": "policy",
+      "keywords": ["workaholism", "avoidance", "TV", "overreading", "creative U-turn"],
+      "retrieval_tags": ["sabotage", "avoidance"],
+      "content": "The source lists common disguises of blocks: workaholism (self-esteem outsourced to busyness), TV/overreading/rescuing others as sedation/avoidance, and creative U-turns (repeatedly abandoning projects). The recommended countermeasure is structural: boundaries (bottom lines), retrieval-and-mend for U-turns, and replacing mood-based decisions with commitment to small actions. The claimed consequence of repeated abandonment is learned self-distrust: starting becomes painful because it predicts future self-betrayal.",
+      "source_evidence": ["ev_003"]
+    }
+  ],
+  "source_snapshot": {
+    "normalized_excerpt_blocks": [
+      "The source is a structured study guide with steps: extract practices/blocks/interventions/progression/core law; identify backbone concepts; map relationships; then produce scenario-based challenge questions with two-paragraph answers bridging to a backbone concept."
+    ]
+  },
+  "source_quality": {
+    "ambiguities": [
+      "The source is a derived study guide; it does not include page-level citations to the original book text.",
+      "Some mechanisms are framed conceptually; they may be interpretive rather than empirically validated within the source."
+    ],
+    "missing_context": [
+      "Full original book context and nuance (intentionally excluded by source constraints)."
+    ],
+    "possible_noise_removed": [
+      "Biographical/publishing/structural book material omitted by design.",
+      "Open Notebook ingestion/load steps not included because this JSON targets disk retrieval."
+    ]
+  }
+}

@@ -1,0 +1,420 @@
+{
+  "source_meta": {
+    "title": "Big Magic — Practical Creative Living (Study Guide)",
+    "source_type": "derived_notes",
+    "source_format": "md",
+    "author": "Elizabeth Gilbert (primary source); distilled study guide generated in OpenClaw",
+    "created_at": "2026-03-13",
+    "source_path": "/Users/igorsilva/clawd/learn/big-magic-study-guide.md",
+    "provenance": {
+      "input_file": "/Users/igorsilva/Downloads/big_magic.txt",
+      "transformation": "Extracted and organized into practices/obstacles/interventions + scenario Q&A; excludes biography/publishing history",
+      "notes": "This JSON represents a retrieval-optimized abstraction of the saved study guide, not the full book text."
+    }
+  },
+  "purpose": {
+    "primary": "Provide retrieval-ready guidance for practical creative living: practices, fear mechanisms, and specific interventions.",
+    "use_cases": [
+      "Generate situation-specific coaching when fear/perfectionism/inertia hits",
+      "Design creative practice routines",
+      "Diagnose creative blocks as mechanisms and apply targeted interventions"
+    ]
+  },
+  "topics": [
+    "creative practice",
+    "fear and perfectionism",
+    "creative legitimacy and permission",
+    "discipline and persistence",
+    "curiosity-driven idea finding",
+    "relationship with ideas/inspiration",
+    "lightness and play vs martyrdom",
+    "finishing and releasing work",
+    "ego vs wonder"
+  ],
+  "entities": [
+    {
+      "name": "Permission",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["creative legitimacy", "low stakes", "spotlight illusion"]
+    },
+    {
+      "name": "Trust",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["stubborn gladness", "fierce trust", "reciprocity"]
+    },
+    {
+      "name": "Discipline & Persistence",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["daily practice", "rejection-tennis", "completion"]
+    },
+    {
+      "name": "Lightness & Play",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["trickster energy", "de-sacralizing work"]
+    },
+    {
+      "name": "Curiosity",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["scavenger hunt", "tiny yeses"]
+    },
+    {
+      "name": "Relationship with Ideas/Inspiration",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["ideas as entities", "attraction/repulsion", "negotiation"]
+    },
+    {
+      "name": "Perfectionism",
+      "type": "obstacle",
+      "verification": "verified",
+      "aliases": ["fear disguised as virtue"]
+    },
+    {
+      "name": "Ego (Hungry Ghost)",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["reward hunger"]
+    },
+    {
+      "name": "Soul (Wonder)",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["wonder appetite"]
+    }
+  ],
+  "entity_registry": {
+    "Permission": {
+      "kind": "backbone",
+      "mechanism": "Stops outsourcing legitimacy to an imagined audience/credential; lowers perceived stakes so action can begin."
+    },
+    "Trust": {
+      "kind": "backbone",
+      "mechanism": "Sustains creation through uncertainty by holding commitment + non-attachment to outcome."
+    },
+    "Discipline & Persistence": {
+      "kind": "backbone",
+      "mechanism": "Turns creativity into repeatable reps (timers, minimum viable sessions, repeated submissions) independent of mood."
+    },
+    "Lightness & Play": {
+      "kind": "backbone",
+      "mechanism": "De-fuses identity from artifact; replaces martyr seriousness with trickster experimentation to keep motion."
+    },
+    "Curiosity": {
+      "kind": "backbone",
+      "mechanism": "Uses low-threshold interest to generate direction when passion is absent; compounding clue-following creates projects."
+    },
+    "Relationship with Ideas/Inspiration": {
+      "kind": "backbone",
+      "mechanism": "Treats ideas as relational: they approach warmth/pleasure/motion and retreat from complaint/contempt/ultimatums."
+    }
+  },
+  "evidence_index": [
+    {
+      "id": "E1",
+      "claim": "Complaining and self-pity repel inspiration; declaring enjoyment draws it nearer.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/big_magic.txt",
+        "note": "See sections: 'A Trick' and related passages about complaining and enjoyment."
+      }
+    },
+    {
+      "id": "E2",
+      "claim": "Perfectionism is fear disguised as virtue; it blocks starting and finishing.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/big_magic.txt",
+        "note": "See section: 'Fear in High Heels' and 'Disciplined Half-Ass' material."
+      }
+    },
+    {
+      "id": "E3",
+      "claim": "Curiosity can replace passion as a reliable fuel; follow small clues to find bigger work.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/big_magic.txt",
+        "note": "See sections: 'Passion vs. Curiosity', 'Devotion to Inquisitiveness', 'The Scavenger Hunt'."
+      }
+    }
+  ],
+  "key_points": [
+    {
+      "id": "KP1",
+      "title": "Permission is self-issued, not granted",
+      "point": "Creative legitimacy comes from doing the work; imagined audiences and credentials are not licensing authorities.",
+      "backbone": "Permission",
+      "obvious_failure_mode": "Endless preparation/credential-chasing replaces making and shipping."
+    },
+    {
+      "id": "KP2",
+      "title": "Trust holds the central paradox",
+      "point": "Treat the work as sacred while making it, and as non-sacred when revising/releasing.",
+      "backbone": "Trust",
+      "obvious_failure_mode": "Oscillating between obsession (stakes too high) and nihilism (stakes too low)."
+    },
+    {
+      "id": "KP3",
+      "title": "Discipline beats mood",
+      "point": "Use minimum viable sessions (timers) and repeated exposure (submissions) to keep the channel open.",
+      "backbone": "Discipline & Persistence",
+      "obvious_failure_mode": "Waiting for inspiration causes long dry spells and identity decay."
+    },
+    {
+      "id": "KP4",
+      "title": "Lightness is a production strategy, not a vibe",
+      "point": "De-sacralize artifacts, impose playful constraints, and game the process to restore motion.",
+      "backbone": "Lightness & Play",
+      "obvious_failure_mode": "Martyr posture converts work into pain-credentialing and kills output."
+    },
+    {
+      "id": "KP5",
+      "title": "Curiosity is the low-threshold compass",
+      "point": "Follow tiny interests; compounding clues can build large projects without dramatic passion.",
+      "backbone": "Curiosity",
+      "obvious_failure_mode": "Status-filter embarrassment blocks honest interest."
+    },
+    {
+      "id": "KP6",
+      "title": "Ideas respond to relationship cues",
+      "point": "Warmth, enjoyment, and motion attract ideas; complaint, coercion, and ultimatum-pressure repel them.",
+      "backbone": "Relationship with Ideas/Inspiration",
+      "obvious_failure_mode": "Treating the muse like an enemy makes inspiration scarce."
+    }
+  ],
+  "instructions": [
+    {
+      "id": "I1",
+      "name": "Minimum viable creative session",
+      "steps": [
+        "Set a timer (15–30 minutes).",
+        "Produce raw material; allow it to be bad.",
+        "Stop when the timer ends; log one next step for tomorrow."
+      ],
+      "when_to_use": "When you feel uninspired, busy, or afraid of proving you’re not good enough.",
+      "expected_effect": "Maintains channel warmth, builds reps, reduces avoidance."
+    },
+    {
+      "id": "I2",
+      "name": "Rejection tennis",
+      "steps": [
+        "On receiving rejection, schedule the next submission that same day.",
+        "Reframe gatekeepers as probabilistic humans (timing/mood).",
+        "Repeat to maximize odds of connection."
+      ],
+      "when_to_use": "After rejections, negative feedback, or silence.",
+      "expected_effect": "Prevents ego-spiral; converts disappointment into motion."
+    },
+    {
+      "id": "I3",
+      "name": "Trickster reset (lightness move)",
+      "steps": [
+        "Pick one playful constraint (cut 30%, rewrite in a different voice, change medium).",
+        "Work for one bounded session under that rule.",
+        "Keep what works; discard the rest without drama."
+      ],
+      "when_to_use": "When you’re rigid, defensive, or stuck in sacredness/perfectionism.",
+      "expected_effect": "Restores flexibility; lowers stakes; reopens experimentation."
+    },
+    {
+      "id": "I4",
+      "name": "Curiosity scavenger hunt",
+      "steps": [
+        "Identify one small genuine interest.",
+        "Take one exploratory action (read, research 1 minute, talk to someone, make a sketch).",
+        "Extract one fact/texture; ask the next question; repeat."
+      ],
+      "when_to_use": "When passion is absent and you’re directionless.",
+      "expected_effect": "Generates projects through compounding clue-following."
+    }
+  ],
+  "workflows": [
+    {
+      "id": "W1",
+      "name": "Fear-stage navigation (mid-project)",
+      "goal": "Keep working through predictable anxiety cycles without quitting.",
+      "steps": [
+        "Label the stage ("This is the part where I lose heart").",
+        "Treat fear as expected weather, not a verdict.",
+        "Do the next smallest unit of work under a timer.",
+        "Repeat daily until you pass through the stage."
+      ],
+      "linked_backbone": "Trust"
+    },
+    {
+      "id": "W2",
+      "name": "Finish + release",
+      "goal": "Complete imperfect work and share it without outcome guarantees.",
+      "steps": [
+        "Adopt 'disciplined half-ass' as a finishing identity.",
+        "Set a deadline; choose 'done' over 'good'.",
+        "Ship once; let the reaction belong to others.",
+        "Move to the next project immediately."
+      ],
+      "linked_backbone": "Discipline & Persistence"
+    }
+  ],
+  "prompts": [
+    {
+      "id": "P1",
+      "type": "challenge_question",
+      "prompt": "Mid-fear, mid-doubt: you’re about to ship but hear 'Who do you think you are?'. Mechanically explain what’s happening and the precise move to break it in 5 minutes.",
+      "linked_concept": "Permission"
+    },
+    {
+      "id": "P2",
+      "type": "challenge_question",
+      "prompt": "You haven’t started because you keep 'improving standards'. Mechanically explain perfectionism’s disguise and the exact anti-perfection behavior that breaks it.",
+      "linked_concept": "Perfectionism"
+    }
+  ],
+  "qa_pairs": [
+    {
+      "q": "What do I do when inspiration feels distant and I start complaining?",
+      "a": "Stop the complaint loop, explicitly state enjoyment/commitment, and generate visible motion (clean the desk, open the notebook, make one honest attempt).",
+      "linked_backbone": "Relationship with Ideas/Inspiration",
+      "verification": "verified"
+    },
+    {
+      "q": "What do I do when I don’t have a big idea or passion?",
+      "a": "Run a curiosity scavenger hunt: pick one small interest, investigate briefly, extract a clue, and follow the next clue.",
+      "linked_backbone": "Curiosity",
+      "verification": "verified"
+    },
+    {
+      "q": "How do I keep working when fear repeats mid-project?",
+      "a": "Label the stage, treat fear as weather, and do the next smallest unit under a timer.",
+      "linked_backbone": "Trust",
+      "verification": "verified"
+    }
+  ],
+  "data": {
+    "lists": {
+      "backbone_concepts": [
+        "Trust",
+        "Permission",
+        "Discipline & Persistence",
+        "Lightness & Play",
+        "Curiosity",
+        "Relationship with Ideas/Inspiration"
+      ],
+      "common_obstacles": [
+        "outsourced legitimacy",
+        "perfectionism",
+        "complaint/self-pity",
+        "scarcity panic about ideas",
+        "ego reward-hunger",
+        "inertia"
+      ]
+    },
+    "tables": [
+      {
+        "name": "Obstacle → Intervention mapping",
+        "columns": ["obstacle", "mechanism", "intervention"],
+        "rows": [
+          [
+            "Perfectionism",
+            "Fear disguised as virtue blocks starting/finishing",
+            "Disciplined half-ass: finish an imperfect version; ship; iterate"
+          ],
+          [
+            "Complaint/self-pity",
+            "Signals contempt/entitlement; inspiration disengages",
+            "Declare enjoyment + generate motion immediately"
+          ],
+          [
+            "No passion",
+            "High-threshold fuel strategy produces waiting/inertia",
+            "Curiosity scavenger hunt: follow tiny interest clues"
+          ],
+          [
+            "Ego spiral after failure",
+            "Reward-hunger interprets failure as identity threat",
+            "Return to wonder: do making as refuge; no autopsies"
+          ]
+        ]
+      }
+    ]
+  },
+  "chunks": [
+    {
+      "id": "C1",
+      "title": "Backbone concepts",
+      "text": "Backbone concepts: Trust; Permission; Discipline & Persistence; Lightness & Play; Curiosity; Relationship with Ideas/Inspiration. These act as the structural bridges for interpreting fears and selecting interventions.",
+      "keywords": ["trust", "permission", "discipline", "play", "curiosity", "inspiration"],
+      "retrieval_tags": ["backbone", "framework"],
+      "verification": "verified"
+    },
+    {
+      "id": "C2",
+      "title": "Permission under social fear",
+      "text": "Mechanism: outsourced legitimacy to imagined audience/credentials creates avoidance via endless refinement. Intervention: self-issue permission, ship a bounded version, let reality correct spotlight illusion.",
+      "keywords": ["legitimacy", "spotlight illusion", "ship", "fear"],
+      "retrieval_tags": ["permission", "shipping"],
+      "verification": "verified"
+    },
+    {
+      "id": "C3",
+      "title": "Trust through the mid-project fear cycle",
+      "text": "Fear repeats mid-project because execution forces contact with the unknown. Treat fear as expected weather; use a timer; do the next small unit without demanding emotional reassurance.",
+      "keywords": ["anxiety cycle", "timer", "weather", "next step"],
+      "retrieval_tags": ["trust", "process"],
+      "verification": "verified"
+    },
+    {
+      "id": "C4",
+      "title": "Discipline & persistence as system design",
+      "text": "Use minimum viable sessions and rejection-tennis. Completion is honorable; 'done is better than good.' Reps create skill; submissions maximize odds with human gatekeepers.",
+      "keywords": ["daily practice", "rejection", "completion", "reps"],
+      "retrieval_tags": ["discipline", "persistence"],
+      "verification": "verified"
+    },
+    {
+      "id": "C5",
+      "title": "Lightness/trickster vs martyr",
+      "text": "Martyr stance turns creativity into suffering-credentialing and rigid identity fusion with the artifact. Trickster stance games constraints, adds play, and restores motion; a light process can produce serious work.",
+      "keywords": ["trickster", "martyr", "play", "rigidity"],
+      "retrieval_tags": ["lightness", "process design"],
+      "verification": "verified"
+    },
+    {
+      "id": "C6",
+      "title": "Curiosity scavenger hunt",
+      "text": "Curiosity is low-threshold fuel when passion is absent. Follow tiny interest clues with small actions; compounding yeses can produce major projects.",
+      "keywords": ["curiosity", "clues", "compound", "direction"],
+      "retrieval_tags": ["curiosity", "idea-finding"],
+      "verification": "verified"
+    },
+    {
+      "id": "C7",
+      "title": "Relationship with ideas/inspiration",
+      "text": "Ideas respond to relational tone: warmth/enjoyment/motion attract; complaint/contempt/ultimatums repel. Become an attractor by stopping complaint and making visible motion.",
+      "keywords": ["inspiration", "complaining", "enjoyment", "motion"],
+      "retrieval_tags": ["inspiration", "relationship"],
+      "verification": "verified"
+    },
+    {
+      "id": "C8",
+      "title": "Ego vs wonder after failure",
+      "text": "After failure, ego (hungry ghost) demands reward and control; it drives shame and quitting. Soul seeks wonder; creativity is a direct path to wonder that quiets the ego.",
+      "keywords": ["ego", "wonder", "failure", "shame"],
+      "retrieval_tags": ["failure", "ego"],
+      "verification": "verified"
+    }
+  ],
+  "source_snapshot": {
+    "excerpt": "This knowledge object is derived from /Users/igorsilva/clawd/learn/big-magic-study-guide.md, which itself is distilled from big_magic.txt with a focus on concrete practices, fear mechanisms, and targeted interventions.",
+    "redactions": []
+  },
+  "source_quality": {
+    "overall": "high",
+    "limitations": [
+      "Not a full-text representation of the book; it is a distilled operational guide.",
+      "Evidence notes reference the original text file but do not include verbatim quotes in this JSON." 
+    ]
+  }
+}

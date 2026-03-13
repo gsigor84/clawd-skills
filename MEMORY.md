@@ -17,6 +17,7 @@ Stable preferences and defaults. Read this first, every time.
 - Don't summarize what you just did at the end
 - Don't say "Great!" or "Sure!" or any filler affirmations
 - If unsure, ask ONE question — not a list
+- For **creative living / idea / writing / making** questions: follow `SOUL.md` standing order — **search `~/clawd/learn/json/` before answering** (use it as the knowledge library built by `/learn + /ingest`).
 
 ## Code Defaults
 - Always show the full file or the exact patch — no "..." placeholders
