@@ -18,6 +18,76 @@ This file is the living reference for this repo and the Clawdbot assistant runni
 
 ---
 
+## SKILL.md Templates
+
+### Agent Loop Contract (agentic skills only)
+Copy/paste this block into a skill when the skill is multi-step, retrieval-heavy, or has side effects.
+
+```md
+## Agent Loop Contract (agentic skills only)
+
+### Trigger (when this skill must use the loop)
+Use the agent loop if **any** are true:
+- Needs **2+ tool calls** (or unknown number)
+- Requires **retrieval/verification** (KB/web/files) before answering
+- Has **multi-step dependencies** (plan → execute → check → revise)
+- Has **risk/side effects** (writes, deletes, sends messages, schedules jobs)
+
+### Loop (high level)
+1) Clarify the goal (one sentence) and constraints (budget, allowed actions).
+2) Decompose into subtasks (todo/doing/done/blocked).
+3) Retrieve/Act (run tools) for the next subtask.
+4) Observe (record tool outputs as evidence).
+5) Critic gate (verify groundedness, relevance, completeness, safety).
+6) Iterate until terminal condition.
+
+### State (MDP-lite)
+Track explicitly:
+- Goal
+- Subtasks + status
+- Evidence/context (tool outputs, file snippets, KB results)
+- Constraints (time/tool budget, allowed actions)
+- Open questions (max **one** queued question to ask the user)
+
+### Tool routing order (default)
+1) Workspace files (read/search)
+2) Local KB (Open Notebook)
+3) Web search/fetch (**fallback**, allowed by default)
+4) Code execution / specialized APIs
+
+Stuck rule:
+- Don’t repeat the same failing action; try the **least-tested plausible next action**.
+- If still blocked, ask **one** clarifying question.
+
+### Strict no-guessing (negative rejection)
+For factual claims:
+- Use **only** evidence from tools/context (KB/file/tool output). Do **not** fill gaps with pretrained memory.
+- If evidence threshold is not met: stop and say **insufficient context** (or ask for the missing input).
+
+### Budgets + loop caps
+Set a hard cap up front (pick one per skill):
+- Max tool calls: __N__
+- Max rounds: __N__
+- Max time: __N__ minutes
+
+On cap reached:
+- Return the best supported partial result + what’s missing + the next most useful tool/action to try.
+
+### Commit rules (Actor–Critic)
+Before any commit (final factual answer, file write, message send, cron schedule):
+- Actor proposes.
+- Critic must confirm:
+  - Directly satisfies the goal
+  - Grounded in evidence
+  - Safe/within allowed actions + privacy rules
+
+### Output contract
+- Default: concise final output.
+- When tools were used: add a short “Tools used:” line (no chain-of-thought required).
+```
+
+---
+
 ## Core pipelines
 
 ### /intel (strategic intelligence)

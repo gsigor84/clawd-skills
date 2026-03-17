@@ -77,8 +77,10 @@ Write the output in this exact order and headings:
 - Bullets for: missing access (paywall), incomplete extraction, ambiguous claims, lack of evidence, potential bias, unknown data sources, or parts not captured.
 
 ### 5) Quality rules
+- **Context-only:** treat the fetched page content as the only allowed source. Do not add outside facts or “common knowledge”.
 - Clearly separate **claims** vs **evidence** when possible.
 - Do not invent facts not in the page.
+- **Negative rejection (no guessing):** if the page content is too incomplete to support KEY POINTS / MAIN ARGUMENT / 3 QUOTES, do partial completion and put the missing parts explicitly under **CAVEATS / UNKNOWNS** rather than guessing.
 - Keep within ~300 words excluding the quotes if necessary; if you exceed, shorten KEY POINTS first.
 
 ## Failure modes

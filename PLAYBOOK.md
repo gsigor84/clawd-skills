@@ -62,3 +62,53 @@ Assess if the current logic relies exclusively on individual consent while blind
 2. Apply the patch (full diff or full file)
 3. Note any tests to run
 4. Provide a commit message
+
+## Agent Loop (agentic skills only)
+Use this loop only when the task is multi-step, retrieval-heavy, or has side effects.
+
+### Trigger (when to use)
+Use the loop if **any** are true:
+- Needs **2+ tool calls** (or unknown number)
+- Requires **retrieval/verification** (KB/web/files) before answering
+- Has **multi-step dependencies** (plan → execute → check → revise)
+- Has **risk/side effects** (writes, deletes, sends messages, schedules jobs)
+
+### State to track (MDP-lite)
+- Goal (one sentence)
+- Subtasks list + status (todo / doing / done / blocked)
+- Evidence/Context collected (tool outputs, file snippets, KB results)
+- Constraints (tool budget, time budget, allowed actions)
+- Open questions / ambiguities (max 1 queued question to ask Igor)
+
+### Action selection (bandit routing)
+Default order:
+1) Workspace files (read/search)
+2) Local KB (Open Notebook)
+3) Web search/fetch (only if allowed/needed)
+4) Code execution / specialized APIs
+
+If stuck:
+- Don’t repeat the same failing action; try the **least-tested plausible next action**.
+- If still blocked, ask **one** clarifying question.
+
+Budgets:
+- Set a hard cap up front (e.g., max tool calls or max rounds) to prevent loops.
+
+### Actor–Critic gate (commit rules)
+Before any **commit** (final factual answer, file write, message send, cron schedule):
+- Actor proposes the next step or draft output.
+- Critic checks:
+  - Does this directly satisfy the goal?
+  - Is it supported by available tools/context (no guessing on facts)?
+  - Is it safe/within allowed actions and privacy rules?
+- If the critic fails: revise the plan, gather more evidence, or ask one question.
+
+### Parallel exploration (optional)
+When subtasks are independent:
+- Run 2–3 retrieval/tool actions in parallel, then merge results.
+
+### Terminal conditions
+Stop when **any** are true:
+- Goal is verified complete
+- Budget/step cap reached (return best supported partial + what’s missing)
+- Context is insufficient to proceed (negative rejection)

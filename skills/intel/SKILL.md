@@ -91,6 +91,8 @@ Failure handling:
 ### Hard constraints (must follow)
 - Never skip a stage.
 - Never pass anything other than the **direct output** of the previous stage to the next stage.
+- **Context-only orchestration:** treat stage outputs (vector map → source map → signal report) as the only allowed context. Do not add outside facts, background knowledge, or “reasonable inferences” about the target.
+- **Negative rejection (no guessing):** if a stage fails its requirements, abort per the specified failure handling. Do not invent missing vectors/sources/signals/sections or “smooth over” gaps.
 - Never answer the intelligence request from memory.
 - Always run all four stages in sequence.
 - Always return the full intelligence-reporter output as the final response.

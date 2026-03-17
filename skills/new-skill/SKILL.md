@@ -12,12 +12,51 @@ The user's plain English description provided after /new-skill.
 
 ### Pipeline
 
+Global settings (hard critic):
+- CRITIC_MODE: HARD (block commit and route back)
+- RETRY_LIMIT_DEFAULT: 2 (Stages 0/2/4)
+- RETRY_LIMIT_WRITE: 3 (Stage 3 — Write)
+- Retry semantics: on critic failure, **re-run the same stage** with the same inputs plus the critic failure reason as an added constraint. If the retry limit is exceeded, abort cleanly with the blocking issue.
+
+STAGE 0 — DISCIPLINED-INQUIRY PREFLIGHT
+Announce: "⚙️ Stage 0 — Preflight: tightening your request..."
+Goal: transform the user's raw description into a focused, evidence-aware request so the pipeline can build a better skill *without* requiring the user to format anything manually.
+
+Process (internal; do not output the full structure unless the user asks):
+- TOPIC: "I am working on building a new skill that [does X]"
+- Generate 2–4 HOW/WHY guiding questions about what success means.
+- Choose 1 guiding question.
+- State the PROBLEM (why it matters to the user) + success criteria.
+- Extract constraints (tools, environment, inputs/outputs, failure modes) from the user's text.
+- Identify missing info that would block design.
+
+Output of Stage 0 (this is what you pass to Stage 1):
+- A single refined plain-English description (call it REFINED_DESCRIPTION) that includes:
+  - what the skill does
+  - trigger phrase
+  - inputs/outputs expectations
+  - constraints and non-goals
+  - at least 1 example invocation
+
+Stage 0 Critic Gate (HARD):
+- Before proceeding, verify REFINED_DESCRIPTION contains all required bullets above.
+- Verify every added detail is traceable to: (a) user message or (b) explicit prior stage output.
+- If any check fails:
+  - If user input is required: ask **one** clarifying question.
+  - Else: re-run Stage 0 with the critic failure reason as a constraint.
+  - Enforce RETRY_LIMIT_DEFAULT.
+
 STAGE 1 — INTAKE
 Announce: "⚙️ Stage 1 — Intake: analysing your request..."
-Pass to skill-intake: the user's raw plain English description only.
+Pass to skill-intake: REFINED_DESCRIPTION only.
 Evaluate output:
-- INTAKE_STATUS: CLARIFICATION_NEEDED → relay the QUESTION to the user, wait for reply, re-run skill-intake with the original description combined with the user's reply
+- INTAKE_STATUS: CLARIFICATION_NEEDED → relay the QUESTION to the user, wait for reply, then:
+  - update REFINED_DESCRIPTION by incorporating the user's reply (repeat Stage 0 quickly if needed), then re-run skill-intake
 - INTAKE_STATUS: COMPLETE → proceed to Stage 2
+
+Stage 1 Critic Gate (HARD):
+- Verify the intake schema is COMPLETE and contains required fields (skill name, trigger, inputs/outputs, tools needed, constraints/non-goals).
+- If not: force CLARIFICATION_NEEDED (no guessing). Re-run intake as many times as needed.
 
 STAGE 2 — DESIGN
 Announce: "⚙️ Stage 2 — Design: mapping to Adam's stack..."
@@ -26,6 +65,16 @@ Evaluate output:
 - DESIGN_STATUS: REJECTED → output "❌ Pipeline aborted at Design: [REASON]" and stop. After delivering the failure message to the user, write an error log entry as specified in **Self-improvement logging (mandatory)**.
 - DESIGN_STATUS: COMPLETE → proceed to Stage 3
 
+Stage 2 Critic Gate (HARD):
+- Verify every STEP has: TOOL, exact runnable COMMAND, and OUTPUT USED FOR.
+- Verify all tools/commands are within Adam’s supported stack.
+- Verify there are no placeholders or missing parameters.
+- If any check fails, produce an internal failure report (do not show unless user asks):
+  - FAIL_REASON: one sentence
+  - MISSING: bullets
+  - FIX_INSTRUCTION: one sentence
+- Then re-run Stage 2 using the same intake schema plus FIX_INSTRUCTION as an added constraint (enforce RETRY_LIMIT_DEFAULT). If still failing, abort at Design with the blocking reason.
+
 STAGE 3 — WRITE
 Announce: "⚙️ Stage 3 — Writing: generating SKILL.md..."
 Pass to skill-writer: the completed blueprint only.
@@ -33,12 +82,29 @@ Evaluate output:
 - WRITER_STATUS: REJECTED → output "❌ Pipeline aborted at Write: [REASON]" and stop. After delivering the failure message to the user, write an error log entry as specified in **Self-improvement logging (mandatory)**.
 - WRITER_STATUS: COMPLETE → proceed to Stage 4
 
+Stage 3 Critic Gate (HARD):
+- Verify SKILL_CONTENT:
+  - Starts with valid YAML frontmatter (`---`) containing `name` and `description`.
+  - Contains the exact trigger phrase in the description.
+  - Has numbered, atomic steps.
+  - Has no placeholder/TODO text.
+  - Includes section: `## Agent Loop Contract (agentic skills only)`.
+  - If blueprint has `HALLUCINATION_GUARDRAILS: on`, includes section: `## Anti-hallucination / context discipline` (per skill-writer rules).
+- If any check fails, produce an internal failure report (do not show unless user asks):
+  - FAIL_REASON: one sentence
+  - MISSING: bullets
+  - FIX_INSTRUCTION: one sentence
+- Then re-run Stage 3 using the same blueprint plus FIX_INSTRUCTION as an added constraint (enforce RETRY_LIMIT_WRITE). If still failing, abort at Write with the blocking reason.
+
 STAGE 4 — DEPLOY
 Announce: "⚙️ Stage 4 — Deploying: saving to filesystem..."
 Pass to skill-deployer: the SKILL_CONTENT only.
 Evaluate output:
 - DEPLOY_STATUS: FAILED → output "❌ Pipeline aborted at Deploy: [REASON]" and stop. After delivering the failure message to the user, write an error log entry as specified in **Self-improvement logging (mandatory)**.
 - DEPLOY_STATUS: COMPLETE → output final confirmation, then write a learning log entry as specified in **Self-improvement logging (mandatory)**. This must not add any user-visible text.
+
+Stage 4 Critic Gate (HARD):
+- Treat deployment as the final commit. Do not proceed to deploy unless Stage 3 Critic Gate passed.
 
 ### Final confirmation
 "✅ Done: [PATH]
@@ -84,6 +150,15 @@ Write it in this shape (markdown is fine):
   - `trigger:` ...
   - `tools_used:` ...
   - `design_assumptions:` ...
+
+### Anti-hallucination / context discipline (mandatory)
+This pipeline is prone to “contextual hallucination” when the model invents requirements, tools, or constraints that the user did not provide.
+
+Guardrails:
+- **Context-only:** treat the user’s request + the direct outputs of prior stages as the only allowed context. Do not import outside facts, tool capabilities, APIs, or conventions not present in the stage outputs.
+- **Negative rejection (no guessing):** if required details are missing (domain, inputs/outputs, trigger, tools, constraints), do **not** guess. Force clarification by ensuring Stage 1 returns `INTAKE_STATUS: CLARIFICATION_NEEDED` and relay the question to the user.
+- **Explicit context referencing (internal):** when refining the request in Stage 0, ensure every added detail is traceable to a specific phrase from the user message or an explicit stage output. If not traceable, omit it.
+- **Scope control:** if the user request is out of scope for Adam’s environment/tools, prefer early rejection at Design (Stage 2) with a concrete reason rather than attempting a “best effort” invention.
 
 ### Rules
 - Never skip a stage

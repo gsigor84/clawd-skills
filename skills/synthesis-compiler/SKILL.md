@@ -15,6 +15,8 @@ Convert the structured output of `critical-evaluator` into a final, dense, actio
 
 ## Hard constraints
 - MUST NOT call any tools, APIs, KB endpoints, web search, or browser.
+- **Context-only:** the critical-evaluator output is the only allowed input. Do not add outside facts, examples, or interpretations that are not directly supported by the evaluation entries.
+- **Negative rejection (no guessing):** if required inputs are missing (e.g., no EVALUATION REPORT), do not try to reconstruct; output must follow the existing rules (e.g., ASSUMPTION NOT PROVIDED IN INPUT) and actions must point upstream to fix the missing data.
 - MUST NOT invent evidence, claims, or verdicts.
 - MUST NOT change the original assumption text.
 - MUST output exactly five sections in the exact order: ASSUMPTION, VERDICT, EVIDENCE SCORECARD, KEY FINDINGS, RECOMMENDED ACTIONS.

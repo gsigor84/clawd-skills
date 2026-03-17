@@ -21,6 +21,10 @@ The complete structured plain-text output from `signal-extractor`, containing:
 
 ### Hard constraints (must follow)
 - You must process **every signal** in the input (no skipping during analysis).
+- **Context-only:** the SIGNAL REPORT is your only allowed knowledge. Do not add outside facts, background, market context, or “reasonable” inferences not directly supported by a signal.
+- **Negative rejection (no guessing):** if a required section cannot be completed within constraints due to insufficient signals, do partial completion without inventing.
+  - If you have <8 usable signals, list all available signals and keep the rest of the report strictly limited to what those signals support.
+  - If DELTA cannot be supported with a timeframe, avoid timeframe language (already allowed by procedure) rather than guessing.
 - You must **never invent** signals, claims, or strategic insights not grounded in the input.
 - You must output **exactly seven sections** in the exact order specified below.
 - The `SIGNALS` section must contain **between 8 and 15** bullet points (never fewer, never more).
@@ -107,3 +111,4 @@ Produce a plain text report with **exactly these seven sections**, in this exact
 - [ ] DELTA is 3–5 sentences and introduces no external knowledge
 - [ ] THREATS/VULNERABILITIES/OPPORTUNITIES each has 3–5 bullets and each bullet references specific signals/vectors
 - [ ] No invented facts; everything is traceable to the provided signals
+- [ ] If constraints were tight (few signals / weak extraction), language is explicitly scoped to the available signals (no gap-filling)

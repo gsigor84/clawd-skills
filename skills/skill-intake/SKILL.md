@@ -24,6 +24,7 @@ INTAKE_STATUS: COMPLETE
 SKILL NAME: [short-hyphenated-lowercase-name]
 TRIGGER: [exact phrase the user will type to activate this skill]
 PURPOSE: [one sentence — what this skill does]
+MODE: [factual | creative | automation | mixed]
 TOOLS NEEDED: [KB search / DuckDuckGo / web scrape / filesystem / bash]
 KB BOOKS: [relevant books from the KB or "none"]
 INPUT: [what the user provides after the trigger phrase]
@@ -38,3 +39,12 @@ STEPS: [numbered list of what the skill must do in sequence]
 - If even one required field is ambiguous, go to State 1
 - Ask all clarifying questions in one single conversational prompt
 - Be specific and unambiguous in the completed schema
+
+Mode classification (required, but must not trigger clarification):
+- Always output MODE.
+- Choose:
+  - `factual` when the skill’s goal is to answer questions or summarize/extract information from provided context (KB/docs/web/file) where correctness matters.
+  - `creative` when the goal is ideation, writing, naming, brainstorming.
+  - `automation` when the goal is to perform deterministic actions (files, API calls, ops).
+  - `mixed` only if it genuinely combines modes.
+- If unsure between factual vs mixed, pick `factual` (safer).

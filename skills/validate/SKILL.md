@@ -139,6 +139,8 @@ Write it in this shape (markdown is fine):
 ## Hard constraints (must never violate)
 - Never skip a stage.
 - Never pass more than the direct output of the previous stage to the next.
+- **Context-only orchestration:** treat the previous stage output as the only allowed context for the next stage. Do not add facts, examples, numbers, definitions, or claims from your own knowledge.
+- **Negative rejection (no guessing):** if any stage output is missing required structure/content, abort per failure handling. Do not “patch” or “complete” missing sections yourself.
 - Never answer the assumption from memory or prior knowledge.
 - Always run all four stages in sequence even if you think you know the answer.
 - Always deliver synthesis-compiler output as the final response with no paraphrasing or summarizing.

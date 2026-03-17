@@ -1,0 +1,355 @@
+{
+  "source_meta": {
+    "title": "Steal Like an Artist (Journal) — Practical Creative Methodology (Study Guide)",
+    "source_type": "derived_notes",
+    "source_format": "md",
+    "author": "Austin Kleon (primary source); distilled study guide generated in OpenClaw",
+    "created_at": "2026-03-13",
+    "source_path": "/Users/igorsilva/clawd/learn/steal-like-an-artist-study-guide.md",
+    "provenance": {
+      "input_file": "/Users/igorsilva/Downloads/steal_like_artist.txt",
+      "transformation": "Extracted and organized into operational practices/obstacles/interventions + scenario Q&A; excludes biography/publishing history",
+      "notes": "OCR in the source is noisy; this guide preserves the operational methodology rather than exact wording."
+    }
+  },
+  "purpose": {
+    "primary": "Provide retrieval-ready creative methodology for building work by stealing, remixing, transforming influences; using constraints, analog tools, and public process.",
+    "use_cases": [
+      "Generate tactical prompts when stuck waiting for originality",
+      "Design influence-collection and lineage mapping routines",
+      "Apply constraints/analog switches to unlock motion",
+      "Set up working-in-public loops"
+    ]
+  },
+  "topics": [
+    "creative theft",
+    "remix and transformation",
+    "creative lineage",
+    "constraints",
+    "analog practice",
+    "working in public",
+    "notebook capture systems",
+    "daily practice"
+  ],
+  "entities": [
+    {
+      "name": "Creative theft as transformation",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["mashup", "remix", "welding theft into a new whole"]
+    },
+    {
+      "name": "Input density & lineage",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["steal from many", "creative family tree", "teachers"]
+    },
+    {
+      "name": "Constraints as creativity engine",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["15-minute timer", "one-spot observation", "vow of silence"]
+    },
+    {
+      "name": "Analog capture",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["pen and paper", "trace shadows", "paste receipts", "draw in the dark"]
+    },
+    {
+      "name": "Working in public",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["show your work", "share process", "journal meetup"]
+    },
+    {
+      "name": "Daily practice loops",
+      "type": "concept",
+      "verification": "verified",
+      "aliases": ["carry notebook", "don't break the chain", "review loop"]
+    }
+  ],
+  "entity_registry": {
+    "Creative theft as transformation": {
+      "kind": "backbone",
+      "mechanism": "Originality emerges from synthesis: collecting fragments, recombining, and imposing your own structure/constraints to create a new whole."
+    },
+    "Input density & lineage": {
+      "kind": "backbone",
+      "mechanism": "Diverse influences increase combinatory possibilities and force selection; explicit mapping deepens transferable moves."
+    },
+    "Constraints as creativity engine": {
+      "kind": "backbone",
+      "mechanism": "Boundaries (time, tools, senses, rules) collapse option space and force commitment, which produces motion and finished artifacts."
+    },
+    "Analog capture": {
+      "kind": "backbone",
+      "mechanism": "Physical tools add friction and finality, shifting cognition from infinite revision to generation, selection, and noticing."
+    },
+    "Working in public": {
+      "kind": "backbone",
+      "mechanism": "Public process creates micro-deadlines and feedback loops; explicit lineage signals attract better sources and collaborators."
+    },
+    "Daily practice loops": {
+      "kind": "backbone",
+      "mechanism": "Small repeated sessions create compounding inventory and skill; streaks reduce activation energy and protect momentum."
+    }
+  },
+  "evidence_index": [
+    {
+      "id": "E1",
+      "claim": "Nothing comes from nowhere; every new idea is a mashup/remix of previous ideas.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/steal_like_artist.txt",
+        "note": "Appears near the beginning: remix/mashup framing."
+      }
+    },
+    {
+      "id": "E2",
+      "claim": "Mature poets steal by transforming what they take into a unique whole; copying is not the goal.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/steal_like_artist.txt",
+        "note": "Quoted passage attributed to T.S. Eliot about mature poets stealing and welding theft into a new whole."
+      }
+    },
+    {
+      "id": "E3",
+      "claim": "Carry a notebook; set aside 15 minutes every day to do exercises; repeat until pages are full.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/steal_like_artist.txt",
+        "note": "Usage instructions: carry it, do at least one exercise daily, set aside 15 minutes."
+      }
+    },
+    {
+      "id": "E4",
+      "claim": "Show your work: share interesting pages online; do timed meetups; share results.",
+      "verification": "verified",
+      "source": {
+        "path": "/Users/igorsilva/Downloads/steal_like_artist.txt",
+        "note": "End pages: show your work, post online with a tag, plan journaling meetup, set timer and share results."
+      }
+    }
+  ],
+  "key_points": [
+    {
+      "id": "KP1",
+      "title": "Originality is synthesis, not a starting condition",
+      "point": "Steal fragments, then transform them by imposing your own structure and constraints until a new whole exists.",
+      "backbone": "Creative theft as transformation",
+      "obvious_failure_mode": "Waiting for a pure original idea produces a blank-page stall."
+    },
+    {
+      "id": "KP2",
+      "title": "Steal from many to force a voice",
+      "point": "Multiple influences create constructive interference; you become the editor and selector.",
+      "backbone": "Input density & lineage",
+      "obvious_failure_mode": "Stealing from one hero produces tribute work."
+    },
+    {
+      "id": "KP3",
+      "title": "Constraints create motion by collapsing option space",
+      "point": "Time-boxes and rules (15 minutes, one spot, vow of silence, limited tools) convert thought into artifacts.",
+      "backbone": "Constraints as creativity engine",
+      "obvious_failure_mode": "Unlimited options produce paralysis and endless revision."
+    },
+    {
+      "id": "KP4",
+      "title": "Analog tools change the cognitive mode",
+      "point": "Pen/paper/tracing/pasting create friction and finality that push you into generation and noticing.",
+      "backbone": "Analog capture",
+      "obvious_failure_mode": "Screens invite infinite tweaking and avoidance."
+    },
+    {
+      "id": "KP5",
+      "title": "Working in public is an iteration accelerator",
+      "point": "Sharing process creates small deadlines, feedback, and lineage signals that improve inputs.",
+      "backbone": "Working in public",
+      "obvious_failure_mode": "Secrecy inflates stakes and delays learning."
+    },
+    {
+      "id": "KP6",
+      "title": "A notebook is a database for stolen parts",
+      "point": "Carry it, capture fragments, and review: your archive becomes your raw material inventory.",
+      "backbone": "Daily practice loops",
+      "obvious_failure_mode": "Inspiration leaks when not captured."
+    }
+  ],
+  "instructions": [
+    {
+      "id": "I1",
+      "name": "Copy → mutate → delete (anti-copying theft drill)",
+      "steps": [
+        "Copy a favorite sentence onto the middle of a page.",
+        "Write two of your own sentences that lead up to it.",
+        "Write two of your own sentences that follow it.",
+        "Cross out the original sentence so only your structure remains."
+      ],
+      "when_to_use": "When you’re stuck, afraid of influence, or waiting for originality.",
+      "expected_effect": "Turns influence into scaffolding; forces your connective tissue; prevents surface copying."
+    },
+    {
+      "id": "I2",
+      "name": "15-minute constraint session",
+      "steps": [
+        "Set a 15-minute timer.",
+        "Choose one constraint exercise (doodle page, transcription, one-spot observation, shadow trace).",
+        "Produce one page; stop when timer ends.",
+        "Mark the day (don't break the chain)."
+      ],
+      "when_to_use": "When you have low time/energy or are frozen by options.",
+      "expected_effect": "Collapses option space; produces artifacts and momentum."
+    },
+    {
+      "id": "I3",
+      "name": "Creative lineage map",
+      "steps": [
+        "Draw a creative family tree (parents, grandparents, cousins across mediums).",
+        "Write a 'thanks to who taught me' list.",
+        "Extract one transferable move from each influence (format, constraint, habit).",
+        "Run one move as a constraint session this week."
+      ],
+      "when_to_use": "When you consume a lot but can't convert it into output.",
+      "expected_effect": "Converts admiration into actionable techniques; deepens influence network."
+    },
+    {
+      "id": "I4",
+      "name": "Work in public loop",
+      "steps": [
+        "Share one page of process regularly (sketch, prompt response, source list).",
+        "Include credits/lineage.",
+        "Host or join a timed journaling meetup; share results.",
+        "Use feedback to add one new influence source each week."
+      ],
+      "when_to_use": "When secrecy and perfectionism stall release.",
+      "expected_effect": "Creates micro-deadlines, feedback, and better inputs."
+    }
+  ],
+  "workflows": [
+    {
+      "id": "W1",
+      "name": "From 'no original idea' to first draft",
+      "goal": "Generate a new artifact by transforming stolen fragments under constraints.",
+      "steps": [
+        "Pick 2–5 fragments from diverse influences.",
+        "Choose a constraint (time-box, format, audience, medium).",
+        "Run copy→mutate→delete or micro-remix.",
+        "Ship a one-page draft; log sources used and next iteration."
+      ],
+      "linked_backbone": "Creative theft as transformation"
+    },
+    {
+      "id": "W2",
+      "name": "Analog unblock",
+      "goal": "Exit screen paralysis and enter generation mode.",
+      "steps": [
+        "Switch to pen/paper.",
+        "Do one constraint exercise (trace shadow, draw in dark, tea-stain association).",
+        "Capture 10 fragments; circle 1 for expansion.",
+        "Return to digital only for transcription/editing after material exists."
+      ],
+      "linked_backbone": "Analog capture"
+    },
+    {
+      "id": "W3",
+      "name": "Public iteration",
+      "goal": "Accelerate output quality through public process and lineage signals.",
+      "steps": [
+        "Post one process artifact on a schedule.",
+        "Credit influences and link lineage.",
+        "Collect feedback and new sources.",
+        "Update family tree monthly and adjust inputs."
+      ],
+      "linked_backbone": "Working in public"
+    }
+  ],
+  "qa_pairs": [
+    {
+      "q": "What distinguishes transformation from copying?",
+      "a": "Copying preserves surface; transformation welds stolen parts into a new whole via your constraints, context, and connective tissue.",
+      "linked_backbone": "Creative theft as transformation",
+      "verification": "verified"
+    },
+    {
+      "q": "Why do constraints help when I feel blocked?",
+      "a": "Constraints collapse option space and force commitment; motion produces material and ideas.",
+      "linked_backbone": "Constraints as creativity engine",
+      "verification": "verified"
+    },
+    {
+      "q": "Why does pen-and-paper change my thinking?",
+      "a": "Analog adds friction and finality, pushing you from infinite revision to generation and noticing.",
+      "linked_backbone": "Analog capture",
+      "verification": "verified"
+    },
+    {
+      "q": "How does working in public improve output?",
+      "a": "Public process creates micro-deadlines and feedback loops, and lineage signals attract better sources/collaborators.",
+      "linked_backbone": "Working in public",
+      "verification": "verified"
+    }
+  ],
+  "chunks": [
+    {
+      "id": "C1",
+      "title": "Creative theft mechanism",
+      "text": "Nothing comes from nowhere: every new idea is a mashup/remix. Mature stealing transforms: you weld what you take into a new whole under your own constraints, rather than copying surface features.",
+      "keywords": ["remix", "mashup", "transform", "weld"],
+      "retrieval_tags": ["creative-theft", "mechanism"],
+      "verification": "verified"
+    },
+    {
+      "id": "C2",
+      "title": "Lineage and input density",
+      "text": "Steal from many, not one. Build a creative family tree and explicit thanks lists; follow influences deeper (their teachers) to harvest transferable moves.",
+      "keywords": ["lineage", "family tree", "influences"],
+      "retrieval_tags": ["lineage", "inputs"],
+      "verification": "verified"
+    },
+    {
+      "id": "C3",
+      "title": "Constraints as engine",
+      "text": "Use forcing functions: 15-minute daily exercises, one-spot observation, vow of silence, sensory limits (draw in dark). Removing constraints creates paralysis and endless tweaking.",
+      "keywords": ["constraints", "timer", "paralysis"],
+      "retrieval_tags": ["constraints", "practice"],
+      "verification": "verified"
+    },
+    {
+      "id": "C4",
+      "title": "Analog practice",
+      "text": "Pen/paper, tracing, pasting receipts, and physical tools add friction and change cognitive mode: more noticing, more generation, fewer infinite revisions.",
+      "keywords": ["analog", "pen", "paper", "friction"],
+      "retrieval_tags": ["analog", "unblock"],
+      "verification": "verified"
+    },
+    {
+      "id": "C5",
+      "title": "Working in public",
+      "text": "Show your work by sharing pages/process; do timed meetups and share results. Public loops create micro-deadlines, feedback, and better inputs via new sources/collaborators.",
+      "keywords": ["show your work", "public", "feedback"],
+      "retrieval_tags": ["public", "iteration"],
+      "verification": "verified"
+    },
+    {
+      "id": "C6",
+      "title": "Notebook as database",
+      "text": "Carry the notebook everywhere; jot fragments; review when stuck. A capture system prevents inspiration leakage and supplies remixable parts.",
+      "keywords": ["notebook", "capture", "inventory"],
+      "retrieval_tags": ["capture", "workflow"],
+      "verification": "verified"
+    }
+  ],
+  "source_snapshot": {
+    "excerpt": "Derived from /Users/igorsilva/Downloads/steal_like_artist.txt (journal prompts + methodology notes), distilled into operational creative methods.",
+    "redactions": []
+  },
+  "source_quality": {
+    "overall": "medium",
+    "limitations": [
+      "Source is OCR-noisy and includes many prompt pages; not all prompts are cleanly readable.",
+      "This JSON favors operational method extraction over verbatim quotes."
+    ]
+  }
+}

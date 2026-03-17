@@ -83,6 +83,8 @@ If all steps can be implemented:
 
 DESIGN_STATUS: COMPLETE
 BLUEPRINT FOR: [skill name]
+MODE: [copied from intake: factual|creative|automation|mixed]
+HALLUCINATION_GUARDRAILS: [on|off]  (on when MODE=factual)
 
 STEP 1:
 TOOL: [which tool from supported stack]
@@ -103,6 +105,8 @@ OUTPUT INSTRUCTION: [exactly what to write and how]
 - Every command must be exact and immediately runnable
 - Never write SKILL.md content — that is the writer's job
 - If one step is unsupported, reject the entire blueprint
+- Always carry through MODE from intake.
+- Set `HALLUCINATION_GUARDRAILS: on` when MODE=factual (and `off` otherwise).
 
 PDF EXTRACTION:
 /opt/anaconda3/bin/python3 -c "

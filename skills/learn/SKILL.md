@@ -15,11 +15,87 @@ description: "Trigger: /learn followed by a file path or attached file (PDF, TXT
 
 ### Hard rules (do not violate)
 - Never skip any step.
+- **Context-only generation:** treat the source text as the only allowed knowledge. Do not import facts, examples, or definitions that are not supported by the source.
+- **Negative rejection (no guessing):** if the source does not contain enough information to complete a step without inventing details, stop and refuse (see “Anti-hallucination gates”).
 - Never summarise concepts instead of extracting them individually.
 - Never write definition questions (no “what is/define X”).
 - Never write one-paragraph answers: every concept must have exactly two answer paragraphs.
 - Never omit backbone identification.
 - Never write any challenge question until the full relationship map is completed.
+
+### Anti-hallucination gates (internal, for /learn)
+
+**Failure mode targeted:** contextual hallucinations — the model has the correct source text available but answers from pre-trained knowledge anyway.
+
+**Strict prompting mode (internal):**
+- Use the source text as the exclusive ground truth.
+- If the source diverges from what you “know”, the source wins.
+- Do not fill gaps with plausible-sounding content.
+
+**Refusal rule (negative rejection):**
+- **Hard-fail only when the source is unusable** (missing/empty/unreadable/clearly irrelevant to the task).
+- **Otherwise, prefer partial completion over guessing:** if *specific concepts* cannot be supported by the source well enough to complete STEP 4 without importing outside knowledge, you MUST **skip those concepts** (do not invent), proceed with the rest, and report the skipped items at the end (see below).
+
+If you must refuse (hard-fail), output exactly one of the following (and nothing else):
+1. `I do not know the answer based on the provided context.`
+2. `The retrieved documents do not contain the information necessary to answer your question.`
+3. `I must decline to answer, as the provided context is insufficient.`
+
+**Coverage checks (internal):**
+- STEP 1 sanity: every extracted item must be explicitly present in the source text (exact string match OR an obvious unambiguous variant, e.g., singular/plural). If not, remove it from the extract list.
+- STEP 2/3 grounding: every backbone decision and every non-backbone → backbone link must be justified by a concrete mechanism described in the text (not vibes). If you can’t point to such support, revise the backbone/mapping.
+- STEP 4 “answerability” gate: before writing any concept’s two paragraphs, verify the source contains enough details to write both paragraphs without importing outside facts. If not, **skip that concept** and add it to an internal `UNSUPPORTED_CONCEPTS` list (do not invent).
+
+**End-of-run reporting (required if any skips):**
+- If `UNSUPPORTED_CONCEPTS` is non-empty, in **STEP 6 — CONFIRM** add one extra line after the saved path:
+  - `Skipped concepts due to insufficient support in source: <comma-separated list>`
+  - Then still print: `Run /ingest [path] to load this into your knowledge base.`
+
+### Disciplined Inquiry (internal, for /learn)
+
+Apply a disciplined-inquiry loop to the /learn workflow WITHOUT changing the required /learn output sections or formats.
+
+Internal structure to maintain (do not print unless explicitly asked):
+- TOPIC: "I am working on producing a study guide from [source]"
+- GUIDING QUESTION (choose one):
+  - "How do the concepts in this source relate structurally?"
+  - "Why are the backbone concepts the bridges that connect the rest?"
+- PROBLEM: why this matters for the user (better learning + retrieval quality)
+- CLAIM: your current best structural interpretation (updated as you read)
+- REASONS: why you think the mapping/backbone is correct
+- EVIDENCE: specific observations from the source text (phrases, repeated links, explicit mechanisms)
+- OBJECTIONS: plausible alternative backbones/mappings
+- WARRANTS: only when a reason→claim link isn’t obvious
+
+Active reading rule (required after every read/tool call):
+- Write a short internal SOURCE NOTE (not user-visible):
+  - MAIN CLAIM of the passage
+  - 1–2 KEY REASONS
+  - how it supports a REASON or tests an OBJECTION in your mapping
+
+Evidence quality check (internal):
+- For any important mapping/backbone decision, ensure evidence is:
+  - Accurate (actually present in the text)
+  - Precise (points to a specific mechanism/phrase/repetition, not vibes)
+  - Sufficient (more than one weak hint; prefer multiple supports)
+
+Skeptical-colleague objection check (internal):
+- For backbone selection and each non-backbone→backbone link, write at least 1 plausible objection and your response:
+  - Intrinsic objection: "the evidence is thin / ambiguous" → response: qualify internally or gather more text
+  - Extrinsic objection: "wrong framing / wrong backbone" → response: compare alternatives and pick the better-supported bridge
+- If objections remain strong, revise Step 2/3 before proceeding.
+
+Do NOT import these rules into /learn output:
+- No 200-word cap (conflicts with /learn required length)
+- No mandatory hedging (conflicts with Step 4 ‘zero hedging’ requirement)
+- No mandatory user-output template (conflicts with /learn’s fixed STEP 1–4 output structure)
+
+Quality gate before STEP 4:
+- Do not start writing challenge questions/answers until:
+  - backbone selection is defensible (reasons + evidence)
+  - STEP 3 mapping is complete and consistent
+  - **answerability is confirmed:** you can write every concept’s two paragraphs using only information present in the source text (no outside knowledge). If any concept fails this, refuse per “Anti-hallucination gates”.
+- Avoid data dumps: include in the final study guide only what the /learn format requires, plus minimal wording needed for accuracy.
 
 ### Procedure (follow exactly, in order)
 
