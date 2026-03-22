@@ -7,3 +7,10 @@ canvas/
 memory/
 HEARTBEAT.md
 .DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# OpenClaw runtime scratch
+/tmp/
