@@ -22,6 +22,13 @@ STAGE 0 — DISCIPLINED-INQUIRY PREFLIGHT
 Announce: "⚙️ Stage 0 — Preflight: tightening your request..."
 Goal: transform the user's raw description into a focused, evidence-aware request so the pipeline can build a better skill *without* requiring the user to format anything manually.
 
+ANTI-CRASH STANDARD (MANDATORY)
+- Detect multi-stage workflows early. If the user request includes multiple logical stages (e.g., extract + transform + store + analyze), do NOT design a single monolithic skill.
+- Instead, either:
+  1) Split the request into multiple single-responsibility skills (preferred), each with one clear trigger and one responsibility; OR
+  2) Ask the user exactly one confirmation question: "This workflow has multiple stages. Do you want it split into separate skills?"
+- Guiding principle: "Monolithic skills die silently. Modular skills complete reliably."
+
 Process (internal; do not output the full structure unless the user asks):
 - TOPIC: "I am working on building a new skill that [does X]"
 - Generate 2–4 HOW/WHY guiding questions about what success means.
@@ -61,6 +68,11 @@ Stage 1 Critic Gate (HARD):
 STAGE 2 — DESIGN
 Announce: "⚙️ Stage 2 — Design: mapping to Adam's stack..."
 Pass to skill-designer: the completed intake schema only.
+
+Stage 2 Anti-crash rules (MANDATORY)
+- Each skill must have ONE responsibility only.
+- Do not chain multiple logical operations inside a single skill.
+- Prefer multiple small skills over one large skill (split pipelines into separate skills).
 Evaluate output:
 - DESIGN_STATUS: REJECTED → output "❌ Pipeline aborted at Design: [REASON]" and stop. After delivering the failure message to the user, write an error log entry as specified in **Self-improvement logging (mandatory)**.
 - DESIGN_STATUS: COMPLETE → proceed to Stage 3
@@ -90,10 +102,18 @@ Stage 3 Critic Gate (HARD):
   - Has no placeholder/TODO text.
   - Includes section: `## Agent Loop Contract (agentic skills only)`.
   - If blueprint has `HALLUCINATION_GUARDRAILS: on`, includes section: `## Anti-hallucination / context discipline` (per skill-writer rules).
+
+- Anti-crash modularity gate (CRITICAL): Reject SKILL_CONTENT if any of the following are true:
+  - It contains multiple responsibilities (extract + parse + save + notify, etc.) in one skill.
+  - It implements a multi-stage pipeline internally.
+  - It implies long execution time or large single-run output.
+  - It includes overly long instructions (prefer concise SKILL.md).
+  - It lacks best-effort / partial-output behavior where applicable.
+
 - If any check fails, produce an internal failure report (do not show unless user asks):
   - FAIL_REASON: one sentence
   - MISSING: bullets
-  - FIX_INSTRUCTION: one sentence
+  - FIX_INSTRUCTION: one sentence (must push modular decomposition)
 - Then re-run Stage 3 using the same blueprint plus FIX_INSTRUCTION as an added constraint (enforce RETRY_LIMIT_WRITE). If still failing, abort at Write with the blocking reason.
 
 STAGE 4 — DEPLOY
@@ -167,3 +187,43 @@ Guardrails:
 - Always announce each stage before executing it
 - Always relay rejection reasons clearly to the user
 - Re-run intake as many times as needed until INTAKE_STATUS: COMPLETE is reached
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/new-skill <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/new-skill <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  ~/clawd/skills/new-skill/SKILL.md
+```
+Expected: `PASS`.

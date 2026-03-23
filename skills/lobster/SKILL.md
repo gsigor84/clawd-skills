@@ -1,11 +1,6 @@
 ---
 name: lobster
-description: >
-  Lobster workflow runtime for deterministic pipelines with approval gates.
-  Use when: (1) Running multi-step automations that need human approval before side effects,
-  (2) Monitoring PRs/issues for changes, (3) Processing data through typed JSON pipelines,
-  (4) Email triage or batch operations, (5) Any workflow that should halt and ask before acting.
-  Lobster saves tokens by running deterministic pipelines instead of re-planning each step.
+description: "# Lobster"
 ---
 
 # Lobster
@@ -138,3 +133,50 @@ Requires `CLAWD_URL` and `CLAWD_TOKEN` environment variables.
 ## State Directory
 
 Lobster stores state in `~/.lobster/state/` by default. Override with `LOBSTER_STATE_DIR`.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/lobster <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/lobster <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/lobster/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/lobster/SKILL.md
+```
+Expected: `PASS`.

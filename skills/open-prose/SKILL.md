@@ -1,7 +1,6 @@
 ---
-name: prose
-description: OpenProse VM skill pack. Activate on any `prose` command, .prose files, or OpenProse mentions; orchestrates multi-agent workflows.
-metadata: { "openclaw": { "emoji": "🪶", "homepage": "https://www.prose.md" } }
+name: open-prose
+description: "# OpenProse Skill"
 ---
 
 # OpenProse Skill
@@ -321,3 +320,50 @@ These documentation files were renamed in the skill itself (not user workspace):
 | `antipatterns.md` | `guidance/antipatterns.md` |
 
 If you encounter references to the old names in user prompts or external docs, map them to the current paths.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/open-prose <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/open-prose <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/open-prose/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/open-prose/SKILL.md
+```
+Expected: `PASS`.

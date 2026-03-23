@@ -1,32 +1,6 @@
 ---
-name: wacli
-description: Send WhatsApp messages to other people or search/sync WhatsApp history via the wacli CLI (not for normal user chats).
-homepage: https://wacli.sh
-metadata:
-  {
-    "openclaw":
-      {
-        "emoji": "📱",
-        "requires": { "bins": ["wacli"] },
-        "install":
-          [
-            {
-              "id": "brew",
-              "kind": "brew",
-              "formula": "steipete/tap/wacli",
-              "bins": ["wacli"],
-              "label": "Install wacli (brew)",
-            },
-            {
-              "id": "go",
-              "kind": "go",
-              "module": "github.com/steipete/wacli/cmd/wacli@latest",
-              "bins": ["wacli"],
-              "label": "Install wacli (go)",
-            },
-          ],
-      },
-  }
+name: mh-wacli
+description: "# wacli"
 ---
 
 # wacli
@@ -70,3 +44,50 @@ Notes
 - Backfill requires your phone online; results are best-effort.
 - WhatsApp CLI is not needed for routine user chats; it’s for messaging other people.
 - JIDs: direct chats look like `<number>@s.whatsapp.net`; groups look like `<id>@g.us` (use `wacli chats list` to find).
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/mh-wacli <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/mh-wacli <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/mh-wacli/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/mh-wacli/SKILL.md
+```
+Expected: `PASS`.

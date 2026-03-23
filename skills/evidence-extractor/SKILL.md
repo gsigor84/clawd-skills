@@ -124,3 +124,43 @@ EVIDENCE SUMMARY
 - Multiple claims pick the same top source: still fetch and extract separately per claim.
 - If the claim’s query seems mismatched to the claim text, do **not** rewrite it; execute exactly what was provided.
 - Never switch to vector search.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/evidence-extractor <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/evidence-extractor <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  ~/clawd/skills/evidence-extractor/SKILL.md
+```
+Expected: `PASS`.

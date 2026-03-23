@@ -1,7 +1,6 @@
 ---
 name: intel
-description: Orchestrator entry point for the /intel intelligence pipeline. Triggered when the user types /intel followed by a plain-English target (company, product, industry, or segment). Chains four internal sub-skills in strict sequence—vector-mapper → digital-scout → signal-extractor → intelligence-reporter—passing only the direct output of each stage to the next, holding state in memory, and returning the final seven-section strategic intelligence report exactly as produced by intelligence-reporter.
-trigger: /intel
+description: "## Intel (Orchestrator Skill)"
 ---
 
 ## Intel (Orchestrator Skill)
@@ -141,3 +140,50 @@ Write it in this shape (markdown is fine):
   - `digital-scout`
   - `signal-extractor`
   - `intelligence-reporter`
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/intel <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/intel <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/intel/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/intel/SKILL.md
+```
+Expected: `PASS`.

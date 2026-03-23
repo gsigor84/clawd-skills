@@ -1,7 +1,6 @@
 ---
 name: intelligence-reporter
-description: Fourth and final stage of the /intel intelligence pipeline. Takes the structured SIGNAL REPORT from signal-extractor and compiles it into a finished seven-section strategic intelligence report for Igor: TARGET, VECTORS RESEARCHED, SIGNALS, DELTA, THREATS, VULNERABILITIES, and OPPORTUNITIES. Every insight is strictly grounded in the extracted signals (no external knowledge introduced). Called internally by the intel orchestrator and never triggered directly by the user.
-trigger: intelligence-reporter
+description: "## Intelligence Reporter (Sub-skill)"
 ---
 
 ## Intelligence Reporter (Sub-skill)
@@ -112,3 +111,50 @@ Produce a plain text report with **exactly these seven sections**, in this exact
 - [ ] THREATS/VULNERABILITIES/OPPORTUNITIES each has 3–5 bullets and each bullet references specific signals/vectors
 - [ ] No invented facts; everything is traceable to the provided signals
 - [ ] If constraints were tight (few signals / weak extraction), language is explicitly scoped to the available signals (no gap-filling)
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/intelligence-reporter <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/intelligence-reporter <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/intelligence-reporter/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/intelligence-reporter/SKILL.md
+```
+Expected: `PASS`.

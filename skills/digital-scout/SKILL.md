@@ -1,7 +1,6 @@
 ---
 name: digital-scout
-description: Second stage of the /intel intelligence pipeline. Takes the full vector map output from vector-mapper, executes every search query for every vector using the Brave Search API (no skipping), and selects the 2–3 most current and authoritative source URLs per vector. Outputs a structured SOURCE MAP (with source type, relevance note, and freshness indicator) for the next stage signal-extractor. Called internally by the intel orchestrator and never triggered directly by the user.
-trigger: digital-scout
+description: "## Digital Scout (Sub-skill)"
 ---
 
 ## Digital Scout (Sub-skill)
@@ -127,3 +126,50 @@ NO QUALITY SOURCES FOUND: <1–2 sentences explaining what was searched and why 
 - [ ] Every selected URL is present in DDG output (no hallucinations)
 - [ ] Every selected URL includes SOURCE TYPE, FRESHNESS, and a one-sentence RELEVANCE NOTE
 - [ ] Vectors with weak results are explicitly marked NO QUALITY SOURCES FOUND
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/digital-scout <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/digital-scout <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/digital-scout/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/digital-scout/SKILL.md
+```
+Expected: `PASS`.

@@ -150,3 +150,43 @@ Replace payload fields to match your installation’s schema.
 
 - Keep requests local (`127.0.0.1`). Don’t expose tokens/credentials in chat logs.
 - If you need exact request/response schemas, always consult `/openapi.json`.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/open-notebook-local <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/open-notebook-local <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  ~/clawd/skills/open-notebook-local/SKILL.md
+```
+Expected: `PASS`.

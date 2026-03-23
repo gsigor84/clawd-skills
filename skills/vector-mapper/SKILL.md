@@ -1,7 +1,6 @@
 ---
 name: vector-mapper
-description: First stage of the /intel intelligence pipeline. Takes a user-provided target name or topic (company, product, industry, or market segment) and maps it into exactly five fixed core research vectors (Pricing, Product, Positioning, Vulnerabilities, Competitive Moves) plus zero to two domain-specific vectors uniquely relevant to the target. Each vector includes a one-sentence description, a priority, and 2–3 DuckDuckGo-optimised search queries that always include the target and are time-bounded where possible. Called internally by the intel orchestrator and never triggered directly by the user.
-trigger: vector-mapper
+description: "## Vector Mapper (Sub-skill)"
 ---
 
 ## Vector Mapper (Sub-skill)
@@ -115,3 +114,50 @@ For each vector, generate 2–3 DuckDuckGo queries that:
 - [ ] Domain-specific vectors (if any) are truly specific to the target
 - [ ] Every query includes the exact target string and at least one time bound (2025/2026)
 - [ ] Output is plain text with the required headers and fields
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/vector-mapper <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/vector-mapper <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/vector-mapper/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/vector-mapper/SKILL.md
+```
+Expected: `PASS`.

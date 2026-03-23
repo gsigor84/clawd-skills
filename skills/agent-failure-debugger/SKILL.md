@@ -1,7 +1,6 @@
 ---
 name: agent-failure-debugger
-description: Triggered by "debug agent", "fix crash", or "trace error". Monitors local OpenClaw agent logs for crash/flakiness signatures, generates a precise RECOVERY PROMPT to get the agent back on track, logs every failure to ~/clawd/.learnings/ERRORS.md (ERR-YYYYMMDD-XXX), and promotes recurring crash patterns (same FAILED TOOL + ERROR TYPE seen 3+ times) to ~/clawd/AGENTS.md.
-tools: bash
+description: "## agent-failure-debugger"
 ---
 
 ## agent-failure-debugger
@@ -129,3 +128,50 @@ This crash pattern has been seen 3+ times. I have added a permanent prevention r
 - Never modify skill files or log files.
 - Writing to `~/clawd/.learnings/ERRORS.md` and `~/clawd/AGENTS.md` is permitted.
 - All user-facing messages must be plain English with no technical jargon, **except** the recovery instruction line prefixed `RECOVERY PROMPT:`.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/agent-failure-debugger <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/agent-failure-debugger <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/agent-failure-debugger/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/agent-failure-debugger/SKILL.md
+```
+Expected: `PASS`.

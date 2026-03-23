@@ -1,7 +1,6 @@
 ---
 name: pattern-library
-description: Trigger phrase "pattern-library". Internal-only skill called by agent-failure-debugger (not triggered directly by users). Scans ~/clawd/.learnings/ERRORS.md, extracts and ranks known crash patterns (unique FAILED TOOL + ERROR TYPE combinations) by occurrence count, identifies recurring failures (3+ occurrences) that should be promoted to AGENTS.md if not already promoted, and outputs a structured plain text PATTERN LIBRARY REPORT that agent-failure-debugger uses to provide historically informed recovery prompts.
-tools: bash
+description: "## pattern-library (internal)"
 ---
 
 ## pattern-library (internal)
@@ -74,3 +73,50 @@ For each pattern (in ranked order), output:
 Promotion detection (read-only):
 - Check `~/clawd/AGENTS.md` for a line that contains both the tool name and the error type.
 - If found, treat that pattern as already promoted and do not list it under RECURRING ALERTS.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/pattern-library <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/pattern-library <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/pattern-library/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/pattern-library/SKILL.md
+```
+Expected: `PASS`.

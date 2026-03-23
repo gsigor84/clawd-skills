@@ -86,3 +86,39 @@ Write the output in this exact order and headings:
 ## Failure modes
 - If content is inaccessible: explain what you could access and put the rest under **CAVEATS / UNKNOWNS**.
 - If multiple URLs provided: ask which single URL to summarise unless the user explicitly asks for comparison.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/url-arg-summarizer <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/url-arg-summarizer <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  ~/clawd/skills/url-arg-summarizer/SKILL.md
+```
+Expected: `PASS`.

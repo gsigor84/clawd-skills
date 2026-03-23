@@ -1,7 +1,6 @@
 ---
 name: health-checker
-description: Triggered by "check health", "health check", or "system check". Internal preflight used by the vibe, validate, and intel orchestrators (before stage 1) and also runnable directly by the user. Runs 5 lightweight checks covering browser relay, Brave Search, Open Notebook knowledge base, Playwright, and gateway health, then outputs a HEALTH REPORT with ALL SYSTEMS READY or WARNINGS DETECTED plus plain-English fix commands for anything unavailable.
-tools: bash
+description: "## health-checker"
 ---
 
 ## health-checker
@@ -73,3 +72,50 @@ If SYSTEM STATUS is WARNINGS DETECTED:
 - List every warning clearly in plain English.
 - Ask the user exactly:
   - `fix these issues before continuing? yes or no.`
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/health-checker <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/health-checker <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/health-checker/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/health-checker/SKILL.md
+```
+Expected: `PASS`.

@@ -1,7 +1,6 @@
 ---
 name: signal-extractor
-description: Third stage of the /intel intelligence pipeline. Takes the structured SOURCE MAP output from digital-scout, attempts to scrape every listed URL (curl first, then Playwright fallback when curl is blocked/insufficient), and extracts 3–7 specific concrete raw signals per URL tagged with their research vector. Outputs a structured SIGNAL REPORT for the next stage intelligence-reporter. Called internally by the intel orchestrator and never triggered directly by the user.
-trigger: signal-extractor
+description: "## Signal Extractor (Sub-skill)"
 ---
 
 ## Signal Extractor (Sub-skill)
@@ -162,3 +161,50 @@ FAILURE REASON: <BLOCKED|EMPTY|TIMEOUT|ERROR>   (only if EXTRACTION QUALITY is F
 - [ ] Signals are concrete data points; no vague statements
 - [ ] Every signal begins with the vector tag in square brackets
 - [ ] EXTRACTION SUMMARY covers success/fallback/failure counts and weakest vectors
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/signal-extractor <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/signal-extractor <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md
+```
+Expected: `PASS`.

@@ -292,6 +292,13 @@ def main() -> int:
         print(vout.rstrip())
         print(tout.rstrip())
         print(f"WROTE: {skill_md_path}")
+
+        # Automatic trigger: if the self-improving runner exists, run it on the newly built skill.
+        improver = ROOT / "skills" / "self-improving-skill-builder" / "scripts" / "improve_skills.py"
+        if improver.exists():
+            log_line("AUTO_IMPROVE start")
+            code, out = run([str(PY), str(improver), "--skills-dir", str(SKILLS_DIR), "--targets", name])
+            log_line(f"AUTO_IMPROVE done code={code}")
         return 0
 
     # State 4 — REPAIR (bounded: 1 deterministic pass)

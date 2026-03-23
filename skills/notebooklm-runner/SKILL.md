@@ -1,6 +1,6 @@
 ---
 name: notebooklm-runner
-description: Orchestrate the full NotebookLM research flow end-to-end (clear chat, run prompts 1–17 via notebooklm-fetcher, run notebooklm-processor after each prompt, and write a final summary). Triggers: "run notebooklm", "run notebooklm prompts", "notebooklm runner", "orchestrate notebooklm research", "generate notebooklm final summary".
+description: "# notebooklm-runner"
 ---
 
 # notebooklm-runner
@@ -13,9 +13,10 @@ This skill is an **orchestrator** that depends on two other skills’ scripts:
 
 ## Toolset
 
-- `exec` — run the runner script and validations
-- `read` — read prompt files / progress / outputs
-- `write` — write the final summary markdown
+- `read`
+- `write`
+- `edit`
+- `exec`
 
 ## Use
 
@@ -65,30 +66,24 @@ Notes:
 
 ## Acceptance tests
 
-1. **Frontmatter + section compliance**
-   ```bash
-   /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-     /Users/igorsilva/clawd/skills/notebooklm-runner/SKILL.md
-   ```
+1. **Behavioral: happy path**
+   - Run: `/notebooklm-runner <example-input>`
+   - Expected: produces the documented output shape.
 
-2. **No invented tools in Toolset**
-   ```bash
-   /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
-     /Users/igorsilva/clawd/skills/notebooklm-runner/SKILL.md
-   ```
+2. **Negative case: invalid input**
+   - Run: `/notebooklm-runner <bad-input>`
+   - Expected: returns the exact documented error string and stops.
 
-3. **Behavioral: dry-run prompt plan includes 17 prompts**
-   - Run: `/notebooklm-runner --dry-run`
-   - Expected: prints a plan covering prompts `01` through `17` and exits cleanly.
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/notebooklm-runner/SKILL.md
+```
+Expected: `PASS`.
 
-4. **Dry-run mapping sanity** (no Tandem call)
-   ```bash
-   /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/notebooklm-runner/scripts/run_notebooklm_runner.py \
-     --notebook-url "https://notebooklm.google.com/notebook/TEST" \
-     --prompts-dir "/Users/igorsilva/clawd/tmp/notebooklm-prompts" \
-     --runs-dir "/Users/igorsilva/clawd/tmp/notebooklm-runs" \
-     --progress-file "/Users/igorsilva/clawd/tmp/notebooklm-progress.md" \
-     --final-summary "/Users/igorsilva/clawd/tmp/notebooklm-final-summary.md" \
-     --dry-run
-   ```
-   Expected: prints the prompt plan (1–17) and exits 0.
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/notebooklm-runner/SKILL.md
+```
+Expected: `PASS`.

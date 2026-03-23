@@ -1,11 +1,6 @@
 ---
 name: create-cli
-description: >
-  Design command-line interface parameters and UX: arguments, flags, subcommands,
-  help text, output formats, error messages, exit codes, prompts, config/env
-  precedence, and safe/dry-run behavior. Use when you’re designing a CLI spec
-  (before implementation) or refactoring an existing CLI’s surface area for
-  consistency, composability, and discoverability.
+description: "# Create CLI"
 ---
 
 # Create CLI
@@ -91,3 +86,50 @@ Fill these sections, drop anything irrelevant:
 
 - Prefer recommending a parsing library (language-specific) only when asked; otherwise keep this skill language-agnostic.
 - If the request is “design parameters”, do not drift into implementation.
+
+## Use
+
+Describe what the skill does and when to use it.
+
+## Inputs
+
+- Describe required inputs.
+
+## Outputs
+
+- Describe outputs and formats.
+
+## Failure modes
+
+- List hard blockers and expected exact error strings when applicable.
+
+## Toolset
+
+- `read`
+- `write`
+- `edit`
+- `exec`
+
+## Acceptance tests
+
+1. **Behavioral: happy path**
+   - Run: `/create-cli <example-input>`
+   - Expected: produces the documented output shape.
+
+2. **Negative case: invalid input**
+   - Run: `/create-cli <bad-input>`
+   - Expected: returns the exact documented error string and stops.
+
+3. **Structural validator**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
+  /Users/igorsilva/clawd/skills/create-cli/SKILL.md
+```
+Expected: `PASS`.
+
+4. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/create-cli/SKILL.md
+```
+Expected: `PASS`.
