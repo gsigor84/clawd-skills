@@ -59,8 +59,9 @@ Notes:
 ### Tooling
 - `read` (existence check)
 - `write` (persist new file; creates parent directory)
+- `exec` (post-deploy self-improvement run)
 
-No shell execution is required for deployment.
+This stage must run a post-deploy self-improvement step after a successful write+verify.
 
 ### Global caps (hard limits)
 - Max SKILL_CONTENT size: **250000** characters (if larger → fail)
@@ -107,8 +108,23 @@ Read back `DEST_PATH` and verify:
 
 If verification fails → fail.
 
-### Step 7 — Emit output
-If all steps succeed, emit Output B.
+### Step 7 — Post-deploy self-improvement (mandatory)
+After the file round-trips successfully, run the self-improvement loop on the newly deployed skill.
+
+Run via `exec`:
+
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/self-improving-skill-builder/scripts/improve_skills.py \
+  --skills-dir /Users/igorsilva/clawd/skills \
+  --targets <skill-name>
+```
+
+Rules:
+- Must target only the deployed `<skill-name>`.
+- If the command fails (non-zero exit) → fail deployment (see Failure modes).
+
+### Step 8 — Emit output
+If all steps succeed (including Step 7), emit Output B.
 
 ## Failure modes
 
@@ -132,6 +148,9 @@ Return Output A with one of these exact REASON strings:
 - Post-write verification failed:
   - `verify_failed. File write did not round-trip correctly.`
 
+- Post-deploy self-improvement failed:
+  - `post_deploy_improve_failed. Self-improvement loop failed for deployed skill.`
+
 ## Boundary rules (privacy + safety)
 
 - Never overwrite existing skills.
@@ -144,6 +163,7 @@ Return Output A with one of these exact REASON strings:
 
 - `read`
 - `write`
+- `exec`
 
 ## Acceptance tests
 
@@ -178,7 +198,7 @@ description: test
      - `DEPLOY_STATUS: FAILED`
      - `REASON: skill_exists. Refusing to overwrite existing skill.`
 
-5. **Behavioral: deploy success envelope is exact**
+5. **Behavioral: deploy success runs post-deploy self-improvement**
    - Precondition: file does not exist at `/Users/igorsilva/clawd/skills/new-skill/SKILL.md`.
    - Input:
 ```
@@ -213,17 +233,24 @@ z
 ## Acceptance tests
 1. Behavioral: it returns something.
 ```
-   - Expected output (exact):
-     - `DEPLOY_STATUS: COMPLETE`
-     - `PATH: /Users/igorsilva/clawd/skills/new-skill/SKILL.md`
-     - `TRIGGER: /new-skill`
-     - `MESSAGE: deployed`
+   - Expected:
+     - deployer runs exec calling `.../improve_skills.py --targets new-skill`
+     - then outputs (exact):
+       - `DEPLOY_STATUS: COMPLETE`
+       - `PATH: /Users/igorsilva/clawd/skills/new-skill/SKILL.md`
+       - `TRIGGER: /new-skill`
+       - `MESSAGE: deployed`
 
 6. **Behavioral: allow/deny boundary does not execute input content**
    - Input SKILL_CONTENT contains a line like `rm -rf ~` inside the body.
    - Expected: deployer writes SKILL.md as plain text only and output remains the normal deploy envelope (no execution, no additional logs).
 
-7. **Behavioral: verification failure surfaces verify_failed**
+7. **Behavioral: post-deploy self-improvement failure surfaces post_deploy_improve_failed**
+   - If `improve_skills.py --targets <name>` exits non-zero, expected output (exact):
+     - `DEPLOY_STATUS: FAILED`
+     - `REASON: post_deploy_improve_failed. Self-improvement loop failed for deployed skill.`
+
+8. **Behavioral: verification failure surfaces verify_failed**
    - If the post-write readback does not contain `name: <name>` in frontmatter (corrupt write), expected:
      - `DEPLOY_STATUS: FAILED`
      - `REASON: verify_failed. File write did not round-trip correctly.`

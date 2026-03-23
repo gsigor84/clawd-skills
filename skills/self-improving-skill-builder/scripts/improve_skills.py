@@ -115,7 +115,13 @@ def openclaw_agent_turn(prompt: str, *, agent_id: str = "main", timeout_s: int =
         raise RuntimeError(f"openclaw_agent_failed code={code}: {out[:400]}")
 
     try:
-        j = json.loads(out)
+        # Some OpenClaw CLI builds emit config warnings before the JSON.
+        # Strip any leading non-JSON prefix by finding the first '{'.
+        raw = out
+        i = raw.find("{")
+        if i != -1:
+            raw = raw[i:]
+        j = json.loads(raw)
         payloads = (((j.get("result") or {}).get("payloads")) or [])
         text = "".join([p.get("text", "") for p in payloads if isinstance(p, dict)]).strip()
         if not text:
