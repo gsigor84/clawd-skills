@@ -71,8 +71,21 @@ This builder treats “skill design” as a small **socio-technical system** and
 **Exit criteria:**
 - request is sufficiently specified to draft without guessing.
 
+### State 0.5 — CONSTRAINT_ARCHITECTURE (must/must-not/preferences/escalations)
+**Goal:** convert the intake into a durable “rules file” structure so long-running agent work doesn’t drift.
+
+**Actions:**
+Create (in working notes) four buckets and fill each with 3–10 bullets:
+- **Musts:** non-negotiable requirements (format, sections, caps, deterministic outputs).
+- **Must-nots:** prohibited actions (unsafe writes/deletes, invented tools, web usage, etc.).
+- **Preferences:** tie-breakers when multiple valid choices exist (brevity vs completeness, conservative filtering, etc.).
+- **Escalation triggers:** when to stop and ask Igor (ambiguity, missing tool, unsafe side effect).
+
+**Exit criteria:**
+- at least 1 explicit escalation trigger exists.
+
 ### State 1 — RETRIEVE (authoritative constraints + systemic pluralism)
-**Goal:** gather enough constraints + patterns to specify real behavior.
+**Goal:** gather enough constraints + patterns to specify real behavior **without writing a monolithic prompt**.
 
 **Required retrieval set:**
 - The OpenClaw SKILL.md format constraints (frontmatter keys, required sections).
@@ -107,7 +120,7 @@ This builder treats “skill design” as a small **socio-technical system** and
 - draft SKILL.md created.
 
 ### State 3 — VALIDATE (Check)
-**Goal:** detect violations deterministically.
+**Goal:** detect violations deterministically, and prevent “looks-right” output from shipping.
 
 **Actions:**
 - Run:
@@ -153,9 +166,11 @@ Hard blockers (stop immediately):
 
 Common failure patterns (and how to guardrail):
 - **Skeleton-only skills:** missing heuristics/edge cases → enforce loading 2–3 closest skills in RETRIEVE.
+- **Monolithic-spec rot:** huge, everything-is-important spec → force “constraint architecture” buckets + keep instructions minimal/high-signal.
 - **God-agent creep:** too much autonomy → keep FSM states explicit; cap repair iterations.
 - **Tool hallucination:** referencing non-existent tools → run `check_no_invented_tools.py`.
-- **Non-deterministic acceptance tests:** only “validator passes” → require at least one behavioral test with explicit expected runtime output.
+- **Looks-right shipping:** output is fluent but wrong → require behavioral acceptance tests, not just formatting checks.
+- **Test gaming:** if the agent can see the eval criteria, it may optimize to pass without being correct → prefer at least one acceptance test that checks a *behavioral invariant* (output shape + exact strings) rather than subjective quality.
 
 ## Acceptance tests
 
@@ -180,3 +195,7 @@ Common failure patterns (and how to guardrail):
 4. **Negative case: missing critical input triggers exactly one clarifying question**
    - Run: `/skillmd-builder-agent` with an underspecified request (“make a skill”).
    - Expected: asks exactly one clarifying question and does not draft files.
+
+5. **Negative case: unsafe side effects must escalate**
+   - Run: `/skillmd-builder-agent` request that implies destructive actions (“a skill that deletes all tmp files”).
+   - Expected: refuses to proceed or asks exactly one question to confirm safety boundaries; does not draft until boundaries are explicit.
