@@ -1,163 +1,174 @@
 ---
 name: vector-mapper
-description: "## Vector Mapper (Sub-skill)"
+description: "Create a deterministic research vector map (queries + priorities) from a plain-English intelligence target. Internal sub-skill for /intel."
 ---
 
-## Vector Mapper (Sub-skill)
+## Vector Mapper (internal sub-skill)
 
-### Role
-You are the first stage in the **/intel** intelligence pipeline. Your single responsibility is to turn a plain-English **target** into a **vector map** that guides downstream research.
+Turn a plain-English **INTELLIGENCE TARGET** (e.g., a company/product/industry string) into a compact **VECTOR MAP** that downstream stages can execute as web/KM searches.
 
-You are **called internally** by the intel orchestrator and are **never triggered directly** by the user.
-
-### Input
-A single plain-English target string, exactly as provided upstream. Examples:
-- Company: "Notion"
-- Product: "Linear"
-- Industry: "B2B project management tools"
-- Segment: "no-code automation for SMBs"
-
-### Hard constraints (must follow)
-- Always output **exactly five** core vectors in this exact order:
-  1) Pricing
-  2) Product
-  3) Positioning
-  4) Vulnerabilities
-  5) Competitive Moves
-- You may add **zero, one, or two** domain-specific vectors **only if** they are genuinely unique to the target.
-  - If added, they must be **#6** and **#7** and come after the five core vectors.
-- Never output fewer than **5** vectors or more than **7** vectors.
-- Every search query must:
-  - include the **target string verbatim** (exact substring)
-  - be specific and aimed at **recent actionable intel** (not generic background)
-  - be **time-bounded where possible** using years like **2025** or **2026**
-- Never add generic domain-specific vectors that could apply to any company.
-- Output must be **structured plain text**, with the exact section headers below, and be directly parseable by the next stage (digital-scout) with no extra interpretation.
-
-### Output format (must match exactly)
-Produce a plain text document with these sections in this order:
-
-1) **INTELLIGENCE TARGET**
-- Contains the target **exactly** as provided in input.
-
-2) **VECTOR MAP**
-- Contains one entry per vector.
-- Each entry must include:
-  - Vector number (1–7)
-  - Vector name (2–4 words)
-  - Priority (HIGH | MEDIUM | LOW)
-  - Description (exactly one sentence)
-  - Search Queries (numbered list; 2–3 queries)
-  - Exception: the Vulnerabilities vector must always include exactly 3 queries (see Vulnerabilities query rule below).
-  - Exception: the Competitive Moves vector must always include exactly 3 queries (see Competitive Moves query rule below).
-
-3) **PIPELINE NOTES**
-- 2–3 sentences summarising the most promising vectors for this target and why they’re likely to yield high-signal intelligence.
-
-### Core vectors (always present)
-You must always generate these five vectors, in this order, with these default priorities:
-
-1) **Pricing** (default PRIORITY: HIGH)
-- Looks for recent pricing changes, tier restructuring, new plans, price increases/decreases, and freemium→paid conversion strategy.
-
-2) **Product** (default PRIORITY: MEDIUM)
-- Looks for features shipped in the last six months, deprecations, roadmap signals in changelogs/release notes, and technical improvements/regressions.
-
-3) **Positioning** (default PRIORITY: LOW)
-- Looks for self-description, ICP shifts, messaging changes, rebrands, and shifts in target customer.
-- Priority escalation rule:
-  - Set to **MEDIUM** or **HIGH** only if the input target itself strongly signals a current positioning change (e.g., contains terms like "rebrand", "renamed", "formerly", "new positioning", "pivot").
-
-4) **Vulnerabilities** (default PRIORITY: HIGH)
-- Looks for complaints, negative reviews, churn posts, support failures, poorly received features, technical debt mentions, and public criticism.
-- Query rule (mandatory): Vulnerabilities must always output exactly these three search queries, following these exact patterns:
-  1) [target] reviews complaints site:g2.com 2025 2026
-  2) [target] negative reviews site:trustpilot.com
-  3) [target] problems frustrations site:news.ycombinator.com
-
-5) **Competitive Moves** (default PRIORITY: MEDIUM)
-- Looks for acquisitions, partnerships, integrations, competitive responses, and market expansion signals.
-- Query rule (mandatory): Competitive Moves must always output exactly these three search queries, following these exact patterns (aimed at tech press/news rather than the target’s own site):
-  1) [target] acquisition partnership integration 2025 2026
-  2) [target] competitor response market expansion site:techcrunch.com OR site:venturebeat.com
-  3) [target] vs competitors announcement 2025 2026 site:news.ycombinator.com
-
-### Domain-specific vectors (0–2)
-Add domain-specific vectors only when you can infer a **specific** angle from the target string itself.
-
-Examples of *acceptable* specificity cues (not exhaustive):
-- Fintech / banking words → regulatory, licenses, bank partners
-- Developer platform / API words → API ecosystem, SDKs, rate limits, developer sentiment
-- No-code / templates / marketplace words → template marketplace, automation depth
-- Enterprise / SOC2 / SSO / procurement words → enterprise adoption, security/compliance posture
-
-Rules:
-- If you cannot infer a truly target-specific vector confidently from the target string alone, add **zero** domain-specific vectors.
-- Domain-specific vectors must not be “generic business vectors” (e.g., "Growth", "Marketing", "Team") unless the target string explicitly calls for them in a way that makes them uniquely relevant.
-
-### Query-writing rules (critical)
-For each vector, generate 2–3 DuckDuckGo queries that:
-- include the target verbatim (copy/paste the target string into each query)
-- include time bounds (prefer “2025” and/or “2026”)
-- include action words (pricing change, plan restructuring, outage, backlash, acquisition, partnership, integration, changelog, deprecation, roadmap, rebrand, pivot, complaints, negative reviews)
-- avoid generic “what is” / encyclopedia-style phrasing
-
-### PIPELINE NOTES rules
-- Keep it to 2–3 sentences.
-- Don’t claim facts about the target.
-- Base the note on plausible yield (e.g., Vulnerabilities + Pricing tend to be high signal; domain-specific vector may be high signal if present).
-
-### Quality checklist (run mentally before finalising)
-- [ ] INTELLIGENCE TARGET matches input exactly
-- [ ] Core vectors 1–5 exist, ordered correctly, and priorities match defaults (with only the allowed Positioning escalation)
-- [ ] Total vectors is 5–7
-- [ ] Domain-specific vectors (if any) are truly specific to the target
-- [ ] Every query includes the exact target string and at least one time bound (2025/2026)
-- [ ] Output is plain text with the required headers and fields
+This skill is intended to be called by an orchestrator (e.g., `/intel`). It is not designed for end-users to discover or run directly, but it **must** remain deterministic and parseable.
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this when you need a consistent, machine-parseable set of research “vectors” (angles) and **time-bounded** search queries for a target.
+
+Use cases:
+- An orchestrator needs to generate a search plan before running web searches.
+- You want a fixed set of core business intel angles plus (optionally) up to two target-specific angles.
+
+Do **not** use this skill to answer questions or to fetch sources; it only outputs a plan.
 
 ## Inputs
 
-- Describe required inputs.
+A single string: the **target** exactly as received upstream.
+
+Examples:
+- `Notion`
+- `Linear`
+- `B2B project management tools`
+- `no-code automation for SMBs`
 
 ## Outputs
 
-- Describe outputs and formats.
+A **plain-text** document with the following sections, in this exact order, with no additional headings:
+
+1) **INTELLIGENCE TARGET**
+- The target string, exactly as provided.
+
+2) **VECTOR MAP**
+- 5–7 vector entries.
+- Each entry must include:
+  - Vector number (`1`–`7`)
+  - Vector name (2–4 words)
+  - Priority (`HIGH` | `MEDIUM` | `LOW`)
+  - Description (exactly **one** sentence)
+  - Search Queries (a numbered list)
+
+3) **PIPELINE NOTES**
+- 2–3 sentences on which vectors are likely highest-signal **without** claiming facts about the target.
+
+### Required vectors
+Always output **exactly five** core vectors, in this exact order:
+1) Pricing
+2) Product
+3) Positioning
+4) Vulnerabilities
+5) Competitive Moves
+
+You may add **0–2** additional domain-specific vectors as #6 and #7 only when the target string itself implies a uniquely relevant angle.
+
+## Steps
+
+Follow this deterministic procedure:
+
+1) **Echo the target**
+   - Output the `INTELLIGENCE TARGET` section containing the target exactly as given (no trimming beyond preserving exact characters).
+
+2) **Emit core vectors (1–5) in order**
+   - Use these default priorities unless the Positioning escalation rule applies:
+     - Pricing: HIGH
+     - Product: MEDIUM
+     - Positioning: LOW (may escalate; see rules)
+     - Vulnerabilities: HIGH
+     - Competitive Moves: MEDIUM
+
+3) **Write queries**
+   - For each vector except where fixed below, generate **2–3** queries.
+   - Each query MUST include:
+     - the target string verbatim
+     - at least one year token: `2025` or `2026`
+     - at least one action term (e.g., pricing change, outage, backlash, acquisition)
+
+4) **Apply fixed query rules**
+   - Vulnerabilities must include **exactly these 3 queries** (substitute `[target]`):
+     1) `[target] reviews complaints site:g2.com 2025 2026`
+     2) `[target] negative reviews site:trustpilot.com 2025 2026`
+     3) `[target] problems frustrations site:news.ycombinator.com 2025 2026`
+
+   - Competitive Moves must include **exactly these 3 queries**:
+     1) `[target] acquisition partnership integration 2025 2026`
+     2) `[target] competitor response market expansion site:techcrunch.com OR site:venturebeat.com 2025 2026`
+     3) `[target] vs competitors announcement site:news.ycombinator.com 2025 2026`
+
+5) **Optionally add domain-specific vectors (#6–#7)**
+   - Add only if the target string itself contains clear specificity cues (e.g., “API”, “SOC2”, “banking”, “marketplace”, “HIPAA”).
+   - If no strong cue exists, add none.
+
+6) **Write PIPELINE NOTES**
+   - 2–3 sentences.
+   - Do not assert facts about the target.
+   - Focus on expected yield (e.g., vulnerabilities + pricing often high-signal).
+
+## Rules & constraints
+
+- Output must be plain text and parseable (no Markdown tables).
+- Never output fewer than 5 vectors or more than 7.
+- Every query must include the target verbatim.
+- Always time-bound queries with `2025` and/or `2026`.
+- Positioning escalation rule: set Positioning to MEDIUM/HIGH only if the target string explicitly signals a positioning change (e.g., contains “rebrand”, “pivot”, “formerly”, “renamed”).
+- Domain-specific vectors must not be generic (avoid “Growth”, “Marketing”, “Team”).
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+- **Empty target**: If the input target is empty or only whitespace, output exactly:
+  - `ERROR: missing_target`
+
+- **Non-string / structured input** (e.g., JSON object provided by upstream by mistake): output exactly:
+  - `ERROR: invalid_target_type`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
-- `exec`
+This skill uses no tools. It only formats text.
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/vector-mapper <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral: invocation contract (internal slash)**
+   - Run: `/vector-mapper Notion`
+   - Expected: the first non-empty line after the header `INTELLIGENCE TARGET` is exactly `Notion`.
 
-2. **Negative case: invalid input**
-   - Run: `/vector-mapper <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: structure + ordering invariants**
+   - Run: `/vector-mapper Notion`
+   - Expected: VECTOR MAP contains vectors numbered **1–5** only, in this order and with these names:
+     - `1) Pricing`
+     - `2) Product`
+     - `3) Positioning`
+     - `4) Vulnerabilities`
+     - `5) Competitive Moves`
+   - Expected: output contains no Markdown table pipes (`|`) and no extra top-level headings beyond the required three sections.
 
-3. **Structural validator**
+3. **Behavioral: fixed Vulnerabilities queries are exact**
+   - Run: `/vector-mapper Linear`
+   - Expected: under vector 4, Search Queries are exactly (line-for-line, substituting `Linear` for `[target]`):
+     1) `Linear reviews complaints site:g2.com 2025 2026`
+     2) `Linear negative reviews site:trustpilot.com 2025 2026`
+     3) `Linear problems frustrations site:news.ycombinator.com 2025 2026`
+
+4. **Behavioral: fixed Competitive Moves queries are exact**
+   - Run: `/vector-mapper Linear`
+   - Expected: under vector 5, Search Queries are exactly:
+     1) `Linear acquisition partnership integration 2025 2026`
+     2) `Linear competitor response market expansion site:techcrunch.com OR site:venturebeat.com 2025 2026`
+     3) `Linear vs competitors announcement site:news.ycombinator.com 2025 2026`
+
+5. **Behavioral: every non-fixed query is time-bounded**
+   - Run: `/vector-mapper Notion`
+   - Expected: every query line includes either `2025` or `2026`.
+
+6. **Negative: empty input hard-stop**
+   - Run: `/vector-mapper "   "`
+   - Expected: output is exactly `ERROR: missing_target` (no extra whitespace, no additional lines).
+
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/vector-mapper/SKILL.md
 ```
-Expected: `PASS`.
+   - Expected: `PASS`
 
-4. **No invented tools**
+8. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/vector-mapper/SKILL.md
 ```
-Expected: `PASS`.
+   - Expected: `PASS`

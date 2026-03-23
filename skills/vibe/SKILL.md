@@ -1,236 +1,191 @@
 ---
 name: vibe
-description: Vibe Canvas entry point. Triggered when the user types /vibe followed by a plain-English workflow description. Called to automatically build a working slash command by chaining intent-parser → tool-auditor → tool-installer → skill-intake → skill-designer → skill-writer → skill-deployer → skill-launcher in strict sequence, handling tool installation confirmation in the middle, and delivering a finished working skill without the user writing any code.
+description: "DEPRECATED. Internal orchestrator prototype for skill building; use /new-skill instead. Not intended as a user entry point."
 ---
 
-## Vibe Canvas Orchestrator
+# vibe (orchestrator)
 
-You are the orchestrator for the **Vibe Canvas** pipeline. Your single responsibility is to:
-1) receive a plain-English workflow description,
-2) chain the eight stages in strict order,
-3) handle the yes/no confirmation pause for tool installation,
-4) deliver the final completion message exactly as produced by the final stage.
+## Trigger contract
 
-### Trigger
-The user runs this skill by typing:
-- `/vibe <plain English workflow description>`
+This skill is **deprecated**.
 
-### Hard constraints
-- **Never skip a stage.**
-- **Never change the stage order.**
-- **Pass only the direct output of the previous stage** to the next stage (no added commentary, no extra wrappers).
-- **Hold all state in memory** (do not write intermediate results to disk).
-- **Never install anything without explicit user confirmation.**
-- **Never answer from memory or “fake” a build** — always run every stage.
-- **All user-facing messages must be plain English** with no technical jargon.
-- **Final response must be exactly the skill-launcher output** (verbatim, no paraphrasing).
+Do not trigger for normal users. Prefer `/new-skill`.
 
-### Self-improvement integration (must do both)
-Keep all pipeline stages, status messages, and hard constraints exactly the same. These integrations happen internally and must not change what the user sees.
+Accepted invocation patterns (operator/debug only):
+- `/vibe <plain-English workflow description>`
 
-1) **On any stage failure**
-- After you deliver the failure message to the user, call **self-improvement** to log an error entry to:
-  - `~/clawd/.learnings/ERRORS.md`
-- The entry must include:
-  - the stage that failed
-  - the user’s original plain-English description
-  - the error or rejection reason (verbatim if available)
-  - a suggested fix (if identifiable; otherwise say "No clear fix identified")
-- Use id format: `ERR-YYYYMMDD-XXX`
-  - YYYYMMDD = today’s date
-  - XXX = next available number for that date (scan ERRORS.md; if none, start at 001)
-
-2) **On successful completion**
-- After skill-launcher delivers the completion message (and you deliver it to the user verbatim), call **self-improvement** to log a learning entry to:
-  - `~/clawd/.learnings/LEARNINGS.md`
-- The entry must include:
-  - the user’s original plain-English description
-  - the skill name and trigger that were built
-  - the tools that were needed (from the tool-auditor report)
-  - the category: `best_practice`
-- Use id format: `LRN-YYYYMMDD-XXX`
-  - YYYYMMDD = today’s date
-  - XXX = next available number for that date (scan LEARNINGS.md; if none, start at 001)
-
-### Pipeline stages (must run in this exact order)
-1. intent-parser
-2. tool-auditor
-3. tool-installer
-4. skill-intake
-5. skill-designer
-6. skill-writer
-7. skill-deployer
-8. skill-launcher
-
-### Required user-facing status messages (must match exactly)
-- Before Stage 1: `give me a moment, I am figuring out what you need.`
-- Before Stage 2: `checking what tools are needed.`
-- When all tools are ready: `all tools are ready, building your skill now.`
-- Before Stage 4: `building your skill now, almost there.`
-
-### Detailed orchestration logic
-
-#### Stage 1 — intent-parser
-1) Send the user this exact message:
-- `give me a moment, I am figuring out what you need.`
-2) Pass to **intent-parser**:
-- the user’s raw plain-English workflow description (everything after `/vibe`).
-3) Receive:
-- the complete **INTENT DOCUMENT**.
-
-#### Stage 2 — tool-auditor
-1) Send the user this exact message:
-- `checking what tools are needed.`
-2) Pass to **tool-auditor**:
-- the complete INTENT DOCUMENT (verbatim).
-3) Receive:
-- the complete **TOOL AUDIT REPORT** (verbatim), including VERDICT.
-
-#### Stage 3 — tool-installer (branching)
-Read the VERDICT in the TOOL AUDIT REPORT and follow exactly one branch:
-
-**A) VERDICT = ALL TOOLS READY**
-1) Send the user this exact message:
-- `all tools are ready, building your skill now.`
-2) Skip tool-installer and continue to Stage 4.
-3) Pass to Stage 4:
-- the original INTENT DOCUMENT (verbatim).
-
-**B) VERDICT = AUDIT INCOMPLETE**
-1) Tell the user (plain English):
-- `I could not verify all the tools needed for this skill, please check your internet connection and try again.`
-2) Abort the pipeline.
-3) After delivering that message, call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-- stage: tool-auditor
-- user description: the original `/vibe ...` text
-- reason: the VERDICT was AUDIT INCOMPLETE
-- suggested fix: check internet connection and rerun
-
-**C) VERDICT = TOOLS MISSING**
-1) Pass to **tool-installer**:
-- the complete TOOL AUDIT REPORT (verbatim).
-2) tool-installer will present missing tools and ask the user to reply yes/no.
-3) You must **pause and wait** for the user’s reply before continuing.
-4) If the user replies **no** (or any negative):
-- abort gracefully, telling the user no changes were made and they can try again anytime.
-- after delivering that message, call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-  - stage: tool-installer
-  - user description: the original `/vibe ...` text
-  - reason: user declined tool installation
-  - suggested fix: user can rerun and reply yes if they want to proceed
-5) If the user replies **yes** (or any affirmative):
-- allow tool-installer to proceed.
-6) Wait until tool-installer returns **INSTALLATION COMPLETE**, then continue to Stage 4.
-7) Pass to Stage 4:
-- the original INTENT DOCUMENT (verbatim).
-
-#### Stage 4 — skill-intake
-1) Send the user this exact message:
-- `building your skill now, almost there.`
-2) Pass to **skill-intake**:
-- the complete INTENT DOCUMENT (verbatim).
-3) Receive:
-- a completed intake schema.
-
-#### Stage 5 — skill-designer
-1) Pass to **skill-designer**:
-- the completed intake schema (verbatim).
-2) If **DESIGN_STATUS: REJECTED**:
-- tell the user in plain English the skill could not be designed with the available tools and suggest describing a simpler workflow, then abort.
-- after delivering that message, call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-  - stage: skill-designer
-  - user description: the original `/vibe ...` text
-  - reason: the DESIGN_STATUS rejection reason (verbatim)
-  - suggested fix: try a simpler workflow that fits available tools
-3) If **DESIGN_STATUS: COMPLETE**:
-- pass the blueprint (verbatim) to Stage 6.
-
-#### Stage 6 — skill-writer
-1) Pass to **skill-writer**:
-- the blueprint (verbatim).
-2) If **WRITER_STATUS: REJECTED**:
-- tell the user in plain English the skill could not be written and to try again, then abort.
-- after delivering that message, call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-  - stage: skill-writer
-  - user description: the original `/vibe ...` text
-  - reason: the WRITER_STATUS rejection reason (verbatim)
-  - suggested fix: rerun /vibe or simplify the workflow description
-3) If **WRITER_STATUS: COMPLETE**:
-- pass SKILL_CONTENT (verbatim) to Stage 7.
-
-#### Stage 7 — skill-deployer
-1) Pass to **skill-deployer**:
-- the SKILL_CONTENT (verbatim).
-2) If **DEPLOY_STATUS: FAILED**:
-- tell the user in plain English the skill could not be saved and to try again, then abort.
-- after delivering that message, call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-  - stage: skill-deployer
-  - user description: the original `/vibe ...` text
-  - reason: the DEPLOY_STATUS failure reason (verbatim)
-  - suggested fix: retry; if it says the skill already exists, choose a different name
-3) If **DEPLOY_STATUS: COMPLETE**:
-- pass the deployment confirmation (verbatim) to Stage 8.
-
-#### Stage 8 — skill-launcher
-1) Pass to **skill-launcher**:
-- the deployment confirmation (verbatim).
-2) Receive:
-- the final output message.
-3) Deliver that message to the user **verbatim** as the final response (no extra lines, no added commentary).
-
-#### Post-run self-improvement logging
-
-A) If the pipeline ends in success (you delivered the celebratory message from skill-launcher):
-- Call **self-improvement** to append an `LRN-YYYYMMDD-XXX` entry to `~/clawd/.learnings/LEARNINGS.md` with:
-  - user description: the original `/vibe ...` text
-  - built skill name + trigger: from the deployment confirmation
-  - tools needed: from the tool-auditor report
-  - category: best_practice
-
-B) If Stage 8 returns a failure message (for example, missing file or gateway not healthy):
-- Deliver that message to the user verbatim.
-- Then call **self-improvement** to append an `ERR-YYYYMMDD-XXX` entry to `~/clawd/.learnings/ERRORS.md` with:
-  - stage: skill-launcher
-  - user description: the original `/vibe ...` text
-  - reason: the failure message details
-  - suggested fix: rerun; if gateway didn’t restart, use the manual restart command provided
+Rules:
+- The workflow description must be non-empty.
+- This skill orchestrates other internal skills in a fixed order.
+- This skill may require a second user turn if tool installation is needed (explicit confirmation).
 
 ## Use
 
-Describe what the skill does and when to use it.
+Deprecated. Historical/experimental orchestrator for building+launching skills. Keep only for reference or operator debugging.
+
+Primary entry point for building skills is `/new-skill`.
 
 ## Inputs
 
-- Describe required inputs.
+One string:
+- `workflow` (required): plain-English description of what the user wants.
+
+Example:
+- `/vibe build a /sumurl command that takes one https url and returns 5 key points, main argument, 3 quotes, and caveats`
 
 ## Outputs
 
-- Describe outputs and formats.
+This skill outputs exactly one of the following:
+
+### Output A — Missing input
+If `workflow` is missing/whitespace, output exactly:
+- `ERROR: missing_workflow. Usage: /vibe <plain-English workflow description>`
+
+### Output B — Waiting for tool-install confirmation
+If tools are missing and tool-installer requests approval, output exactly the `tool-installer` confirmation block (verbatim), and then stop.
+
+### Output C — Final completion
+On success or final failure, output exactly the `skill-launcher` output (verbatim). No extra lines.
+
+## Deterministic workflow (must follow)
+
+Tools used: none.
+
+### Hard constraints (non-negotiable)
+- Never skip a stage.
+- Never change the stage order.
+- Pass only the direct output of the previous stage to the next stage (no commentary, no wrappers).
+- Never install anything without explicit user confirmation (handled by tool-installer).
+- Do not invent stage outputs.
+- Final response must be exactly the `skill-launcher` output (verbatim).
+
+### Stage order (fixed)
+1) `intent-parser`
+2) `tool-auditor`
+3) `tool-installer`
+4) `skill-intake`
+5) `skill-designer`
+6) `skill-writer`
+7) `skill-deployer`
+8) `skill-launcher`
+
+### Step 0 — Validate input
+- If workflow missing/whitespace → Output A.
+
+### Step 1 — intent-parser
+- Input: the workflow text (everything after `/vibe`).
+- Output: an INTENT DOCUMENT.
+
+### Step 2 — tool-auditor
+- Input: INTENT DOCUMENT (verbatim).
+- Output: TOOL AUDIT REPORT (verbatim) including `VERDICT:`.
+
+### Step 3 — tool-installer (branch)
+Read `VERDICT:` from TOOL AUDIT REPORT and follow exactly one branch:
+
+#### Branch 3A — VERDICT: ALL TOOLS READY
+- Do not call tool-installer.
+- Proceed to Stage 4 with the original INTENT DOCUMENT (verbatim).
+
+#### Branch 3B — VERDICT: AUDIT INCOMPLETE
+- Abort the pipeline.
+- Output exactly:
+  - `ERROR: tool_audit_incomplete. Rerun /vibe when tool checks can complete.`
+
+#### Branch 3C — VERDICT: TOOLS MISSING
+- Call tool-installer with the TOOL AUDIT REPORT (verbatim).
+
+Then branch by tool-installer output:
+- If tool-installer outputs an `INSTALL CONFIRMATION` block:
+  - Output it verbatim (Output B) and stop (wait for user reply).
+- If tool-installer outputs `INSTALLATION CANCELLED`:
+  - Output it verbatim and stop.
+- If tool-installer outputs `INSTALLATION FAILED`:
+  - Output it verbatim and stop.
+- If tool-installer outputs `INSTALLATION COMPLETE`:
+  - Proceed to Stage 4 with the original INTENT DOCUMENT (verbatim).
+
+### Step 4 — skill-intake
+- Input: INTENT DOCUMENT (verbatim).
+- Output: an intake schema.
+- If `INTAKE_STATUS: CLARIFICATION_NEEDED`, output the intake schema verbatim and stop.
+
+### Step 5 — skill-designer
+- Input: intake schema (verbatim).
+- Output: either `DESIGN_STATUS: REJECTED` or `DESIGN_STATUS: COMPLETE` blueprint.
+- If rejected, output the rejection verbatim and stop.
+
+### Step 6 — skill-writer
+- Input: blueprint (verbatim).
+- Output: either `WRITER_STATUS: REJECTED` or `WRITER_STATUS: COMPLETE` with SKILL_CONTENT.
+- If rejected, output the rejection verbatim and stop.
+
+### Step 7 — skill-deployer
+- Input: skill-writer COMPLETE output (verbatim).
+- Output: either `DEPLOY_STATUS: FAILED` or `DEPLOY_STATUS: COMPLETE`.
+- If failed, output it verbatim and stop.
+
+### Step 8 — skill-launcher
+- Input: skill-deployer COMPLETE output (verbatim).
+- Output: final user message.
+- Output exactly that message (Output C).
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+- Missing workflow:
+  - `ERROR: missing_workflow. Usage: /vibe <plain-English workflow description>`
+
+- Tool audit incomplete:
+  - `ERROR: tool_audit_incomplete. Rerun /vibe when tool checks can complete.`
+
+All other failures must be surfaced verbatim from the stage that produced them (no paraphrasing).
+
+## Boundary rules (privacy + safety)
+
+- Do not request secrets.
+- Do not install tools without explicit confirmation (delegated to tool-installer).
+- Do not write files directly in this orchestrator.
+- Do not add any network/tool actions beyond invoking the fixed internal stages.
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
-- `exec`
+- (none)
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/vibe <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): missing workflow hard-stop**
+   - Run: `/vibe`
+   - Expected output (exact): `ERROR: missing_workflow. Usage: /vibe <plain-English workflow description>`
 
-2. **Negative case: invalid input**
-   - Run: `/vibe <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: stage order is fixed (no skipping)**
+   - Run: `/vibe build a simple summarizer skill`
+   - Expected: the orchestrator invokes stages in the exact order listed under Stage order (intent-parser→tool-auditor→...→skill-launcher).
 
-3. **Structural validator**
+3. **Behavioral: tool audit incomplete aborts with exact error**
+   - Given a TOOL AUDIT REPORT containing `VERDICT: AUDIT INCOMPLETE`, expected output is exactly:
+     - `ERROR: tool_audit_incomplete. Rerun /vibe when tool checks can complete.`
+
+4. **Behavioral: tools missing pauses and outputs tool-installer confirmation verbatim**
+   - Given a TOOL AUDIT REPORT containing `VERDICT: TOOLS MISSING` and tool-installer returns `INSTALL CONFIRMATION ...`, expected:
+     - `/vibe` outputs exactly that confirmation block and stops.
+
+5. **Behavioral: pass-through invariants**
+   - Expected: at every stage boundary, the next stage input is exactly the previous stage output with no added commentary, prefixes, or wrappers.
+
+6. **Behavioral: final output is exactly skill-launcher output**
+   - Given skill-launcher returns `SKILL READY: ...`, expected:
+     - `/vibe` outputs exactly `SKILL READY: ...` with no extra lines.
+
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/vibe/SKILL.md
+  /Users/igorsilva/clawd/skills/vibe/SKILL.md
+```
+Expected: `PASS`.
+
+8. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/vibe/SKILL.md
 ```
 Expected: `PASS`.

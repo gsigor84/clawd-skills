@@ -23,7 +23,9 @@ import subprocess
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Any
+
+import json
 
 ROOT = Path("/Users/igorsilva/clawd")
 SKILLS_DIR_DEFAULT = ROOT / "skills"
@@ -54,6 +56,14 @@ ALLOWED_TOOLS = [
     "sessions_yield",
 ]
 
+# LLM-as-judge runs through the local OpenClaw gateway agent (no direct vendor API calls here).
+# The model used is whatever is configured for the target agent in openclaw.json.
+JUDGE_MODEL = "openclaw:configured"  # informational label only
+
+# Judge threshold policy
+JUDGE_MIN_AVG = 4.0
+JUDGE_MIN_DIM = 3.0
+
 
 @dataclass
 class EvalResult:
@@ -80,6 +90,99 @@ def log(msg: str) -> None:
 def run(cmd: list[str]) -> tuple[int, str]:
     p = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     return p.returncode, p.stdout
+
+
+def openclaw_agent_turn(prompt: str, *, agent_id: str = "main", timeout_s: int = 600) -> str:
+    """Run one OpenClaw agent turn via the local Gateway using the CLI.
+
+    This intentionally uses OpenClaw's configured routing/models (openclaw.json).
+    """
+    cmd = [
+        "npx",
+        "--yes",
+        "openclaw",
+        "agent",
+        "--agent",
+        agent_id,
+        "--json",
+        "--timeout",
+        str(timeout_s),
+        "--message",
+        prompt,
+    ]
+    code, out = run(cmd)
+    if code != 0:
+        raise RuntimeError(f"openclaw_agent_failed code={code}: {out[:400]}")
+
+    try:
+        j = json.loads(out)
+        payloads = (((j.get("result") or {}).get("payloads")) or [])
+        text = "".join([p.get("text", "") for p in payloads if isinstance(p, dict)]).strip()
+        if not text:
+            raise ValueError("empty_payload_text")
+        return text
+    except Exception as e:
+        raise RuntimeError(f"openclaw_agent_output_parse_failed: {e}; raw={out[:400]}")
+
+
+def judge_prompt(skill_name: str, md: str) -> str:
+    return (
+        "You are grading an OpenClaw SKILL.md file for quality and operational safety.\n"
+        "Return ONLY valid JSON. No markdown.\n\n"
+        "Score each dimension from 0 to 5 (integers or halves allowed), where 5 is excellent.\n"
+        "Dimensions:\n"
+        "- task_fidelity: Does the skill do what its Trigger/Use claims, without drift?\n"
+        "- boundary_clarity: Are constraints explicit (what must/must not happen), and tool boundaries clear?\n"
+        "- behavioral_test_adequacy: Are acceptance tests realistic, executable, and covering behavior + negative case?\n"
+        "- operational_clarity: Can an operator run it reliably (inputs, outputs, steps, failure modes)?\n"
+        "- safety_blast_radius: Is the blast radius bounded (no dangerous defaults), safe-by-default?\n\n"
+        "Also include: avg (number), min_dim (number), pass (boolean), reasons (array of 3-8 short bullets).\n"
+        "Pass criteria:\n"
+        f"- avg >= {JUDGE_MIN_AVG}\n"
+        f"- no dimension below {JUDGE_MIN_DIM}\n\n"
+        "JSON schema:\n"
+        "{\n"
+        '  "task_fidelity": 0,\n'
+        '  "boundary_clarity": 0,\n'
+        '  "behavioral_test_adequacy": 0,\n'
+        '  "operational_clarity": 0,\n'
+        '  "safety_blast_radius": 0,\n'
+        '  "avg": 0,\n'
+        '  "min_dim": 0,\n'
+        '  "pass": false,\n'
+        '  "reasons": []\n'
+        "}\n\n"
+        f"Skill name: {skill_name}\n\n"
+        "SKILL.md:\n"
+        "---\n"
+        + md
+        + "\n---\n"
+    )
+
+
+def judge_skill(skill_name: str, md: str, *, agent_id: str = "main") -> dict[str, Any]:
+    """LLM-as-judge evaluation via OpenClaw's own LLM access (gateway agent)."""
+    text = openclaw_agent_turn(judge_prompt(skill_name, md), agent_id=agent_id, timeout_s=600)
+    try:
+        j = json.loads(text)
+    except Exception as e:
+        raise RuntimeError(f"judge_json_parse_failed: {e}; text={text[:400]}")
+
+    dims = [
+        float(j.get("task_fidelity", 0)),
+        float(j.get("boundary_clarity", 0)),
+        float(j.get("behavioral_test_adequacy", 0)),
+        float(j.get("operational_clarity", 0)),
+        float(j.get("safety_blast_radius", 0)),
+    ]
+    avg = sum(dims) / 5.0
+    min_dim = min(dims)
+    j["avg"] = float(j.get("avg", avg))
+    j["min_dim"] = float(j.get("min_dim", min_dim))
+
+    # Enforce Igor's policy regardless of what the judge claims.
+    j["pass"] = j["avg"] >= JUDGE_MIN_AVG and j["min_dim"] >= JUDGE_MIN_DIM
+    return j
 
 
 def eval_skill(skill_md: Path) -> EvalResult:
@@ -184,18 +287,39 @@ def patch_acceptance_tests(md: str, name: str) -> str:
     return append_section(md, "Acceptance tests", content)
 
 
-def categorize_failures(er: EvalResult) -> set[str]:
-    cats = set()
+def categorize_failures(er: EvalResult, md_text: str | None = None) -> set[str]:
+    """Map deterministic validator outputs (and optional content heuristics) to failure categories.
+
+    Categories requested by Igor: boundary/tool/guardrail/output/test/safety.
+    """
+    cats: set[str] = set()
     out = (er.validate_out + "\n" + er.invented_out).lower()
-    if "toolset" in out or "invented_tool" in out:
+
+    # Tooling violations
+    if "toolset" in out or "invented_tool" in out or "invented" in out:
         cats.add("tool")
-    if "acceptance_tests" in out:
+
+    # Test harness / acceptance tests
+    if "acceptance_tests" in out or "missing_required_section:acceptance_tests" in out:
         cats.add("test")
-    if "frontmatter" in out:
+
+    # Frontmatter + required sections are treated as output/spec-structure failures
+    if "frontmatter" in out or "missing_required_section" in out:
         cats.add("output")
-    # default
+
+    # Boundary / safety heuristics (not covered by deterministic validators)
+    if md_text is not None:
+        md_lower = md_text.lower()
+        if "hard constraints" not in md_lower and "hard constraint" not in md_lower:
+            cats.add("boundary")
+        if "safety" not in md_lower and "blast radius" not in md_lower:
+            # heuristic: missing any safety mention
+            cats.add("safety")
+
+    # Catch-all
     if not cats:
         cats.add("guardrail")
+
     return cats
 
 
@@ -229,6 +353,25 @@ def minimal_patch(skill_md: Path, skill_name: str, er: EvalResult) -> tuple[bool
         md = md2
         changed = True
 
+    # Non-validator sections that materially improve boundary clarity / safety for operators and judges.
+    md2 = append_section(
+        md,
+        "Hard constraints",
+        "- Must use only the documented tools in Toolset.\n- Must not modify files unless explicitly stated.\n- Must stop and ask for clarification if inputs are ambiguous.",
+    )
+    if md2 != md:
+        md = md2
+        changed = True
+
+    md2 = append_section(
+        md,
+        "Safety",
+        "- Default to read-only / no side effects.\n- Avoid high-blast-radius actions (deletes, mass edits, external posts) without explicit user confirmation.",
+    )
+    if md2 != md:
+        md = md2
+        changed = True
+
     md2 = patch_toolset(md)
     if md2 != md:
         md = md2
@@ -242,7 +385,7 @@ def minimal_patch(skill_md: Path, skill_name: str, er: EvalResult) -> tuple[bool
     if changed:
         skill_md.write_text(md, encoding="utf-8")
 
-    return changed, categorize_failures(er)
+    return changed, categorize_failures(er, md_text=md)
 
 
 def iter_skill_mds(skills_dir: Path) -> list[Path]:
@@ -281,6 +424,8 @@ def main() -> int:
     ap.add_argument("--targets", nargs="*", default=[])
     ap.add_argument("--max-iters", type=int, default=3)
     ap.add_argument("--push", action="store_true")
+    ap.add_argument("--no-judge", action="store_true", help="Disable LLM-as-judge gating")
+    ap.add_argument("--judge-agent", default="main", help="OpenClaw agent id to use for judging (default: main)")
     args = ap.parse_args()
 
     skills_dir = Path(args.skills_dir).expanduser()
@@ -289,14 +434,22 @@ def main() -> int:
         log(f"ERROR skills_dir_not_found {skills_dir}")
         return 2
 
-    judge_enabled = bool(os.getenv("OPENAI_API_KEY"))
-    if not judge_enabled:
-        log("INFO judge_skipped OPENAI_API_KEY missing")
+    # LLM-as-judge runs via OpenClaw (gateway agent). Enabled by default.
+    # Can be disabled with --no-judge.
+    judge_enabled = not bool(getattr(args, "no_judge", False))
+    if judge_enabled:
+        log("INFO judge_enabled openclaw_agent")
+    else:
+        log("INFO judge_skipped disabled_by_flag")
 
     scanned = 0
     changed = 0
     passed = 0
     escalated = 0
+    judge_passed = 0
+    judge_failed = 0
+    judge_errors = 0
+    judge_scores: list[tuple[str, float, float]] = []  # (skill, avg, min_dim)
 
     for skill_md in iter_skill_mds(skills_dir):
         if not matches_targets(skill_md, args.targets):
@@ -309,6 +462,54 @@ def main() -> int:
             log(f"SKILL {skill_name} ITER {it} EVAL")
             er = eval_skill(skill_md)
             if er.validate_ok and er.invented_ok:
+                # Deterministic checks passed; now enforce LLM-as-judge quality gate (if enabled).
+                if judge_enabled:
+                    md_text = skill_md.read_text(encoding="utf-8", errors="ignore")
+                    try:
+                        jr = judge_skill(skill_name, md_text, agent_id=args.judge_agent)
+                        log(
+                            "SKILL "
+                            + skill_name
+                            + " JUDGE "
+                            + json.dumps(
+                                {
+                                    "model": JUDGE_MODEL,
+                                    "task_fidelity": jr.get("task_fidelity"),
+                                    "boundary_clarity": jr.get("boundary_clarity"),
+                                    "behavioral_test_adequacy": jr.get("behavioral_test_adequacy"),
+                                    "operational_clarity": jr.get("operational_clarity"),
+                                    "safety_blast_radius": jr.get("safety_blast_radius"),
+                                    "avg": jr.get("avg"),
+                                    "min_dim": jr.get("min_dim"),
+                                    "pass": jr.get("pass"),
+                                },
+                                sort_keys=True,
+                            )
+                        )
+                        judge_scores.append((skill_name, float(jr.get("avg", 0)), float(jr.get("min_dim", 0))))
+                        if not jr.get("pass"):
+                            judge_failed += 1
+                            # Treat as failure category for escalation analysis.
+                            cats = {"guardrail"}
+                            if float(jr.get("boundary_clarity", 0)) < JUDGE_MIN_DIM:
+                                cats.add("boundary")
+                            if float(jr.get("behavioral_test_adequacy", 0)) < JUDGE_MIN_DIM:
+                                cats.add("test")
+                            if float(jr.get("safety_blast_radius", 0)) < JUDGE_MIN_DIM:
+                                cats.add("safety")
+                            if float(jr.get("task_fidelity", 0)) < JUDGE_MIN_DIM or float(jr.get("operational_clarity", 0)) < JUDGE_MIN_DIM:
+                                cats.add("guardrail")
+                            log(f"SKILL {skill_name} FAIL_JUDGE categories={sorted(cats)}")
+                            # No automatic content-quality patching in this runner yet.
+                            continue
+                        else:
+                            judge_passed += 1
+                    except Exception as e:
+                        judge_errors += 1
+                        log(f"SKILL {skill_name} JUDGE_ERROR {e}")
+                        # Be conservative: do not pass when judge is enabled but fails.
+                        continue
+
                 passed += 1
                 log(f"SKILL {skill_name} PASS")
                 break
@@ -328,7 +529,16 @@ def main() -> int:
             escalated += 1
             log(f"SKILL {skill_name} ESCALATE max_iters_exceeded")
 
-    print(f"scanned={scanned} passed={passed} changed={changed} escalated={escalated} judge={'on' if judge_enabled else 'off'}")
+    # Summary line (machine-readable-ish)
+    print(
+        f"scanned={scanned} passed={passed} changed={changed} escalated={escalated} "
+        f"judge={'on' if judge_enabled else 'off'} judge_passed={judge_passed} judge_failed={judge_failed} judge_errors={judge_errors}"
+    )
+
+    if judge_enabled and judge_scores:
+        avgs = [a for _, a, _ in judge_scores]
+        mins = [m for _, _, m in judge_scores]
+        print(f"judge_avg_overall={sum(avgs)/len(avgs):.3f} judge_min_overall={min(mins):.3f}")
 
     if args.push:
         log("GIT push_requested")

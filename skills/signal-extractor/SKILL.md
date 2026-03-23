@@ -1,208 +1,299 @@
 ---
+---
 name: signal-extractor
-description: "## Signal Extractor (Sub-skill)"
+description: "Stage 3 of /intel. Fetch every URL from a SOURCE MAP and extract concrete, vector-tagged signals with strict anti-hallucination, redaction, and bounded fetching."
 ---
 
-## Signal Extractor (Sub-skill)
+# signal-extractor (internal)
 
-### Role
-You are the third stage in the **/intel** intelligence pipeline.
+## Trigger contract
 
-Your single responsibility is to:
-1) take the **SOURCE MAP** produced by `digital-scout`,
-2) scrape the actual content from **every** URL (without skipping), and
-3) extract **specific, concrete** raw signals relevant to each research vector.
+This is an internal pipeline skill for `/intel`.
 
-You are **called internally** by the intel orchestrator and are **never triggered directly** by the user.
-
-### Input
-The complete structured plain-text output from `digital-scout`, containing:
+Trigger **only** when the message body is the full plain-text output of `digital-scout` and contains:
 - `INTELLIGENCE TARGET`
-- `SOURCE MAP` (one entry per vector, including vector name + priority, and 1–3 source URLs with metadata)
-- `SCOUT SUMMARY`
+- a `SOURCE MAP` section
+- for each vector: `PRIORITY: <HIGH|MEDIUM|LOW>` and **1–3** `URL:` lines
 
-### Tools / execution requirements
-You must attempt to fetch each URL using **curl first**, then fall back to **Playwright** if curl fails or content is insufficient/blocked.
+Accepted invocation patterns:
+- Internal (preferred): the orchestrator calls `signal-extractor` with the full `digital-scout` output.
+- Manual debug (operator only): `/signal-extractor <paste digital-scout output>`
 
-Exception (mandatory): For URLs that are likely JavaScript-rendered, skip curl and go directly to the Playwright fetch command. Apply Playwright-first when the URL matches any of these patterns:
-- contains `/product/` or `/products/`
-- contains `/help/` or `/support/`
-- contains `/features/`
-- contains `/enterprise/`
-- contains `/pricing/` **and** is on the target’s own domain
+If the input does not contain a parseable `SOURCE MAP` with at least one URL, fail with the exact error in **Failure modes**.
 
-For all other URLs, keep the default curl-first then Playwright fallback logic.
+## Deterministic workflow (must follow)
 
-#### Primary fetch (must be tried first for every URL)
+### Tooling
+- Primary fetch: `web_fetch`
+- Fallback fetch: `exec` (Playwright via `/opt/anaconda3/bin/python3`)
 
-curl -sL URL | /opt/anaconda3/bin/python3 -c "import sys, re; html = sys.stdin.read(); text = re.sub(r'<[^>]+>', ' ', html); text = re.sub(r'\s+', ' ', text).strip(); print(text[:5000])"
+### Global caps (hard limits)
+- Max vectors processed: **25** (if more, fail)
+- Max URLs processed: **75** total (if more, fail)
+- Per-URL fetch attempts: **2** (web_fetch, then optional Playwright)
+- `web_fetch` maxChars: **12000**
+- Playwright navigation timeout: **30000 ms**
 
-#### Fallback fetch (use only when curl is insufficient or blocked)
+### Step 1 — Parse and validate input
+1) Extract `INTELLIGENCE TARGET` value exactly as provided.
+2) Parse `SOURCE MAP` into an ordered list of vectors. For each vector, capture:
+   - `Vector Name`
+   - `PRIORITY` (must be HIGH|MEDIUM|LOW)
+   - URLs (from `URL:` lines)
+3) Hard validation:
+   - If `SOURCE MAP` missing → Failure.
+   - If any vector has 0 URLs → Failure.
+   - If total vectors > 25 or total URLs > 75 → Failure.
 
+### Step 2 — URL allow/deny gating (hard safety)
+Before fetching any URL, apply these deterministic rules:
+
+#### 2A) Allowed schemes
+- Only allow `http://` and `https://`.
+
+#### 2B) Hard-deny hosts / private networks
+Hard block (do not fetch) any URL whose host matches any of:
+- `localhost`, `127.0.0.1`, `0.0.0.0`, `::1`
+- any host ending with: `.local`, `.internal`, `.lan`, `.home`, `.corp`
+
+Also hard block URLs that appear to target RFC1918/private ranges (string-prefix heuristic, case-insensitive):
+- host starts with `10.`
+- host starts with `192.168.`
+- host starts with `172.16.` through `172.31.` (heuristic: host starts with `172.` and second octet is between 16 and 31)
+
+If blocked:
+- Do not call any tools for that URL.
+- Mark the source as `EXTRACTION QUALITY: FAILED`, `FAILURE REASON: ERROR`, and include `SIGNALS: - (none)`.
+
+#### 2C) Optional allowlist from upstream
+If the input contains a line:
+- `ALLOWED_DOMAINS: <comma-separated domains>`
+
+Then additionally enforce:
+- Only fetch URLs whose host is exactly one of those domains, or a subdomain of one of those domains.
+- If a URL is outside the allowlist, treat it as blocked (same handling as above).
+
+### Step 3 — For each URL, fetch readable text
+Process vectors in the same order as the `SOURCE MAP`. For each URL that is not blocked:
+
+#### 3A) Decide fetch strategy (Playwright-first heuristic)
+Use **Playwright first** (skip `web_fetch`) only if URL path contains any of:
+- `/product/` or `/products/`
+- `/help/` or `/support/`
+- `/features/`
+- `/enterprise/`
+
+Also use Playwright first if:
+- path contains `/pricing/` AND the URL host appears to be the target’s own domain (heuristic: the host string appears inside `INTELLIGENCE TARGET` case-insensitively)
+
+Otherwise default to `web_fetch` first.
+
+#### 3B) Primary fetch (web_fetch)
+Call:
+- `web_fetch(url=<url>, extractMode="markdown", maxChars=12000)`
+
+After `web_fetch`, evaluate **insufficiency/block**. If any are true, run Playwright fallback:
+- Extracted text length (after trimming) < **800** characters
+- Contains any of these block/paywall signals (case-insensitive substring match):
+  - `enable javascript`
+  - `access denied`
+  - `subscribe`
+  - `cloudflare`
+  - `captcha`
+  - `verify you are human`
+
+#### 3C) Fallback fetch (Playwright via exec)
+Run exactly (substitute URL):
+
+```bash
 /opt/anaconda3/bin/python3 -c "from playwright.sync_api import sync_playwright
 import re
-pw = sync_playwright().start()
-browser = pw.chromium.launch(headless=True)
-page = browser.new_page()
-try:
-    page.goto('URL', wait_until='domcontentloaded', timeout=60000)
-    content = page.content()
-except Exception as e:
-    print('PLAYWRIGHT_ERROR: ' + str(e))
+url='URL'
+with sync_playwright() as p:
+    browser = p.chromium.launch(headless=True)
+    page = browser.new_page()
+    try:
+        page.goto(url, wait_until='domcontentloaded', timeout=30000)
+        content = page.content()
+    except Exception as e:
+        print('PLAYWRIGHT_ERROR: ' + str(e))
+        browser.close()
+        raise
     browser.close()
-    pw.stop()
-    exit()
-browser.close()
-pw.stop()
 text = re.sub(r'<[^>]+>', ' ', content)
-text = re.sub(r'\s+', ' ', text).strip()
-print(text[:5000])"
+text = re.sub(r'\\s+', ' ', text).strip()
+print(text[:12000])"
+```
 
-### Block / insufficiency detection rules (for deciding Playwright fallback)
-After running the curl fetch, you must evaluate the returned text. If **any** of the following are true, you must run the Playwright command for that URL:
-- The curl output contains fewer than **500 characters** of meaningful text.
-- The curl output contains strong block signals (case-insensitive match), including any of:
-  - "enable javascript"
-  - "access denied"
-  - "subscribe to read"
-  - "cloudflare"
-  - "captcha"
+Interpretation:
+- If the command prints a line starting with `PLAYWRIGHT_ERROR:` → treat as fetch failure.
+- Otherwise treat stdout as fetched text.
 
-### Hard constraints (must follow)
-- You must attempt to scrape **every URL** in the SOURCE MAP.
-- Default: try **curl first** for every URL.
-- Exception: apply Playwright-first for URLs matching any of these patterns: `/product/` or `/products/`, `/help/` or `/support/`, `/features/`, `/enterprise/`, and `/pricing/` (when the URL is on the target’s own domain).
-- You must fall back to **Playwright** whenever curl is blocked/insufficient per the rules above.
-- You must **not skip** a URL; if both methods fail, you must report `FAILED` with a failure reason.
-- You must never invent or hallucinate signals. Signals must be directly supported by scraped page text.
-- You must never output vague general statements as signals.
-  - Every signal must contain a **specific concrete data point** (e.g., exact price, plan name, feature name, a date, a named partner, a quoted complaint with specifics, a metric/number).
-- Every signal must be tagged with its vector name in square brackets at the start:
-  - Example: `[Pricing] "Plus" tier increased from $10 to $12/user in Jan 2026.`
+### Step 4 — Extract signals (context-only + redaction)
+For each URL’s final fetched text:
 
-### Signal definition (what to extract)
-A **signal** is a single-sentence, concrete data point that is directly relevant to the vector that URL belongs to.
+1) Extract **3–7** signals when possible.
+2) Each signal MUST:
+   - Be exactly one sentence.
+   - Begin with the vector tag: `[<Vector Name>] `
+   - Contain at least one concrete data point (examples: a price, tier name, numeric limit, date, named integration/partner, quoted complaint with specifics, version number).
+3) Disallow vague signals:
+   - If a candidate signal does not contain concrete detail, do not output it.
 
-Good signals include:
-- exact prices, tiers, limits, contract terms, discounts
-- specific feature names added/removed; deprecation notices
-- explicit dates of announcements/changes; release versions
-- direct quotes from the company or users that include concrete claims
-- named competitors, partners, integrations, acquisitions
-- specific complaints/praise with concrete details (what broke, what was slow, what support failed)
-- numerical metrics (counts, percentages, durations, costs)
+#### Redaction (hard privacy boundary)
+Before outputting any signal, apply this deterministic redaction rule:
+- If the signal text contains any of these case-insensitive substrings:
+  - `api key`, `secret`, `token`, `password`, `bearer`, `private key`
+  - or contains a PEM marker like `BEGIN PRIVATE KEY`
 
-Bad signals (do not extract):
-- generic positioning blurbs without concrete change
-- vague sentiment without details
-- timeless product descriptions
+Then **do not output** that signal. (Skip it; do not attempt to paraphrase.)
 
-### Extraction quality rules
-For each URL, set `EXTRACTION QUALITY`:
-- `STRONG`: **3 or more** high-quality specific signals extracted.
-- `WEAK`: fewer than **3** signals extracted OR signals are borderline/vague.
-- `FAILED`: page could not be fetched or returned no usable content after both curl and Playwright.
+If you cannot produce ≥1 non-sensitive concrete signal, the source must become `FAILED` with `FAILURE REASON: EMPTY`.
 
-If `FAILED`, you must include `FAILURE REASON` as one of:
-- `BLOCKED` (site actively blocked scraping)
-- `EMPTY` (no meaningful content returned)
-- `TIMEOUT` (Playwright timed out after 30 seconds)
-- `ERROR` (unexpected error)
+4) If you can only extract 1–2 truly concrete, non-sensitive signals, output those and mark `WEAK`.
 
-### Output format (must match exactly)
-Produce a structured plain text document with these sections in this order:
+### Step 5 — Assign extraction quality
+For each URL, set:
+- `STRONG` if ≥ 3 signals
+- `WEAK` if 1–2 signals
+- `FAILED` if:
+  - blocked by allow/deny rules, OR
+  - fetch produced no usable text after allowed attempts, OR
+  - redaction rules eliminate all otherwise-valid signals
+
+If `FAILED`, set `FAILURE REASON` to exactly one of:
+- `BLOCKED` (block/paywall/captcha signals from fetched content)
+- `EMPTY` (returned too little meaningful text OR no non-sensitive signals after redaction)
+- `TIMEOUT` (Playwright timeout)
+- `ERROR` (blocked by URL allow/deny OR any other failure)
+
+### Step 6 — Emit output (strict schema)
+Output must be structured **plain text** with the following sections and headings **exactly** in this order:
 
 ## INTELLIGENCE TARGET
-<Target name exactly as provided in the input>
+<Target exactly as provided>
 
 ## SIGNAL REPORT
-(Group entries by vector, and include every URL from that vector’s SOURCE MAP.)
 
 ### Vector — <Vector Name>
 PRIORITY: <HIGH|MEDIUM|LOW>
 
-#### Source 1
+#### Source <n>
 URL: <url>
-FETCH METHOD: <CURL|PLAYWRIGHT>
+FETCH METHOD: <WEB_FETCH|PLAYWRIGHT>
 SIGNALS:
-1) [<Vector Name>] <one-sentence concrete signal>
-2) ... (3–7 total when possible)
-EXTRACTION QUALITY: <STRONG|WEAK|FAILED>
-FAILURE REASON: <BLOCKED|EMPTY|TIMEOUT|ERROR>   (only if EXTRACTION QUALITY is FAILED)
+1) [<Vector Name>] <signal>
+2) ...
 
-(Repeat for each URL under this vector, then repeat for all vectors in the same order as SOURCE MAP.)
+If EXTRACTION QUALITY is FAILED, replace the list with exactly:
+- `SIGNALS:`
+- `- (none)`
+
+EXTRACTION QUALITY: <STRONG|WEAK|FAILED>
+FAILURE REASON: <BLOCKED|EMPTY|TIMEOUT|ERROR>  (only if FAILED)
+
+(Repeat per URL; repeat per vector; preserve SOURCE MAP order.)
 
 ## EXTRACTION SUMMARY
-3–5 sentences describing:
-- how many URLs were successfully scraped
-- how many required Playwright fallback
-- how many failed
-- which vectors have the strongest signal coverage
-- which vectors need additional sourcing
-
-### Operating procedure (do this in order)
-1. Parse `INTELLIGENCE TARGET` and copy it verbatim.
-2. Parse `SOURCE MAP` and build an internal list of vectors and URLs.
-3. For each vector, for each URL:
-   1) If the URL matches any Playwright-first pattern (`/product/` or `/products/`, `/help/` or `/support/`, `/features/`, `/enterprise/`, or `/pricing/` on the target’s domain), run the Playwright fetch command first (skip curl).
-   2) Otherwise, run the curl fetch command.
-   3) If curl output is blocked/insufficient, run the Playwright fetch command.
-   3) From the final fetched text, extract **3–7** concrete signals relevant to the vector.
-      - If you can only extract 1–2 truly concrete signals, output those and mark `WEAK`.
-   4) If neither fetch yields usable text, mark `FAILED` and choose the appropriate failure reason.
-4. Write the grouped `SIGNAL REPORT`.
-5. Write `EXTRACTION SUMMARY`.
-
-### Quality checklist (run mentally before finalising)
-- [ ] INTELLIGENCE TARGET matches input exactly
-- [ ] Every URL from SOURCE MAP appears exactly once in SIGNAL REPORT
-- [ ] curl attempted first for every URL; Playwright used only when needed
-- [ ] No hallucinated URLs or signals
-- [ ] Signals are concrete data points; no vague statements
-- [ ] Every signal begins with the vector tag in square brackets
-- [ ] EXTRACTION SUMMARY covers success/fallback/failure counts and weakest vectors
+3–5 sentences including:
+- total URLs
+- succeeded count
+- Playwright-used count
+- failed count
+- which vectors are strongest/weakest by coverage
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this sub-skill inside `/intel` after `digital-scout` has produced a `SOURCE MAP`. It fetches each URL (subject to safety deny rules), extracts concrete, vector-tagged signals grounded in the fetched text, and reports failures explicitly (no hallucinations).
 
 ## Inputs
 
-- Describe required inputs.
+One plain-text blob: the full output from `digital-scout`, containing:
+- `INTELLIGENCE TARGET`
+- `SOURCE MAP` with vectors + priorities + URLs
+- Optional: `ALLOWED_DOMAINS: ...` allowlist line
 
 ## Outputs
 
-- Describe outputs and formats.
+A structured plain-text report with:
+- `## INTELLIGENCE TARGET`
+- `## SIGNAL REPORT` (every URL included exactly once)
+- `## EXTRACTION SUMMARY`
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+- Missing/invalid SOURCE MAP:
+  - `ERROR: invalid_source_map. Provide full digital-scout output with INTELLIGENCE TARGET and SOURCE MAP.`
+
+- Too many vectors/URLs:
+  - `ERROR: source_map_too_large. Max 25 vectors and 75 URLs.`
+
+- Malformed SOURCE MAP:
+  - `ERROR: malformed_source_map. Each vector must include PRIORITY and at least one URL.`
+
+## Boundary rules (privacy + safety)
+
+- Never invent URLs or signals.
+- Fetch only from the URLs in the SOURCE MAP.
+- Do not follow links discovered on pages.
+- Enforce URL allow/deny gating (Step 2).
+- Enforce redaction by skipping any secret-like signals (Step 4).
+- Caps are mandatory; no retry loops.
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
+- `web_fetch`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/signal-extractor <example-input>`
-   - Expected: produces the documented output shape.
+1) **Negative: missing SOURCE MAP**
+   - Input: `hello` (no INTELLIGENCE TARGET / SOURCE MAP).
+   - Expected output is exactly:
+     - `ERROR: invalid_source_map. Provide full digital-scout output with INTELLIGENCE TARGET and SOURCE MAP.`
 
-2. **Negative case: invalid input**
-   - Run: `/signal-extractor <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2) **Negative: too many URLs**
+   - Input: a SOURCE MAP containing 76 URLs.
+   - Expected output is exactly:
+     - `ERROR: source_map_too_large. Max 25 vectors and 75 URLs.`
 
-3. **Structural validator**
+3) **Behavioral: blocked localhost URL still reported (no skip)**
+   - Input fixture:
+     - INTELLIGENCE TARGET: `ExampleCo`
+     - SOURCE MAP includes one vector with `URL: http://127.0.0.1/private`
+   - Expected in output:
+     - That URL appears under SIGNAL REPORT.
+     - `EXTRACTION QUALITY: FAILED`
+     - `FAILURE REASON: ERROR`
+     - `SIGNALS:` followed by `- (none)`
+
+4) **Behavioral: allowlist blocks out-of-scope domains**
+   - Input fixture includes:
+     - `ALLOWED_DOMAINS: example.com`
+     - a URL `https://not-example.com/x`
+   - Expected:
+     - That URL is present and marked `FAILED` with `FAILURE REASON: ERROR` and `SIGNALS: - (none)`.
+
+5) **Behavioral: structure and ordering is stable**
+   - Input fixture with 2 vectors and 3 URLs total.
+   - Expected:
+     - Vectors appear in the same order as SOURCE MAP.
+     - Exactly 3 `URL:` lines appear in the output.
+     - Each URL appears exactly once.
+
+6) **Behavioral: redaction skips secret-like signals**
+   - Given a fetched page text containing `api key`/`token`-style strings, expected:
+     - No signal line includes those secret markers.
+     - If all candidate signals are removed by redaction, source becomes `FAILED` with `FAILURE REASON: EMPTY`.
+
+7) **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md
 ```
 Expected: `PASS`.
 
-4. **No invented tools**
+8) **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md

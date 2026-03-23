@@ -1,16 +1,23 @@
+# Local learning artifacts
+learn/
+autoresearch/
+autoresearch-macos/
+notebooklm-prompt-library.md
+
+# Runtime / cache
+__pycache__/
+**/__pycache__/
+*.pyc
+.tmp/
+tmp/
 tmp_biblio/
 tmp_biblio_full/
-.learnings/
-.openclaw/
-open-notebook/
 canvas/
+open-notebook/
+.openclaw/
 memory/
-HEARTBEAT.md
-.DS_Store
+.learnings/
+tools/__pycache__/
 
-# Python
-__pycache__/
-*.pyc
-
-# OpenClaw runtime scratch
-/tmp/
+# Tool vendor checkouts / embedded repos
+tools/tandem/tandem-browser/

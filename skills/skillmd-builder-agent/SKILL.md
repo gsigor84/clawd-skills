@@ -1,13 +1,19 @@
 ---
 name: skillmd-builder-agent
-description: Design and run a graph-constrained (finite state machine) agent that generates valid OpenClaw SKILL.md files from a user request. Use when Igor asks to create a new skill reliably (retrieve → draft → validate → repair), with deterministic validation and bounded autonomy. Triggers: “build a SKILL.md agent”, “skill generator”, “generate SKILL.md”, “create new OpenClaw skill”, “SKILL.md builder”.
+description: "INTERNAL DOCS ONLY. Design notes for a FSM-style SKILL.md builder. Not a user trigger; use /new-skill for building skills."
 ---
 
 # skillmd-builder-agent
 
+## Status
+
+**Internal documentation only.**
+
+Do not use this as a user-facing entry point. For building skills, use `/new-skill`.
+
 ## Use
 
-Build **reliable SKILL.md files** by running a **constrained agent loop** (finite state machine) that:
+This document describes how to build **reliable SKILL.md files** using a **constrained agent loop** (finite state machine) that:
 - does boundary-aware intake (what problem are we solving, what is out of scope?)
 - retrieves authoritative constraints + closest skill patterns
 - drafts a behaviorally-specified SKILL.md (not just a skeleton)

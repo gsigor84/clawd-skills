@@ -1,108 +1,163 @@
 ---
 name: self-improving-skill-builder
-description: "Improve SKILL.md files across ~/clawd/skills/ via a bounded evaluation→patch loop. Manual trigger: /improve-skills. Automatic: runs after skillmd-builder-agent successfully builds a new skill."
+description: "Trigger: /improve-skills [--targets ...]. Run deterministic validator checks across skills and apply bounded, minimal patches until PASS or ESCALATE."
 ---
 
 # self-improving-skill-builder
 
+## Trigger contract
+
+Manual trigger:
+- `/improve-skills` optionally with:
+  - `--targets <comma-separated skill names>`
+
+Automatic trigger (internal):
+- called by the build pipeline after a new skill is created, with `--targets <new-skill-name>`.
+
+This skill only operates inside:
+- `/Users/igorsilva/clawd/skills/`
+
+If the skills directory is missing or targets are invalid, it must fail with an exact error string (see Failure modes).
+
 ## Use
 
-Improve the quality and validator-compliance of all skills under `~/clawd/skills/` using a **bounded** loop:
+Use this skill to iteratively improve SKILL.md files so they pass the deterministic validators:
+- `validate_skillmd.py`
+- `check_no_invented_tools.py`
 
-1) Scan skills
-2) Evaluate (deterministic validators + optional LLM-as-judge)
-3) Categorize failures
-4) Apply minimal patches
-5) Repeat up to 3 iterations, then escalate
-6) Persist traces to a daily log
-7) Commit + push changes to GitHub
-
-### Triggers
-- Manual: `/improve-skills` (improves all skills in `~/clawd/skills/`)
-- Automatic: after every new skill built by `skillmd-builder-agent` (implemented by calling this runner from `build_skill.py` when present)
+It applies minimal edits (no rewrites) within a strict cap of iterations, and produces a plain-text summary of what passed, changed, or escalated.
 
 ## Inputs
 
-- `skills_dir` (optional, default: `/Users/igorsilva/clawd/skills`)
-- `targets` (optional): list of skill folder names or SKILL.md paths to restrict the run
-- `max_iters` (optional, default: 3)
-- `push` (optional flag): when set, commit + push changes to GitHub
+- `--skills-dir <path>` (optional, default: `/Users/igorsilva/clawd/skills`)
+- `--targets <comma-separated>` (optional)
+  - Each target is either a skill folder name under skills-dir (e.g., `url-arg-summarizer`) or an absolute path to a `SKILL.md` within skills-dir.
+- `--max-iters <n>` (optional, default: 3, max: 5)
+
+If no targets are provided, all skills under skills-dir are scanned.
 
 ## Outputs
 
-- Updated skills in place: `~/clawd/skills/*/SKILL.md`
-- Daily trace log:
-  - `/Users/igorsilva/clawd/tmp/logs/skill-improvement-YYYYMMDD.log`
-- Git commit(s) + push (when `--push` is set)
+A plain-text report with these headings exactly:
 
-## Evaluation stack
+IMPROVEMENT RUN
+SKILLS_SCANNED: <n>
+SKILLS_CHANGED: <n>
+SKILLS_PASSING: <n>
+SKILLS_ESCALATED: <n>
 
-### Deterministic (always)
-- `validate_skillmd.py` on each SKILL.md
-- `check_no_invented_tools.py` on each SKILL.md
+CHANGED:
+- <skill-name> — <one-line change summary>
 
-### LLM-as-judge (optional)
-- Only runs if `OPENAI_API_KEY` is available in the environment.
-- If not available, the run still proceeds using deterministic checks only and logs `judge_skipped`.
+ESCALATED:
+- <skill-name> — <one-line reason>
+
+No file contents are printed.
+
+## Deterministic workflow (must follow)
+
+### Tooling
+- `exec` (to run deterministic validators)
+- `read` / `edit` (to apply minimal patches)
+
+### Global caps (hard limits)
+- Max iterations per skill: **3** by default (hard max 5)
+- Max skills processed per run: **200**
+- Max patch size per skill per iteration: **6000** characters
+
+### Boundary rules (privacy + safety)
+
+- Do not run any network calls.
+- Do not commit, push, or modify git state.
+- Only edit files under `/Users/igorsilva/clawd/skills/`.
+- Never create new skills; only patch existing `SKILL.md`.
+- Minimal patches only: change the smallest text necessary to satisfy validators.
+
+### Step 1 — Resolve targets
+1) Determine `skills_dir`.
+2) If `skills_dir` does not exist → fail.
+3) If `--targets` provided:
+   - Resolve each target to an absolute `.../<skill>/SKILL.md` under skills_dir.
+   - If any target cannot be resolved → fail.
+4) Else:
+   - Enumerate all `SKILL.md` files exactly one directory deep under skills_dir.
+
+### Step 2 — For each SKILL.md, run validators
+For each target SKILL.md:
+1) Run:
+   - `/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py <path>`
+2) Run:
+   - `/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py <path>`
+
+If both PASS → mark skill PASSING.
+
+If either FAIL → proceed to Step 3.
+
+### Step 3 — Apply bounded minimal patch loop
+For up to `max_iters` iterations:
+1) Parse validator failure lines (those beginning with `- `).
+2) Apply one minimal patch addressing the highest-priority failure:
+   - missing required section headers → insert empty but non-placeholder section stubs.
+   - acceptance tests issues → add one concrete behavioral test line with a `/skill-name ...` run and an Expected output assertion.
+   - frontmatter issues → normalize frontmatter to exactly `name` and `description`.
+   - invented tools → remove non-allowed tools from Toolset.
+3) Re-run both validators.
+4) If PASS → mark CHANGED + PASSING.
+
+If still failing after max_iters → mark ESCALATED and leave the last attempted file state as-is.
+
+### Step 4 — Emit report
+Print the Output format exactly as specified.
 
 ## Failure modes
 
-- If `OPENAI_API_KEY` is not configured, LLM-as-judge evaluation is skipped (deterministic validation still runs).
-- If a skill cannot be made to pass deterministic validators in 3 iterations, it is marked `escalate` and left unchanged.
-- Git push failures stop the run and print the git error.
+Return exactly one line and nothing else:
 
-## Failure taxonomy (categorize each failure)
+- Missing skills directory:
+  - `ERROR: skills_dir_missing. Provide a valid --skills-dir.`
 
-- `boundary`
-- `tool`
-- `guardrail`
-- `output`
-- `test`
-- `safety`
+- Invalid targets:
+  - `ERROR: invalid_targets. Targets must resolve to SKILL.md under the skills dir.`
 
-## Guardrails
-
-- Minimal patches only (no large rewrites)
-- Max iterations per skill: 3
-- Never introduce non-allowed tools in the `## Toolset` section
-- If deterministic validators still fail after 3 iterations: log `escalate` and skip the skill
+- Too many skills:
+  - `ERROR: too_many_skills. Refusing to process more than 200 skills.`
 
 ## Toolset
 
 - `read`
-- `write`
 - `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: run on a single skill (dry run)**
-```bash
-/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/self-improving-skill-builder/scripts/improve_skills.py \
-  --skills-dir /Users/igorsilva/clawd/skills \
-  --targets file-summarizer
-```
-Expected: exits 0, logs state transitions, and validators pass for the target skill.
+1. **Behavioral: run on a single target**
+   - Run: `/improve-skills --targets url-arg-summarizer`
+   - Expected: output includes `IMPROVEMENT RUN` and a non-negative integer on `SKILLS_SCANNED:`.
 
-2. **Behavioral: run on all skills and produce a summary**
-```bash
-/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/self-improving-skill-builder/scripts/improve_skills.py \
-  --skills-dir /Users/igorsilva/clawd/skills
-```
-Expected: exits 0 and prints counts for scanned/changed/passed/escalated.
+2. **Behavioral: invalid targets hard-stop**
+   - Run: `/improve-skills --targets /tmp/not-a-skill.md`
+   - Expected output (exact): `ERROR: invalid_targets. Targets must resolve to SKILL.md under the skills dir.`
 
-3. **Negative case: missing skills dir**
-- Run: `/improve-skills /path/does/not/exist`
-- Expected: clean error and no files modified.
+3. **Behavioral: missing skills dir hard-stop**
+   - Run: `/improve-skills --skills-dir /path/does/not/exist`
+   - Expected output (exact): `ERROR: skills_dir_missing. Provide a valid --skills-dir.`
 
-4. **Structural validator**
+4. **Behavioral: bounded iterations enforced**
+   - Given a skill that cannot be fixed within 3 iterations, expected:
+     - It appears under `ESCALATED:` in the report.
+
+5. **Behavioral: never prints full file contents**
+   - Run: `/improve-skills --targets url-arg-summarizer`
+   - Expected: output does not include the literal frontmatter fence `---` from any target skill.
+
+6. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/self-improving-skill-builder/SKILL.md
 ```
 Expected: `PASS`.
 
-5. **No invented tools**
+7. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/self-improving-skill-builder/SKILL.md

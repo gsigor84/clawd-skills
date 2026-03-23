@@ -1,165 +1,191 @@
 ---
 name: tmux
-description: "# tmux Skill (Clawdbot)"
+description: "Trigger: /tmux <action>. Deterministically manage a private tmux server (isolated socket) for TTY-required workflows: create session, run command, capture output, and clean up safely."
 ---
 
-# tmux Skill (Clawdbot)
+# tmux
 
-Use tmux only when you need an interactive TTY. Prefer bash background mode for long-running, non-interactive tasks.
+## Trigger contract
 
-## Quickstart (isolated socket, bash tool)
+Trigger when the user sends:
+- `/tmux <action> [args...]`
 
-```bash
-SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}"
-mkdir -p "$SOCKET_DIR"
-SOCKET="$SOCKET_DIR/clawdbot.sock"
-SESSION=clawdbot-python
+Supported actions:
+- `start` — create (or ensure) a tmux session on an isolated socket
+- `run` — send a single shell command to a target pane
+- `capture` — capture recent output from a target pane
+- `stop` — kill a session
+- `status` — list sessions/panes for the isolated socket
 
-tmux -S "$SOCKET" new -d -s "$SESSION" -n shell
-tmux -S "$SOCKET" send-keys -t "$SESSION":0.0 -- 'PYTHON_BASIC_REPL=1 python3 -q' Enter
-tmux -S "$SOCKET" capture-pane -p -J -t "$SESSION":0.0 -S -200
-```
-
-After starting a session, always print monitor commands:
-
-```
-To monitor:
-  tmux -S "$SOCKET" attach -t "$SESSION"
-  tmux -S "$SOCKET" capture-pane -p -J -t "$SESSION":0.0 -S -200
-```
-
-## Socket convention
-
-- Use `CLAWDBOT_TMUX_SOCKET_DIR` (default `${TMPDIR:-/tmp}/clawdbot-tmux-sockets`).
-- Default socket path: `"$CLAWDBOT_TMUX_SOCKET_DIR/clawdbot.sock"`.
-
-## Targeting panes and naming
-
-- Target format: `session:window.pane` (defaults to `:0.0`).
-- Keep names short; avoid spaces.
-- Inspect: `tmux -S "$SOCKET" list-sessions`, `tmux -S "$SOCKET" list-panes -a`.
-
-## Finding sessions
-
-- List sessions on your socket: `{baseDir}/scripts/find-sessions.sh -S "$SOCKET"`.
-- Scan all sockets: `{baseDir}/scripts/find-sessions.sh --all` (uses `CLAWDBOT_TMUX_SOCKET_DIR`).
-
-## Sending input safely
-
-- Prefer literal sends: `tmux -S "$SOCKET" send-keys -t target -l -- "$cmd"`.
-- Control keys: `tmux -S "$SOCKET" send-keys -t target C-c`.
-
-## Watching output
-
-- Capture recent history: `tmux -S "$SOCKET" capture-pane -p -J -t target -S -200`.
-- Wait for prompts: `{baseDir}/scripts/wait-for-text.sh -t session:0.0 -p 'pattern'`.
-- Attaching is OK; detach with `Ctrl+b d`.
-
-## Spawning processes
-
-- For python REPLs, set `PYTHON_BASIC_REPL=1` (non-basic REPL breaks send-keys flows).
-
-## Windows / WSL
-
-- tmux is supported on macOS/Linux. On Windows, use WSL and install tmux inside WSL.
-- This skill is gated to `darwin`/`linux` and requires `tmux` on PATH.
-
-## Orchestrating Coding Agents (Codex, Claude Code)
-
-tmux excels at running multiple coding agents in parallel:
-
-```bash
-SOCKET="${TMPDIR:-/tmp}/codex-army.sock"
-
-# Create multiple sessions
-for i in 1 2 3 4 5; do
-  tmux -S "$SOCKET" new-session -d -s "agent-$i"
-done
-
-# Launch agents in different workdirs
-tmux -S "$SOCKET" send-keys -t agent-1 "cd /tmp/project1 && codex --yolo 'Fix bug X'" Enter
-tmux -S "$SOCKET" send-keys -t agent-2 "cd /tmp/project2 && codex --yolo 'Fix bug Y'" Enter
-
-# Poll for completion (check if prompt returned)
-for sess in agent-1 agent-2; do
-  if tmux -S "$SOCKET" capture-pane -p -t "$sess" -S -3 | grep -q "❯"; then
-    echo "$sess: DONE"
-  else
-    echo "$sess: Running..."
-  fi
-done
-
-# Get full output from completed session
-tmux -S "$SOCKET" capture-pane -p -t agent-1 -S -500
-```
-
-**Tips:**
-- Use separate git worktrees for parallel fixes (no branch conflicts)
-- `pnpm install` first before running codex in fresh clones
-- Check for shell prompt (`❯` or `$`) to detect completion
-- Codex needs `--yolo` or `--full-auto` for non-interactive fixes
-
-## Cleanup
-
-- Kill a session: `tmux -S "$SOCKET" kill-session -t "$SESSION"`.
-- Kill all sessions on a socket: `tmux -S "$SOCKET" list-sessions -F '#{session_name}' | xargs -r -n1 tmux -S "$SOCKET" kill-session -t`.
-- Remove everything on the private socket: `tmux -S "$SOCKET" kill-server`.
-
-## Helper: wait-for-text.sh
-
-`{baseDir}/scripts/wait-for-text.sh` polls a pane for a regex (or fixed string) with a timeout.
-
-```bash
-{baseDir}/scripts/wait-for-text.sh -t session:0.0 -p 'pattern' [-F] [-T 20] [-i 0.5] [-l 2000]
-```
-
-- `-t`/`--target` pane target (required)
-- `-p`/`--pattern` regex to match (required); add `-F` for fixed string
-- `-T` timeout seconds (integer, default 15)
-- `-i` poll interval seconds (default 0.5)
-- `-l` history lines to search (integer, default 1000)
+If the action is missing or not one of the supported actions, return the exact error in **Failure modes**.
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this skill when you need a real TTY (interactive programs, REPLs, terminal UIs) and you want deterministic control and reproducible capture of output. It uses an isolated tmux socket so it does not interfere with any other tmux server.
 
 ## Inputs
 
-- Describe required inputs.
+A single line command.
+
+Parameters (by action):
+
+### start
+- `session=<name>` (optional, default: `openclaw`)
+- `shell=<command>` (optional, default: `$SHELL -l`)
+
+Example:
+- `/tmux start session=repl`
+
+### run
+- `session=<name>` (required)
+- `target=<session:window.pane>` (optional, default: `<session>:0.0`)
+- `cmd=<shell command>` (required)
+
+Example:
+- `/tmux run session=repl cmd=python3 -q`
+
+### capture
+- `target=<session:window.pane>` (required)
+- `lines=<n>` (optional, default: 200, max: 2000)
+
+Example:
+- `/tmux capture target=repl:0.0 lines=200`
+
+### stop
+- `session=<name>` (required)
+
+Example:
+- `/tmux stop session=repl`
+
+### status
+(no args)
 
 ## Outputs
 
-- Describe outputs and formats.
+Plain text.
+
+### Output A — Success
+TMUX_STATUS: OK
+SOCKET: <path>
+SESSION: <name or empty>
+DETAILS:
+- <one line per action result>
+
+### Output B — Error
+Output exactly one line starting with `ERROR:` (see Failure modes).
+
+## Deterministic workflow (must follow)
+
+### Tooling
+- `exec`
+
+### Global caps (hard limits)
+- Max sessions managed per run: **1**
+- Max capture lines: **2000**
+- Max command length for `run`: **500** characters
+- Exec timeout per tmux command: **20 seconds**
+
+### Boundary rules (privacy + safety)
+
+- Use an isolated socket only.
+- Never attach interactively (no `tmux attach`), only create/send/capture/list/kill.
+- Never run destructive shell commands via `run` if they contain (case-insensitive substring match):
+  - `rm -rf`, `mkfs`, `:(){`, `dd if=`
+- Never run commands that attempt privilege escalation: `sudo`.
+
+### Step 1 — Compute socket path
+Set:
+- `SOCKET_DIR=${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}`
+- `SOCKET=$SOCKET_DIR/clawdbot.sock`
+
+### Step 2 — Implement each action
+
+#### start
+Run (single exec command):
+```bash
+SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}" && mkdir -p "$SOCKET_DIR" && SOCKET="$SOCKET_DIR/clawdbot.sock" && tmux -S "$SOCKET" has-session -t "SESSION" 2>/dev/null || tmux -S "$SOCKET" new-session -d -s "SESSION" -n shell
+```
+
+#### status
+Run:
+```bash
+SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}" && SOCKET="$SOCKET_DIR/clawdbot.sock" && tmux -S "$SOCKET" list-sessions -F '#{session_name}'
+```
+
+#### run
+Before executing, enforce command caps/denylist.
+
+Run:
+```bash
+SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}" && SOCKET="$SOCKET_DIR/clawdbot.sock" && tmux -S "$SOCKET" send-keys -t "TARGET" -l -- "CMD" && tmux -S "$SOCKET" send-keys -t "TARGET" Enter
+```
+
+#### capture
+Run:
+```bash
+SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}" && SOCKET="$SOCKET_DIR/clawdbot.sock" && tmux -S "$SOCKET" capture-pane -p -J -t "TARGET" -S -LINES
+```
+
+#### stop
+Run:
+```bash
+SOCKET_DIR="${CLAWDBOT_TMUX_SOCKET_DIR:-${TMPDIR:-/tmp}/clawdbot-tmux-sockets}" && SOCKET="$SOCKET_DIR/clawdbot.sock" && tmux -S "$SOCKET" kill-session -t "SESSION"
+```
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+Return exactly one of these lines and nothing else:
+
+- Missing/invalid action:
+  - `ERROR: invalid_action. Use: /tmux start|run|capture|stop|status`
+
+- tmux not installed:
+  - `ERROR: tmux_missing. Install tmux and retry.`
+
+- Session/target missing:
+  - `ERROR: missing_required_args. Provide required session/target/cmd fields.`
+
+- Command denied:
+  - `ERROR: command_denied. Refusing to run destructive or privileged commands.`
+
+- tmux command failed:
+  - `ERROR: tmux_failed. tmux returned non-zero.`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/tmux <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): invalid action**
+   - Run: `/tmux`
+   - Expected output (exact): `ERROR: invalid_action. Use: /tmux start|run|capture|stop|status`
 
-2. **Negative case: invalid input**
-   - Run: `/tmux <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: start creates session deterministically**
+   - Run: `/tmux start session=test-sess`
+   - Expected: output contains `TMUX_STATUS: OK` and `SESSION: test-sess`.
 
-3. **Structural validator**
+3. **Behavioral: run sends keys and capture returns output**
+   - Run: `/tmux run session=test-sess target=test-sess:0.0 cmd=echo hello`
+   - Then: `/tmux capture target=test-sess:0.0 lines=50`
+   - Expected: capture output contains `hello`.
+
+4. **Behavioral (negative): deny rm -rf**
+   - Run: `/tmux run session=test-sess cmd=rm -rf /`
+   - Expected output (exact): `ERROR: command_denied. Refusing to run destructive or privileged commands.`
+
+5. **Behavioral: stop kills session**
+   - Run: `/tmux stop session=test-sess`
+   - Expected: output contains `TMUX_STATUS: OK`.
+
+6. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/tmux/SKILL.md
 ```
 Expected: `PASS`.
 
-4. **No invented tools**
+7. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/tmux/SKILL.md

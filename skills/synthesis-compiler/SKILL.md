@@ -1,139 +1,144 @@
 ---
 name: synthesis-compiler
-description: Fourth and final stage of the /validate pipeline. Takes the evaluation report from critical-evaluator and compiles it into a single dense actionable validation report for Igor: a headline verdict, an evidence scorecard covering every claim, key findings grounded in the evaluation, and specific recommended actions. Called internally by the validate orchestrator; never triggered directly by the user.
+description: "Compile a critical-evaluator report into a final 5-section /validate decision memo (no tools, no new facts)."
 ---
 
-# Synthesis Compiler (internal)
+## Trigger contract
 
-## Trigger (internal)
-- `synthesis-compiler`
+This is an internal pipeline skill used by `/validate`.
 
-This sub-skill is **not** user-facing. It is invoked by the `/validate` orchestrator.
+Trigger it when (and only when) the input payload is a **critical-evaluator output** that contains:
+- a clearly marked assumption line/section (e.g. `ASSUMPTION:` or `ORIGINAL ASSUMPTION:`)
+- an `EVALUATION REPORT` with one entry per claim
 
-## Single responsibility
-Convert the structured output of `critical-evaluator` into a final, dense, actionable validation report Igor can read and act on immediately.
+Accepted invocation patterns:
+- Internal: the orchestrator calls the skill with the full critical-evaluator text as the message body.
+- Manual debug (operator only): `/synthesis-compiler <paste critical-evaluator output>`
 
-## Hard constraints
-- MUST NOT call any tools, APIs, KB endpoints, web search, or browser.
-- **Context-only:** the critical-evaluator output is the only allowed input. Do not add outside facts, examples, or interpretations that are not directly supported by the evaluation entries.
-- **Negative rejection (no guessing):** if required inputs are missing (e.g., no EVALUATION REPORT), do not try to reconstruct; output must follow the existing rules (e.g., ASSUMPTION NOT PROVIDED IN INPUT) and actions must point upstream to fix the missing data.
-- MUST NOT invent evidence, claims, or verdicts.
-- MUST NOT change the original assumption text.
-- MUST output exactly five sections in the exact order: ASSUMPTION, VERDICT, EVIDENCE SCORECARD, KEY FINDINGS, RECOMMENDED ACTIONS.
-- VERDICT must be exactly one of: VALIDATED, PARTIALLY VALIDATED, CONTESTED, UNVALIDATED.
-- EVIDENCE SCORECARD must include every claim from EVALUATION REPORT without omission.
-- KEY FINDINGS must be grounded in the evaluation report (no external knowledge).
-- RECOMMENDED ACTIONS must be specific to the assumption + evaluation gaps (no generic startup advice).
-- Output must be plain text with clear section headers.
+## Deterministic agent workflow
 
-## Input
-The complete plain-text output of `critical-evaluator`, containing:
-- EVALUATION REPORT (one entry per claim)
-- VALIDATION SUMMARY
+Tools: none. Single-pass text transform.
 
-Each claim entry includes:
-- Claim #
-- Claim (verbatim claim text)
-- Epistemic status
-- If TESTABLE/PARTIALLY TESTABLE: Verdict (SUPPORTED|CONTRADICTED|INSUFFICIENT EVIDENCE), Confidence (1–5), Reasoning note
-- If UNTESTABLE FROM KB: Evaluation status EVALUATION SKIPPED + Real-world evidence needed
+1) **Parse the assumption**
+   - If the input contains a line starting with `ASSUMPTION:` or `ORIGINAL ASSUMPTION:` → extract everything after the colon as the assumption string.
+   - Else set assumption string to `ASSUMPTION NOT PROVIDED IN INPUT`.
 
-## Required output (plain text; no markdown code blocks)
-Must contain the following five sections in this exact order.
+2) **Parse claim entries (ordered)**
+   - Split the input into claim blocks by `Claim #` markers (or equivalent numbered claim headers).
+   - For each claim block, extract:
+     - claim number (required)
+     - claim text (required)
+     - epistemic status (TESTABLE | PARTIALLY TESTABLE | UNTESTABLE FROM KB)
+     - verdict for testable claims (SUPPORTED | CONTRADICTED | INSUFFICIENT EVIDENCE)
+     - confidence (1–5) for testable claims
+     - reasoning note (verbatim-ish; do not expand)
 
-### 1) ASSUMPTION
-- Output the original assumption **exactly as stated by the user**.
-- The assumption must be extracted from the input context.
-  - Preferred: a line/section explicitly labeled `ORIGINAL ASSUMPTION` or `ASSUMPTION`.
-  - If missing: output `ASSUMPTION NOT PROVIDED IN INPUT` (verbatim) and ensure the first recommended action is to fix upstream so the original assumption is included.
+3) **Compute overall verdict (deterministic)**
+   - If any testable claim has verdict CONTRADICTED → overall verdict = `CONTESTED`.
+   - Else if majority of testable claims are SUPPORTED with confidence >= 4 → `VALIDATED`.
+   - Else if at least one claim is SUPPORTED and the rest are INSUFFICIENT EVIDENCE and/or UNTESTABLE FROM KB → `PARTIALLY VALIDATED`.
+   - Else → `UNVALIDATED`.
 
-### 2) VERDICT
-- Single bold headline verdict line with exactly one of:
-  - **VALIDATED**
-  - **PARTIALLY VALIDATED**
-  - **CONTESTED**
-  - **UNVALIDATED**
+4) **Emit final memo (exact 5 sections, exact order)**
+   Output must be plain text with these headers:
+   1. `ASSUMPTION`
+   2. `VERDICT`
+   3. `EVIDENCE SCORECARD`
+   4. `KEY FINDINGS`
+   5. `RECOMMENDED ACTIONS`
 
-Verdict selection rules (deterministic; derived only from the evaluation report):
-- If any TESTABLE/PARTIALLY TESTABLE claim has Verdict=CONTRADICTED → VERDICT = CONTESTED.
-- Else if majority of TESTABLE/PARTIALLY TESTABLE claims are SUPPORTED with Confidence ≥4 AND none contradicted → VERDICT = VALIDATED.
-- Else if at least one claim is SUPPORTED (any confidence) AND remaining are mix of INSUFFICIENT EVIDENCE and/or UNTESTABLE → VERDICT = PARTIALLY VALIDATED.
-- Else (majority INSUFFICIENT EVIDENCE, or no supported claims) → VERDICT = UNVALIDATED.
+5) **Key findings rules (3–5 bullets)**
+   - Every bullet must explicitly reference at least one claim number.
+   - No external facts, no new evidence, no invented citations.
 
-### 3) EVIDENCE SCORECARD
-A compact table or structured list that includes every claim.
-For each claim:
-- Claim #: <n>
-- Claim summary: one sentence summary of the claim (do not contradict or expand beyond the claim text)
-- Result:
-  - If TESTABLE/PARTIALLY TESTABLE: SUPPORTED | CONTRADICTED | INSUFFICIENT EVIDENCE
-  - If UNTESTABLE FROM KB: NEEDS REAL-WORLD TESTING
-- Confidence:
-  - If TESTABLE/PARTIALLY TESTABLE: the numeric confidence from input (1–5)
-  - If UNTESTABLE FROM KB: N/A
+6) **Recommended actions rules (3–5 bullets)**
+   - First action must address the highest-severity gap, in this priority order:
+     1) any CONTRADICTED claim
+     2) many INSUFFICIENT EVIDENCE claims
+     3) many UNTESTABLE FROM KB claims
+     4) otherwise: propose the smallest real-world test implied by the assumption
 
-### 4) KEY FINDINGS
-- Exactly 3–5 bullet points.
-- Each bullet MUST be grounded in the evaluation report’s reasoning and must not introduce external facts.
-- Each bullet should reference either:
-  - the cited source book mentioned in the evidence/explanation (if present in the reasoning), OR
-  - the real-world evidence note (for untestable claims), OR
-  - the specific evaluation outcome (e.g., “insufficient evidence because NO EVIDENCE FOUND”).
+## Boundary rules
 
-### 5) RECOMMENDED ACTIONS
-- Exactly 3–5 bullet points.
-- Must be concrete and specific to the assumption and the highest-priority gap.
-Priority rules:
-1) If any claim is CONTRADICTED, the first action must address that contradiction directly (e.g., revisit the claim framing, run a targeted customer interview/test, or adjust the assumption).
-2) Else if the biggest issue is INSUFFICIENT EVIDENCE (e.g., many claims with NO EVIDENCE FOUND / SOURCE FETCH FAILED), the first action must address evidence gaps (e.g., improve query specificity upstream, rerun extraction, or expand KB sources if that is part of the system).
-3) Else if all evaluated claims are SUPPORTED with high confidence, the first action must be a forward step appropriate to the assumption (e.g., design the smallest test/MVP or a specific customer interview script) — but it must remain specific, not generic.
-4) If any claims are UNTESTABLE FROM KB, include at least one action to collect the real-world evidence specified (e.g., pricing test, interviews with specified segment, pilot).
-
-## Compilation procedure
-1) Parse EVALUATION REPORT into an ordered list of claim entries.
-2) Extract and freeze (verbatim) the assumption text from the input context (if present).
-3) Compute verdict counts and apply VERDICT selection rules.
-4) Create EVIDENCE SCORECARD (every claim included).
-5) Write 3–5 KEY FINDINGS grounded strictly in the evaluation entries.
-6) Write 3–5 RECOMMENDED ACTIONS following priority rules.
-7) Output the five sections in the required order.
+- Must not call tools.
+- Must not add facts, examples, citations, or reasoning beyond what appears in the critical-evaluator input.
+- Must not change the assumption wording (if provided).
+- Must include every claim in the Evidence Scorecard (no omissions).
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this skill as the final formatting and decision layer of `/validate`: it turns a structured evaluation report into a single memo Igor can act on immediately.
 
 ## Inputs
 
-- Describe required inputs.
+A single plain-text blob: the full output of `critical-evaluator`.
+
+Required fields inside that blob:
+- an assumption line/section (`ASSUMPTION:` or `ORIGINAL ASSUMPTION:`) OR it will be treated as missing
+- an evaluation report with claim entries that include verdict/confidence for testable claims
 
 ## Outputs
 
-- Describe outputs and formats.
+Plain text memo with exactly five sections in order:
+
+ASSUMPTION
+<one line>
+
+VERDICT
+**<VALIDATED|PARTIALLY VALIDATED|CONTESTED|UNVALIDATED>**
+
+EVIDENCE SCORECARD
+- Claim #n: <claim text>
+  - Status: <SUPPORTED|CONTRADICTED|INSUFFICIENT EVIDENCE|NEEDS REAL-WORLD TESTING>
+  - Confidence: <1–5|N/A>
+
+KEY FINDINGS
+- <bullet>
+
+RECOMMENDED ACTIONS
+- <bullet>
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+- If the input does not contain any parseable claims, return exactly:
+  - `ERROR: no claims found in input. Provide full critical-evaluator output.`
+
+- If the input contains claims but no verdicts for testable claims, return exactly:
+  - `ERROR: missing verdict/confidence in claim entries. Re-run critical-evaluator.`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
-- `exec`
+- (none)
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/synthesis-compiler <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral: happy path (mixed claim set)**
+   - Run: `/synthesis-compiler <critical-evaluator-output>`
+   - Input fixture: 3 claims where verdicts are SUPPORTED(4), INSUFFICIENT EVIDENCE(3), UNTESTABLE FROM KB, and an `ASSUMPTION:` line.
+   - Expected: output contains the 5 section headers in order (ASSUMPTION/VERDICT/EVIDENCE SCORECARD/KEY FINDINGS/RECOMMENDED ACTIONS); VERDICT is `**PARTIALLY VALIDATED**`; all 3 claims appear in EVIDENCE SCORECARD.
 
-2. **Negative case: invalid input**
-   - Run: `/synthesis-compiler <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: contradiction forces CONTESTED**
+   - Run: `/synthesis-compiler <critical-evaluator-output-with-contradicted-claim>`
+   - Expected: VERDICT is exactly `**CONTESTED**`.
 
-3. **Structural validator**
+3. **Behavioral: missing assumption string**
+   - Run: `/synthesis-compiler <critical-evaluator-output-without-assumption-line>`
+   - Expected: ASSUMPTION section contains exactly `ASSUMPTION NOT PROVIDED IN INPUT`.
+
+4. **Negative: no claims found**
+   - Run: `/synthesis-compiler this is not an evaluation report`
+   - Expected: returns exactly `ERROR: no claims found in input. Provide full critical-evaluator output.`
+
+5. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/synthesis-compiler/SKILL.md
+  /Users/igorsilva/clawd/skills/synthesis-compiler/SKILL.md
+```
+Expected: `PASS`.
+
+6. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/synthesis-compiler/SKILL.md
 ```
 Expected: `PASS`.

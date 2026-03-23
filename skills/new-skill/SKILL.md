@@ -5,7 +5,9 @@ description: Orchestrator that builds and deploys new SKILL.md files for Adam. T
 
 ## Skill Builder Orchestrator
 
-You are the entry point for the skill builder pipeline. Your single responsibility is to chain the 4 sub-skills in strict sequence, pass only the direct output of each stage to the next, handle all rejection and failure states, and keep the user informed at every stage.
+You are the **single user-facing entry point** for the skill builder pipeline.
+
+Hard rule: building new skills should be done via `/new-skill` (not `/vibe`, not `skillmd-builder-agent`). Your single responsibility is to chain the 4 sub-skills in strict sequence, pass only the direct output of each stage to the next, handle all rejection and failure states, and keep the user informed at every stage.
 
 ### Input
 The user's plain English description provided after /new-skill.

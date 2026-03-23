@@ -1,179 +1,235 @@
 ---
 name: skill-designer
-description: Second stage of the skill builder pipeline. Takes a completed intake schema and maps it to exact technical commands using Adam's stack. Rejects schemas that require tools or capabilities not supported by Adam's environment. Used internally by the new-skill orchestrator.
+description: "Pipeline stage 2: convert an INTAKE_STATUS: COMPLETE schema into a deterministic blueprint of allowed OpenClaw tool calls (or REJECT if the requested tools/capabilities are unsupported)."
 ---
 
-## Skill Designer
+# skill-designer (internal)
 
-You are the second stage in a skill builder pipeline. Your single responsibility is to take a completed intake schema and produce a technical blueprint using only Adam's supported stack. You do not write SKILL.md files or deploy anything.
+## Trigger contract
 
-### Input
-The completed schema from skill-intake with INTAKE_STATUS: COMPLETE.
+This is stage 2 of the skill builder pipeline.
 
-### Adam's supported stack
-You may only use these tools. Reject anything outside this list:
+Trigger only when the input contains a completed intake schema with:
+- `INTAKE_STATUS: COMPLETE`
+- `SKILL_NAME:`
+- `TRIGGER:`
+- `PURPOSE:`
+- `MODE:`
+- `TOOLS_NEEDED:`
+- `INPUT:`
+- `OUTPUT_FORMAT:`
+- `OUTPUT_LENGTH:`
+- `STEPS:` (numbered list)
 
-KB SEARCH:
-curl -s -X POST http://127.0.0.1:5055/api/search \
-  -H 'Content-Type: application/json' \
-  -d '{"query":"QUERY","type":"text","limit":6,"search_sources":true}'
-
-FETCH SOURCE:
-curl -s 'http://127.0.0.1:5055/api/sources/SOURCE_ID'
-
-DUCKDUCKGO:
-/opt/anaconda3/bin/python3 -c "
-from duckduckgo_search import DDGS
-results = DDGS().text('QUERY', max_results=8)
-for r in results:
-    print(r['title']); print(r['href']); print(r['body'][:300]); print('---')
-"
-
-BRAVE SEARCH (preferred over DuckDuckGo, no rate limits, requires API key):
-curl -s "https://api.search.brave.com/res/v1/web/search?q=QUERY_URL_ENCODED&count=5" \
-  -H "Accept: application/json" \
-  -H "X-Subscription-Token: BSATauqhG5V6hBQaS2y0_SSNf8i1fVe" | /opt/anaconda3/bin/python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-for r in data.get('web', {}).get('results', []):
-    print(r['title'])
-    print(r['url'])
-    print(r.get('description', '')[:200])
-    print('---')
-"
-
-Note: QUERY_URL_ENCODED = query with spaces replaced by + signs.
-
-WEB SCRAPING:
-curl -sL URL | python3 -c "
-import sys, re
-html = sys.stdin.read()
-text = re.sub(r'<[^>]+>', ' ', html)
-text = re.sub(r'\s+', ' ', text).strip()
-print(text[:3000])
-"
-
-
-PLAYWRIGHT (JavaScript-rendered pages, modern sites, anti-bot bypass):
-/opt/anaconda3/bin/python3 -c "
-from playwright.sync_api import sync_playwright
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True)
-    page = browser.new_page()
-    page.goto('URL')
-    content = page.content()
-    browser.close()
-    import re
-    text = re.sub(r'<[^>]+>', ' ', content)
-    text = re.sub(r'\s+', ' ', text).strip()
-    print(text[:5000])
-"
-
-FILESYSTEM:
-bash commands with full paths only
-
-### Output State 1 — Rejected
-If any required step cannot be implemented with the supported stack:
-
-DESIGN_STATUS: REJECTED
-REASON: [specific explanation of which tool or step is not supported]
-
-### Output State 2 — Complete
-If all steps can be implemented:
-
-DESIGN_STATUS: COMPLETE
-BLUEPRINT FOR: [skill name]
-MODE: [copied from intake: factual|creative|automation|mixed]
-HALLUCINATION_GUARDRAILS: [on|off]  (on when MODE=factual)
-
-STEP 1:
-TOOL: [which tool from supported stack]
-COMMAND: [exact runnable command]
-OUTPUT USED FOR: [what the next step needs from this]
-
-STEP 2:
-TOOL: [which tool from supported stack]
-COMMAND: [exact runnable command]
-OUTPUT USED FOR: [what the next step needs from this]
-
-SYNTHESIS: [how to combine all step outputs]
-OUTPUT INSTRUCTION: [exactly what to write and how]
-
-### Rules
-- Only use tools from the supported stack
-- Never hallucinate endpoints, libraries, or commands
-- Every command must be exact and immediately runnable
-- Never write SKILL.md content — that is the writer's job
-- If one step is unsupported, reject the entire blueprint
-- Always carry through MODE from intake.
-- Set `HALLUCINATION_GUARDRAILS: on` when MODE=factual (and `off` otherwise).
-
-PDF EXTRACTION:
-/opt/anaconda3/bin/python3 -c "
-from pdfminer.high_level import extract_text
-text = extract_text('PATH_TO_PDF')
-print(text[:5000])
-"
-
-DOCX EXTRACTION:
-/opt/anaconda3/bin/python3 -c "
-import docx
-doc = docx.Document('PATH_TO_DOCX')
-text = '\n'.join([p.text for p in doc.paragraphs])
-print(text[:5000])
-"
-
-PDF EXTRACTION:
-/opt/anaconda3/bin/python3 -c "
-from pdfminer.high_level import extract_text
-text = extract_text('PATH_TO_PDF')
-print(text[:5000])
-"
-
-DOCX EXTRACTION:
-/opt/anaconda3/bin/python3 -c "
-import docx
-doc = docx.Document('PATH_TO_DOCX')
-text = '\n'.join([p.text for p in doc.paragraphs])
-print(text[:5000])
-"
+If `INTAKE_STATUS` is missing or not `COMPLETE`, reject (see Failure modes).
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this stage to turn a requirements schema into a deterministic, validator-friendly technical blueprint that downstream stages can convert into an OpenClaw `SKILL.md`. This stage chooses a minimal tool plan, enforces tool allowlists, and rejects requests that would require unsupported capabilities.
+
+This stage does not browse, does not run commands, and does not write files.
 
 ## Inputs
 
-- Describe required inputs.
+A single plain-text intake schema produced by `skill-intake`.
+
+Minimum required fields:
+- `INTAKE_STATUS: COMPLETE`
+- `SKILL_NAME:` (kebab-case)
+- `MODE:` (factual|creative|automation|mixed)
+- `TOOLS_NEEDED:` (comma-separated)
+- `STEPS:` with 3–10 steps
 
 ## Outputs
 
-- Describe outputs and formats.
+Exactly one of these envelopes (and nothing else):
 
-## Failure modes
+### Output A — Rejected
+DESIGN_STATUS: REJECTED
+REASON: <one-line reason>
 
-- List hard blockers and expected exact error strings when applicable.
+### Output B — Complete
+DESIGN_STATUS: COMPLETE
+BLUEPRINT FOR: <skill-name>
+MODE: <factual|creative|automation|mixed>
+HALLUCINATION_GUARDRAILS: <on|off>
 
-## Toolset
+Then a numbered series of STEP blocks:
 
+STEP 1:
+TOOL: <one allowed tool>
+COMMAND: <exact OpenClaw tool-call line>
+OUTPUT USED FOR: <one sentence>
+
+...
+
+SYNTHESIS:
+<2–6 lines describing how to combine step outputs into the final result>
+
+OUTPUT INSTRUCTION:
+<the exact output headings/format the final skill must emit>
+
+## Deterministic workflow (must follow)
+
+Tools used: none.
+
+### Allowed tool vocabulary (for blueprint TOOL fields)
+Only these tool names are allowed in blueprint steps:
 - `read`
 - `write`
 - `edit`
 - `exec`
+- `web_fetch`
+- `web_search`
+- `cron`
+
+If the intake requests anything outside this allowlist, reject.
+
+### Global caps (hard limits)
+- Max blueprint steps: **12**
+- Max commands per step: **1**
+- Max command length: **500** characters
+
+### Step 1 — Parse and validate intake
+1) Confirm `INTAKE_STATUS: COMPLETE`.
+2) Extract required fields.
+3) Validate `SKILL_NAME` matches: `^[a-z0-9]+(-[a-z0-9]+)*$`.
+4) Parse `TOOLS_NEEDED:` into a set.
+5) If any requested tool is not in Allowed tool vocabulary and not exactly `none` → reject.
+
+### Step 2 — Set hallucination guardrails
+- If `MODE: factual` → `HALLUCINATION_GUARDRAILS: on`
+- Else → `HALLUCINATION_GUARDRAILS: off`
+
+### Step 3 — Map requirements to a blueprint plan
+Create a minimal plan consistent with `TOOLS_NEEDED` and the intake’s INPUT/OUTPUT requirements.
+
+Deterministic mapping rules:
+
+1) If `TOOLS_NEEDED` contains `web_fetch`:
+- Add a step with:
+  - `TOOL: web_fetch`
+  - `COMMAND:` must include the literal arguments `extractMode=` and `maxChars=`.
+
+2) If `TOOLS_NEEDED` contains `web_search`:
+- Add a step with:
+  - `TOOL: web_search`
+  - `COMMAND:` must include `query=` and `count=`.
+
+3) If `TOOLS_NEEDED` contains `read`:
+- Add a step with:
+  - `TOOL: read`
+  - `COMMAND:` must include `path=`.
+
+4) If `TOOLS_NEEDED` contains `write` or `edit`:
+- Add a step with:
+  - `TOOL: write` or `edit`
+  - `COMMAND:` must include `path=`.
+
+5) If `TOOLS_NEEDED` contains `exec`:
+- Add a step with:
+  - `TOOL: exec`
+  - `COMMAND:` must include `command=` and either `timeout=` or `yieldMs=`.
+
+6) If `TOOLS_NEEDED` is `none`:
+- Do not emit any TOOL steps; instead emit one step:
+  - `TOOL: (none)` is not allowed → therefore use:
+  - A single step with `TOOL: read` is also not allowed unless requested.
+- In this case, emit exactly one STEP:
+  - `TOOL: exec`
+  - `COMMAND: command="true" timeout=1`
+  - and set `OUTPUT USED FOR:` to `No external tools required; continue with pure text transformation.`
+
+### Step 4 — Enforce command safety constraints
+Reject if any blueprint COMMAND contains (case-insensitive substring match):
+- `X-Subscription-Token:`
+- `Authorization: Bearer`
+- `api_key` or `api key`
+- `password`
+
+Reject if any `exec` COMMAND contains destructive patterns:
+- `rm -rf`
+- `mkfs`
+- `sudo`
+
+### Step 5 — Output synthesis + instruction
+- `SYNTHESIS:` must describe combining tool outputs without introducing new facts.
+- `OUTPUT INSTRUCTION:` must restate the final output format required by intake (headings/JSON/etc.) and any no-guessing constraints.
+
+## Failure modes
+
+Reject with Output A and one of these exact REASON strings:
+
+- Not a complete intake:
+  - `invalid_intake. Expected INTAKE_STATUS: COMPLETE.`
+
+- Unsupported tool requested:
+  - `unsupported_tools. Only read/write/edit/exec/web_fetch/web_search/cron are allowed.`
+
+- Invalid skill name:
+  - `invalid_skill_name. Expected kebab-case SKILL_NAME.`
+
+- Unsafe or secret-bearing command:
+  - `unsafe_command. Refusing to emit commands that include secrets or destructive operations.`
+
+## Boundary rules (privacy + safety)
+
+- Do not run tools; emit a blueprint only.
+- Do not include secrets/tokens in any command.
+- Reject destructive or privilege-escalating commands.
+- Keep the blueprint minimal (no extra steps not implied by intake).
+
+## Toolset
+
+- (none)
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/skill-designer <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): rejects non-complete intake**
+   - Run: `/skill-designer INTAKE_STATUS: CLARIFICATION_NEEDED`
+   - Expected output (exact first line): `DESIGN_STATUS: REJECTED`
+   - Expected `REASON:` is exactly: `invalid_intake. Expected INTAKE_STATUS: COMPLETE.`
 
-2. **Negative case: invalid input**
-   - Run: `/skill-designer <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral (negative): invalid tool request is rejected**
+   - Run: `/skill-designer <intake with TOOLS_NEEDED: sessions_send>`
+   - Expected output contains:
+     - `DESIGN_STATUS: REJECTED`
+     - `REASON: unsupported_tools. Only read/write/edit/exec/web_fetch/web_search/cron are allowed.`
 
-3. **Structural validator**
+3. **Behavioral: factual mode forces guardrails on**
+   - Run: `/skill-designer <intake with MODE: factual and TOOLS_NEEDED: web_fetch>`
+   - Expected output contains the exact line:
+     - `HALLUCINATION_GUARDRAILS: on`
+
+4. **Behavioral: non-factual mode forces guardrails off**
+   - Run: `/skill-designer <intake with MODE: creative and TOOLS_NEEDED: none>`
+   - Expected output contains the exact line:
+     - `HALLUCINATION_GUARDRAILS: off`
+
+5. **Behavioral (negative): rejects secret-bearing command emission**
+   - Run: `/skill-designer <intake that would cause designer to include Authorization or X-Subscription-Token in a COMMAND>`
+   - Expected:
+     - `DESIGN_STATUS: REJECTED`
+     - `REASON: unsafe_command. Refusing to emit commands that include secrets or destructive operations.`
+
+6. **Behavioral: blueprint contains STEP blocks and synthesis**
+   - Run: `/skill-designer <valid intake with TOOLS_NEEDED: web_search,web_fetch>`
+   - Expected output contains:
+     - `DESIGN_STATUS: COMPLETE`
+     - At least `STEP 1:` and `STEP 2:` blocks
+     - `SYNTHESIS:`
+     - `OUTPUT INSTRUCTION:`
+
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/skill-designer/SKILL.md
+  /Users/igorsilva/clawd/skills/skill-designer/SKILL.md
+```
+Expected: `PASS`.
+
+8. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/skill-designer/SKILL.md
 ```
 Expected: `PASS`.

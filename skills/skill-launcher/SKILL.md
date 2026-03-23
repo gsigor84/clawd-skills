@@ -1,101 +1,184 @@
 ---
 name: skill-launcher
-description: Final stage of the Vibe Canvas pipeline. Called internally by the vibe orchestrator (trigger phrase: skill-launcher) to verify the deployed skill file exists, restart the clawdbot gateway automatically, confirm the gateway is healthy, and then deliver a warm celebratory completion message with the new slash command, usage examples, and a tools-installed summary.
+description: "Pipeline stage 8: validate deployed skill path, restart the OpenClaw gateway safely, verify health, and output a single final user-facing message (or exact error)."
 ---
 
-## Skill Launcher (Vibe Canvas — Final Stage)
+# skill-launcher (internal)
 
-You are the final stage in the **/vibe** pipeline. Your single responsibility is to take the deployment confirmation from **skill-deployer**, make the new skill immediately usable by restarting the gateway, verify everything is healthy, and then send a friendly celebration message to the user.
+## Trigger contract
 
-### Input
-The deployment confirmation text from skill-deployer. It includes:
-- SKILL NAME
-- TRIGGER (slash command)
-- PATH (where the SKILL.md was saved)
+This is the final stage of the `/vibe` pipeline.
 
-### Hard constraints
-- Always verify the skill file exists **before** restarting the gateway.
-- Always restart the gateway so the user does not have to do anything.
-- Always verify the gateway is healthy after restart.
-- If anything fails, respond with a friendly plain-English message.
-- Completion message must be warm, enthusiastic, and contain (in this exact order):
-  1) celebratory opening line
-  2) the slash command prominently
-  3) 2–3 usage examples with realistic inputs
-  4) one-sentence plain-English description of what the skill does
-  5) tools installed list (or “no new tools were needed”)
-  6) friendly closing line
-- Never use technical jargon in the completion message.
+Trigger only when the input is the complete output from `skill-deployer` and contains:
+- `DEPLOY_STATUS: COMPLETE`
+- `PATH:` pointing to `/Users/igorsilva/clawd/skills/<skill-name>/SKILL.md`
+- `TRIGGER:` (slash command)
 
-### Steps (must run in this exact order)
-
-#### Step 1 — Verify the skill file exists
-Extract the SKILL NAME from the deployment confirmation and run:
-```bash
-ls ~/clawd/skills/SKILL_NAME/SKILL.md
-```
-- If the file does not exist: abort and tell the user you couldn’t find the skill file and they should try again.
-
-#### Step 2 — Restart the clawdbot gateway
-Run exactly:
-```bash
-pkill -f clawdbot-gateway && sleep 3 && clawdbot gateway start
-```
-Then wait for the gateway to come back up.
-
-#### Step 3 — Verify gateway health (15 second limit)
-Verify by running:
-```bash
-clawdbot health
-```
-- If the gateway does not become healthy within **15 seconds**, tell the user it couldn’t restart and provide this manual command to run:
-  - `pkill -f clawdbot-gateway && sleep 2 && clawdbot gateway start`
-
-#### Step 4 — Deliver completion message
-Build the final user message using:
-- The TRIGGER from the deployment confirmation.
-- A one-sentence description of what the skill does (plain English for non-technical users).
-- The list of tools installed during this session if present in the provided context; otherwise say **“no new tools were needed.”**
-
-### Output
-Output only the final user-facing message (or a friendly failure message). It must be suitable for a non-technical user to read directly.
+If `DEPLOY_STATUS` is missing or not `COMPLETE`, fail with the exact error in **Failure modes**.
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this stage to make a newly deployed skill available immediately by restarting the gateway and verifying it is healthy, then emitting a single final user-facing message.
+
+This stage must be deterministic and safe-by-default: it only touches the gateway process and reads the deployed skill file path.
 
 ## Inputs
 
-- Describe required inputs.
+A single plain-text deployment confirmation block from `skill-deployer`.
+
+Example (minimum):
+
+DEPLOY_STATUS: COMPLETE
+PATH: /Users/igorsilva/clawd/skills/example-skill/SKILL.md
+TRIGGER: /example-skill
+MESSAGE: deployed
 
 ## Outputs
 
-- Describe outputs and formats.
+Exactly one of the following:
+
+### Output A — Success
+A plain-text completion message (multi-line allowed) that includes, in this exact order:
+1) `SKILL READY`
+2) `TRIGGER: <trigger>`
+3) `USAGE:` then exactly 2 example invocations
+4) `WHAT IT DOES:` one sentence
+
+### Output B — Failure (exact one-line error)
+Return exactly one of the `ERROR:` strings in **Failure modes**.
+
+## Deterministic workflow (must follow)
+
+### Tooling
+- `read` (confirm file exists and sanity-check frontmatter)
+- `exec` (restart gateway + health check)
+
+### Global caps (hard limits)
+- Max gateway restart wait: **15 seconds**
+- Max health retries: **3** (5 seconds apart)
+- No other process management commands allowed besides those listed below.
+
+### Boundary rules (privacy + safety)
+
+- Never run `pkill -f` or broad process-kill patterns.
+- Never modify the deployed SKILL.md.
+- Never print file contents.
+- Never run commands unrelated to gateway health.
+- If the deployed path does not match `/Users/igorsilva/clawd/skills/<name>/SKILL.md`, refuse.
+
+### Step 1 — Parse and validate deploy confirmation
+1) Require `DEPLOY_STATUS: COMPLETE`.
+2) Extract `PATH:` and `TRIGGER:`.
+3) Validate `PATH:` starts with `/Users/igorsilva/clawd/skills/` and ends with `/SKILL.md`.
+4) Read `PATH:` using `read`.
+   - If read fails → fail.
+5) Sanity-check the file begins with YAML frontmatter `---` and includes a `name:` line.
+   - If not → fail.
+
+### Step 2 — Restart gateway (safe command set)
+Run exactly one of the following command sequences via `exec`:
+
+Primary:
+```bash
+openclaw gateway restart
+```
+
+If restart is not available in this environment, fallback:
+```bash
+openclaw gateway stop && openclaw gateway start
+```
+
+Notes:
+- Do not use `pkill`.
+- Do not restart anything else.
+
+### Step 3 — Verify gateway health
+Check health using:
+```bash
+openclaw status
+```
+
+Deterministic retry policy:
+- Run `openclaw status` up to 3 times.
+- Sleep 5 seconds between attempts.
+- If all attempts fail to show a healthy gateway state, fail.
+
+### Step 4 — Emit final message
+Emit Output A with:
+- `TRIGGER:` exactly as provided.
+- USAGE examples:
+  1) `<TRIGGER> <example-input-1>`
+  2) `<TRIGGER> <example-input-2>`
+
+Example inputs must be generic placeholders that do not contain secrets.
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+Return exactly one of these lines and nothing else:
+
+- Invalid input:
+  - `ERROR: invalid_deploy_confirmation. Expected DEPLOY_STATUS: COMPLETE with PATH and TRIGGER.`
+
+- Skill file missing/unreadable:
+  - `ERROR: skill_file_missing. Deployed SKILL.md not found or unreadable.`
+
+- Skill file malformed:
+  - `ERROR: skill_file_malformed. Deployed SKILL.md failed frontmatter sanity check.`
+
+- Unsafe path:
+  - `ERROR: unsafe_path. Refusing to operate outside /Users/igorsilva/clawd/skills/.`
+
+- Gateway restart failed:
+  - `ERROR: gateway_restart_failed. Could not restart gateway.`
+
+- Gateway not healthy:
+  - `ERROR: gateway_unhealthy. Gateway did not become healthy after restart.`
 
 ## Toolset
 
 - `read`
-- `write`
-- `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/skill-launcher <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): rejects non-complete deploy input**
+   - Run: `/skill-launcher DEPLOY_STATUS: FAILED`
+   - Expected output (exact): `ERROR: invalid_deploy_confirmation. Expected DEPLOY_STATUS: COMPLETE with PATH and TRIGGER.`
 
-2. **Negative case: invalid input**
-   - Run: `/skill-launcher <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral (negative): unsafe path is refused**
+   - Run: `/skill-launcher DEPLOY_STATUS: COMPLETE\nPATH: /tmp/x\nTRIGGER: /x`
+   - Expected output (exact): `ERROR: unsafe_path. Refusing to operate outside /Users/igorsilva/clawd/skills/.`
 
-3. **Structural validator**
+3. **Behavioral (negative): missing skill file fails**
+   - Run: `/skill-launcher DEPLOY_STATUS: COMPLETE\nPATH: /Users/igorsilva/clawd/skills/does-not-exist/SKILL.md\nTRIGGER: /does-not-exist\nMESSAGE: deployed`
+   - Expected output (exact): `ERROR: skill_file_missing. Deployed SKILL.md not found or unreadable.`
+
+4. **Behavioral: success message ordering**
+   - Run: `/skill-launcher <valid deploy confirmation for an existing skill>`
+   - Expected: output begins with `SKILL READY` and contains lines in this order:
+     - `SKILL READY`
+     - `TRIGGER: ...`
+     - `USAGE:`
+     - `WHAT IT DOES:`
+
+5. **Behavioral: no broad process kill**
+   - Run: `/skill-launcher <valid deploy confirmation>`
+   - Expected: the restart step uses `openclaw gateway restart` (or `openclaw gateway stop && openclaw gateway start`) and never uses `pkill`.
+
+6. **Behavioral: gateway unhealthy fails with exact error**
+   - If `openclaw status` does not reach healthy state within retries, expected output (exact):
+     - `ERROR: gateway_unhealthy. Gateway did not become healthy after restart.`
+
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/skill-launcher/SKILL.md
+  /Users/igorsilva/clawd/skills/skill-launcher/SKILL.md
+```
+Expected: `PASS`.
+
+8. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/skill-launcher/SKILL.md
 ```
 Expected: `PASS`.

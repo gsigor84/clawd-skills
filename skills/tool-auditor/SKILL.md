@@ -1,164 +1,54 @@
 ---
 name: tool-auditor
-description: Second stage of the Vibe Canvas pipeline. Called internally by the vibe orchestrator (trigger phrase: tool-auditor) to take the INTENT DOCUMENT from intent-parser and verify—by running real checks—whether every required tool category is installed and available. Outputs a TOOL AUDIT REPORT with a verdict of ALL TOOLS READY, TOOLS MISSING, or AUDIT INCOMPLETE, and includes an INSTALL PLAN for any missing tools.
+description: "Stage 2 of /vibe. Given an INTENT DOCUMENT, run real deterministic checks (via exec) to classify required tool categories as READY|MISSING|UNKNOWN and emit a parseable TOOL AUDIT REPORT + INSTALL PLAN (no secrets)."
 ---
 
-## Tool Auditor (Vibe Canvas — Stage 2)
+# tool-auditor (internal)
 
-You are the second stage in the **/vibe** pipeline. Your single responsibility is to take an **INTENT DOCUMENT** from **intent-parser** and determine whether all required tools are installed and available on Adam's system.
+## Trigger contract
 
-### Hard constraints
-- **Always run real checks** (bash commands) to verify availability.
-- **Never mark a tool as READY** unless you verified it.
-- **Always provide install commands** for every MISSING tool.
-- Output must be **directly parseable** by the next stage (**tool-installer**) without extra interpretation.
+This is stage 2 of the `/vibe` pipeline.
 
-### Input
-The complete plain-text **INTENT DOCUMENT** produced by intent-parser, including:
-- SKILL NAME
-- TRIGGER
-- TOOLS LIKELY NEEDED (one or more categories from: web search, web scraping, knowledge base, file system, email, Reddit API, calendar, other)
-- WORKFLOW STEPS (used to infer “other”)
+Trigger only when the input contains an INTENT DOCUMENT with:
+- `SKILL NAME:`
+- `TRIGGER:`
+- `TOOLS LIKELY NEEDED:` (comma-separated categories)
 
-### Known installed stack (what to check)
-You must verify each requested category using commands.
+Allowed categories (case-insensitive):
+- `web search`
+- `web scraping`
+- `knowledge base`
+- `file system`
+- `email`
+- `reddit api`
+- `calendar`
+- `other`
 
-#### web search (Brave Search)
-Available if a simple Brave Search request succeeds.
-- Endpoint: https://api.search.brave.com/res/v1/web/search
-- Token: BSATauqhG5V6hBQaS2y0_SSNf8i1fVe
+If the document is missing required fields or includes unsupported categories, return the exact error in **Failure modes**.
 
-**Check command (run it):**
-```bash
-curl -s "https://api.search.brave.com/res/v1/web/search?q=test&count=1" \
-  -H "Accept: application/json" \
-  -H "X-Subscription-Token: BSATauqhG5V6hBQaS2y0_SSNf8i1fVe" | /opt/anaconda3/bin/python3 -c "import sys, json; d=json.load(sys.stdin); print('ok' if isinstance(d, dict) and 'web' in d else 'bad')"
-```
-- If output is `ok` → READY
-- Otherwise → UNKNOWN (do not assume missing; could be network)
+## Use
 
-#### web scraping
-Available if curl exists AND Playwright is importable (Chromium is used via Playwright).
+Use this stage to determine whether the system has the required capabilities to build the requested skill. It executes deterministic availability checks and produces an INSTALL PLAN for missing items.
 
-**Check commands (run both):**
-```bash
-command -v curl >/dev/null && echo ok || echo missing
-```
-```bash
-/opt/anaconda3/bin/python3 -c "from playwright.sync_api import sync_playwright; print('ok')"
-```
-- If both return ok → READY
-- If either fails → MISSING, and provide install command:
-  - For Playwright missing: `/opt/anaconda3/bin/python3 -m pip install playwright --break-system-packages`
-  - If Playwright installs but browsers are missing, include: `/opt/anaconda3/bin/python3 -m playwright install chromium`
-  - If curl missing: UNKNOWN (do not invent OS-level install commands)
+This stage must never embed or print secrets (API tokens). It should prefer local, non-network checks when possible.
 
-#### knowledge base (Open Notebook)
-Available if the local search endpoint responds.
+## Inputs
 
-**Check command (run it):**
-```bash
-curl -s -X POST http://127.0.0.1:5055/api/search \
-  -H 'Content-Type: application/json' \
-  -d '{"query":"test","type":"text","limit":1,"search_sources":false}' | /opt/anaconda3/bin/python3 -c "import sys, json; d=json.load(sys.stdin); print('ok' if isinstance(d, dict) and ('results' in d or 'data' in d) else 'bad')"
-```
-- `ok` → READY
-- otherwise → UNKNOWN
+One plain-text INTENT DOCUMENT produced by `intent-parser`.
 
-#### file system
-Available if bash is available.
+Minimum example:
 
-**Check command (run it):**
-```bash
-command -v bash >/dev/null && echo ok || echo missing
-```
-- `ok` → READY
-- `missing` → UNKNOWN
+INTENT DOCUMENT
+SKILL NAME: example
+TRIGGER: /example
+TOOLS LIKELY NEEDED: web scraping, file system
+WORKFLOW STEPS:
+1) ...
 
-#### email
-Email tooling is treated as Python package availability.
+## Outputs
 
-**Check command (run it):**
-```bash
-/opt/anaconda3/bin/python3 -c "import yagmail; print('ok')"
-```
-- `ok` → READY
-- ImportError → MISSING, install:
-  - `/opt/anaconda3/bin/python3 -m pip install yagmail --break-system-packages`
+A structured plain-text report with sections in this exact order:
 
-#### Reddit API
-Must be verified exactly like this:
-
-**Check command (run it):**
-```bash
-/opt/anaconda3/bin/python3 -c "import praw; print('ok')"
-```
-- `ok` → READY
-- ImportError → MISSING, install:
-  - `/opt/anaconda3/bin/python3 -m pip install praw --break-system-packages`
-
-#### calendar
-Calendar tooling is treated as Python package availability.
-
-**Check command (run it):**
-```bash
-/opt/anaconda3/bin/python3 -c "import gcsa; print('ok')"
-```
-- `ok` → READY
-- ImportError → MISSING, install:
-  - `/opt/anaconda3/bin/python3 -m pip install gcsa --break-system-packages`
-
-#### other
-When the intent document includes `other`, infer what specific tool might be needed from WORKFLOW STEPS, then try to verify it.
-
-Inference rules (plain, keyword-based):
-- If steps mention **Google Sheets** or **spreadsheets** → check `gspread`
-- If steps mention **Slack** → check `slack_sdk`
-- If steps mention **Notion** → check `notion_client`
-- If steps mention **Twitter/X** → check `tweepy`
-- If steps mention **PDF** → check `pypdf`
-- If steps mention **images** → check `PIL` (Pillow)
-- If you cannot infer a specific package → status UNKNOWN
-
-Verification:
-- For a chosen python package name `PKG_IMPORT`, run:
-```bash
-/opt/anaconda3/bin/python3 -c "import PKG_IMPORT; print('ok')"
-```
-- If ok → READY
-- If ImportError → MISSING and provide:
-  - `/opt/anaconda3/bin/python3 -m pip install PACKAGE --break-system-packages`
-
-### Output
-Produce a structured plain-text report with these sections in this order.
-
-#### Section 1: TOOL AUDIT REPORT
-Must include the original SKILL NAME and TRIGGER from the intent document.
-
-#### Section 2: AUDIT RESULTS
-One entry per tool category checked.
-Each entry must include:
-- Tool category name
-- STATUS: READY | MISSING | UNKNOWN
-- INSTALL COMMAND: only when STATUS is MISSING
-
-#### Section 3: VERDICT
-One of:
-- ALL TOOLS READY
-- TOOLS MISSING
-- AUDIT INCOMPLETE
-
-Rules:
-- If **any** tool is MISSING → VERDICT is TOOLS MISSING
-- Else if **any** tool is UNKNOWN → VERDICT is AUDIT INCOMPLETE
-- Else → ALL TOOLS READY
-
-#### Section 4: INSTALL PLAN
-Only include when VERDICT is TOOLS MISSING.
-- A numbered list of every install command needed.
-- After each command, include a plain-English explanation of what it enables (non-technical).
-
-### Exact output format
 TOOL AUDIT REPORT
 SKILL NAME: <from intent>
 TRIGGER: <from intent>
@@ -166,7 +56,8 @@ TRIGGER: <from intent>
 AUDIT RESULTS
 - TOOL: <category>
   STATUS: <READY|MISSING|UNKNOWN>
-  INSTALL COMMAND: <only if MISSING>
+  CHECK: <exact check command used>
+  INSTALL COMMAND: <present only if MISSING>
 
 VERDICT: <ALL TOOLS READY|TOOLS MISSING|AUDIT INCOMPLETE>
 
@@ -174,42 +65,190 @@ INSTALL PLAN
 1. <install command> — <plain-English explanation>
 2. ...
 
-## Use
+Rules:
+- Include INSTALL PLAN only when VERDICT is `TOOLS MISSING`.
+- Do not include any API tokens in CHECK or INSTALL commands.
 
-Describe what the skill does and when to use it.
+## Deterministic workflow (must follow)
 
-## Inputs
+### Tooling
+- `exec`
 
-- Describe required inputs.
+### Global caps (hard limits)
+- Max categories processed: **10**
+- Per-check timeout: **20 seconds**
+- Total exec calls: **12**
 
-## Outputs
+### Boundary rules (privacy + consent + disallowed)
 
-- Describe outputs and formats.
+- No installs are executed in this stage.
+- Do not print or embed tokens or secrets.
+- Do not run destructive commands.
+- For any check that would require a secret (e.g., Brave token), mark the tool as `UNKNOWN` unless a local, secret-free check exists.
+
+### Step 1 — Parse intent
+1) Extract `SKILL NAME`, `TRIGGER`, and `TOOLS LIKELY NEEDED`.
+2) Normalize categories to lowercase.
+3) If categories list is empty → fail.
+4) If any category is not in the allowed set → fail.
+
+### Step 2 — Run checks per category
+For each category, run the exact check below and set STATUS:
+
+#### web search
+Do not perform a live Brave request (would require a secret token). Instead:
+- Check whether `web_search` capability is available in this OpenClaw environment by verifying the tool name is present in this repository’s tooling assumptions is not possible here.
+- Therefore set:
+  - STATUS: `UNKNOWN`
+  - CHECK: `N/A (requires secret for live check)`
+  - INSTALL COMMAND: (none)
+
+#### web scraping
+Run:
+- `command -v curl >/dev/null && echo ok || echo missing`
+- `/opt/anaconda3/bin/python3 -c "from playwright.sync_api import sync_playwright; print('ok')"`
+
+STATUS rules:
+- If curl missing → `UNKNOWN` (do not invent OS install commands)
+- If playwright import fails → `MISSING`
+
+INSTALL COMMAND (if missing playwright):
+- `/opt/anaconda3/bin/python3 -m pip install playwright --break-system-packages`
+
+#### knowledge base
+Run:
+- `curl -s -m 3 -X POST http://127.0.0.1:5055/api/search -H 'Content-Type: application/json' -d '{"query":"test","type":"text","limit":1,"search_sources":false}' | /opt/anaconda3/bin/python3 -c "import sys,json; d=json.load(sys.stdin); print('ok' if isinstance(d, dict) and ('results' in d or 'data' in d) else 'bad')"`
+
+STATUS rules:
+- `ok` → READY
+- `bad` or curl error → UNKNOWN
+
+#### file system
+Run:
+- `command -v bash >/dev/null && echo ok || echo missing`
+
+STATUS rules:
+- `ok` → READY
+- else → UNKNOWN
+
+#### email
+Run:
+- `/opt/anaconda3/bin/python3 -c "import yagmail; print('ok')"`
+
+STATUS rules:
+- `ok` → READY
+- ImportError → MISSING
+
+INSTALL COMMAND:
+- `/opt/anaconda3/bin/python3 -m pip install yagmail --break-system-packages`
+
+#### reddit api
+Run:
+- `/opt/anaconda3/bin/python3 -c "import praw; print('ok')"`
+
+STATUS rules:
+- `ok` → READY
+- ImportError → MISSING
+
+INSTALL COMMAND:
+- `/opt/anaconda3/bin/python3 -m pip install praw --break-system-packages`
+
+#### calendar
+Run:
+- `/opt/anaconda3/bin/python3 -c "import gcsa; print('ok')"`
+
+STATUS rules:
+- `ok` → READY
+- ImportError → MISSING
+
+INSTALL COMMAND:
+- `/opt/anaconda3/bin/python3 -m pip install gcsa --break-system-packages`
+
+#### other
+Infer a python import to check based on WORKFLOW STEPS (case-insensitive keyword match):
+- contains `google sheets` or `spreadsheet` → import `gspread`
+- contains `slack` → import `slack_sdk`
+- contains `notion` → import `notion_client`
+- contains `twitter` or `x.com` → import `tweepy`
+- contains `pdf` → import `pypdf`
+- contains `image` or `png` or `jpg` → import `PIL`
+
+If no inference possible → STATUS: UNKNOWN.
+
+If inferred import is `PIL`, treat package name as `pillow` for install.
+
+Check command:
+- `/opt/anaconda3/bin/python3 -c "import <import_name>; print('ok')"`
+
+STATUS rules:
+- ok → READY
+- ImportError → MISSING
+
+INSTALL COMMAND (if MISSING):
+- `/opt/anaconda3/bin/python3 -m pip install <package_name> --break-system-packages`
+
+### Step 3 — Compute verdict
+- If any STATUS is MISSING → `VERDICT: TOOLS MISSING`
+- Else if any STATUS is UNKNOWN → `VERDICT: AUDIT INCOMPLETE`
+- Else → `VERDICT: ALL TOOLS READY`
+
+### Step 4 — Build INSTALL PLAN
+Only when VERDICT is TOOLS MISSING:
+- List each install command exactly once.
+- Add a plain-English explanation.
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+Return exactly one line and nothing else:
+
+- Missing required fields:
+  - `ERROR: invalid_intent_document. Expected SKILL NAME, TRIGGER, and TOOLS LIKELY NEEDED.`
+
+- Unsupported category:
+  - `ERROR: unsupported_tool_category. Allowed: web search, web scraping, knowledge base, file system, email, reddit api, calendar, other.`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/tool-auditor <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): missing intent fields**
+   - Run: `/tool-auditor hello`
+   - Expected output (exact): `ERROR: invalid_intent_document. Expected SKILL NAME, TRIGGER, and TOOLS LIKELY NEEDED.`
 
-2. **Negative case: invalid input**
-   - Run: `/tool-auditor <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral (negative): unsupported category rejected**
+   - Run: `/tool-auditor SKILL NAME: x\nTRIGGER: /x\nTOOLS LIKELY NEEDED: bluetooth`
+   - Expected output (exact): `ERROR: unsupported_tool_category. Allowed: web search, web scraping, knowledge base, file system, email, reddit api, calendar, other.`
 
-3. **Structural validator**
+3. **Behavioral: report sections and ordering**
+   - Run: `/tool-auditor <valid intent>`
+   - Expected: output contains, in order:
+     - `TOOL AUDIT REPORT`
+     - `AUDIT RESULTS`
+     - `VERDICT:`
+
+4. **Behavioral: MISSING tool produces INSTALL PLAN**
+   - Given an intent requiring `email` and yagmail import fails, expected:
+     - One AUDIT RESULTS entry with `STATUS: MISSING` and an INSTALL COMMAND.
+     - `VERDICT: TOOLS MISSING`
+     - `INSTALL PLAN` present.
+
+5. **Behavioral: UNKNOWN tool yields AUDIT INCOMPLETE**
+   - Given an intent requiring `web search`, expected:
+     - `STATUS: UNKNOWN` for web search
+     - `VERDICT: AUDIT INCOMPLETE`
+
+6. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/tool-auditor/SKILL.md
+  /Users/igorsilva/clawd/skills/tool-auditor/SKILL.md
+```
+Expected: `PASS`.
+
+7. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/tool-auditor/SKILL.md
 ```
 Expected: `PASS`.

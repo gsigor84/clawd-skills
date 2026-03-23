@@ -1,202 +1,236 @@
 ---
 name: tool-installer
-description: Third stage of the Vibe Canvas pipeline. Called internally by the vibe orchestrator (trigger phrase: tool-installer) to take the TOOL AUDIT REPORT from tool-auditor, explain any missing tools in plain English, wait for explicit user confirmation before making changes, install missing tools one by one using the exact commands from the INSTALL PLAN, verify each installation, and output an INSTALLATION COMPLETE message when all tools are ready.
+description: "Stage 3 of /vibe. Parse a TOOL AUDIT REPORT, request explicit approval, install missing tools using only the report’s INSTALL PLAN commands, verify, and emit a parseable result."
 ---
 
-## Tool Installer (Vibe Canvas — Stage 3)
+# tool-installer (internal)
 
-You are the third stage in the **/vibe** pipeline. Your single responsibility is to take a **TOOL AUDIT REPORT** from **tool-auditor**, ask the user for permission if anything is missing, and (only after explicit confirmation) install the missing tools and verify they worked.
+## Trigger contract
 
-### Hard constraints
-- **Never install anything without explicit user confirmation.**
-- **Always use the exact install commands** from the report’s INSTALL PLAN (never invent your own).
-- **Always verify** each installation after running it.
-- **Never use technical jargon** in user-facing messages.
-- All user-facing messages must be **warm, friendly, and plain English**.
-- Output must be **directly parseable** by the next stage (**skill-intake**) without extra interpretation.
+This is an internal stage in the `/vibe` pipeline.
 
-### Input
-The complete plain-text **TOOL AUDIT REPORT** produced by tool-auditor. It contains:
-- SKILL NAME
-- TRIGGER
-- AUDIT RESULTS (one entry per tool)
-- VERDICT (ALL TOOLS READY | TOOLS MISSING | AUDIT INCOMPLETE)
-- Optional INSTALL PLAN (numbered install commands with plain-English explanations)
+Trigger only when the input includes a plain-text `TOOL AUDIT REPORT` produced by `tool-auditor` and contains:
+- `SKILL NAME:`
+- `TRIGGER:`
+- `VERDICT:` with one of: `ALL TOOLS READY` | `TOOLS MISSING` | `AUDIT INCOMPLETE`
+- If `VERDICT: TOOLS MISSING`, an `INSTALL PLAN:` section with one or more numbered install commands.
 
-### Behavior
+This skill supports a two-turn flow:
+- Turn 1 (TOOLS MISSING): ask for confirmation and stop.
+- Turn 2: input contains the original report plus the user reply; if reply is YES → install; else cancel.
 
-#### 1) Read the VERDICT
-You must branch based on VERDICT:
+## Use
 
-**A) VERDICT: ALL TOOLS READY**
-- Do not install anything.
-- Output exactly one line (no extra lines):
-  - `ALL TOOLS READY: Everything needed is already installed. Continuing to build the skill.`
+Use this stage to safely install missing helper tools required to build a skill. It never invents install commands; it only runs commands explicitly listed in the upstream `INSTALL PLAN`, and only after explicit user approval.
 
-**B) VERDICT: AUDIT INCOMPLETE**
-- Do not install anything.
-- Output a short, friendly message telling the user some checks could not be completed and to try again.
-- Output must be a structured plain-text block:
+## Inputs
 
-AUDIT INCOMPLETE
-MESSAGE: I couldn’t confirm some tools right now. Please check your internet connection (or try again in a moment) and rerun the tool check. I didn’t install anything.
-NEXT: RETRY
+A single plain-text message containing:
 
-**C) VERDICT: TOOLS MISSING**
-- You must:
-  1) Present what will be installed in plain English.
-  2) Ask the user to confirm (yes/no).
-  3) Wait for the user’s reply.
+1) The full `TOOL AUDIT REPORT` from `tool-auditor`, and optionally
+2) A user reply appended anywhere in the message (for the second turn).
 
-### Confirmation flow (TOOLS MISSING)
+The user reply is interpreted as YES only if it contains (case-insensitive, whole-word match):
+- `yes` or `y`
 
-#### Step 1 — Build the confirmation message
-From the INSTALL PLAN, list each item you plan to install and what it does.
-- Reuse the plain-English explanation already provided in the INSTALL PLAN.
-- If an explanation is missing, write a simple one-sentence explanation without jargon.
+Any other reply (including empty/unclear) is treated as NO.
 
-Then ask:
-- “Is it ok to install these helper tools? Reply yes to continue or no to cancel.”
+## Outputs
 
-#### Step 2 — Wait for user response
-This skill must support a two-turn flow.
-- On the first run (TOOLS MISSING), output a confirmation request and stop.
-- On the second run, the input will include the user’s reply text along with the original TOOL AUDIT REPORT.
+Output must be a structured plain-text block in exactly one of these formats.
 
-You must interpret the reply:
-- Affirmative examples: `yes`, `y`, `ok`, `okay`, `sure`, `go ahead`, `do it`, `install`, `please do`
-- Negative examples: `no`, `n`, `nope`, `cancel`, `stop`, `don’t`, `do not`
-- If unclear, treat it as NO (safest) and do not install.
+### A) VERDICT: ALL TOOLS READY
+Exactly one line:
+- `ALL TOOLS READY: Everything needed is already installed. Continuing.`
 
-### Installation (only after YES)
+### B) VERDICT: AUDIT INCOMPLETE
+Exactly 3 lines:
+- `AUDIT INCOMPLETE`
+- `MESSAGE: I couldn’t confirm tool status. I didn’t install anything.`
+- `NEXT: RETRY`
 
-#### Step 3 — Run installs one by one
-- Execute each install command from INSTALL PLAN exactly as written, in order.
-- After each install, verify it worked using the same check commands tool-auditor would use.
-
-Verification commands (must match tool-auditor):
-- web search:
-  ```bash
-  curl -s "https://api.search.brave.com/res/v1/web/search?q=test&count=1" \
-    -H "Accept: application/json" \
-    -H "X-Subscription-Token: BSATauqhG5V6hBQaS2y0_SSNf8i1fVe" | /opt/anaconda3/bin/python3 -c "import sys, json; d=json.load(sys.stdin); print('ok' if isinstance(d, dict) and 'web' in d else 'bad')"
-  ```
-- web scraping (Playwright):
-  ```bash
-  /opt/anaconda3/bin/python3 -c "from playwright.sync_api import sync_playwright; print('ok')"
-  ```
-- knowledge base:
-  ```bash
-  curl -s -X POST http://127.0.0.1:5055/api/search \
-    -H 'Content-Type: application/json' \
-    -d '{"query":"test","type":"text","limit":1,"search_sources":false}' | /opt/anaconda3/bin/python3 -c "import sys, json; d=json.load(sys.stdin); print('ok' if isinstance(d, dict) and ('results' in d or 'data' in d) else 'bad')"
-  ```
-- file system (bash):
-  ```bash
-  command -v bash >/dev/null && echo ok || echo missing
-  ```
-- email (yagmail):
-  ```bash
-  /opt/anaconda3/bin/python3 -c "import yagmail; print('ok')"
-  ```
-- Reddit API (praw):
-  ```bash
-  /opt/anaconda3/bin/python3 -c "import praw; print('ok')"
-  ```
-- calendar (gcsa):
-  ```bash
-  /opt/anaconda3/bin/python3 -c "import gcsa; print('ok')"
-  ```
-- other:
-  - Infer the import name from the install command:
-    - If the command is `... pip install PACKAGE ...`, try importing a sensible module name:
-      - If PACKAGE contains a dash, replace `-` with `_` for the import check.
-      - If that fails, mark verification UNKNOWN.
-  - Verification command:
-    ```bash
-    /opt/anaconda3/bin/python3 -c "import IMPORT_NAME; print('ok')"
-    ```
-
-#### Step 4 — User updates
-After each successful installation, output a warm, plain-English line confirming success.
-If any installation fails or verification fails:
-- Tell the user in plain English that it didn’t work.
-- Say you are stopping and made no further changes.
-- Abort.
-
-### Output formats (must be parseable)
-
-#### Output when asking for confirmation (TOOLS MISSING, first turn)
-OUTPUT exactly this structure:
+### C) VERDICT: TOOLS MISSING (turn 1 → confirmation)
+Exactly this structure:
 
 INSTALL CONFIRMATION
 SKILL NAME: <from report>
 TRIGGER: <from report>
-MESSAGE: To build your skill, I need to install the helper tools listed below. I’ll only install them if you say yes.
 TOOLS TO INSTALL:
-1. <tool name or package> — <plain-English explanation>
+1. <item 1 name> — <explanation from report if present, else: "required helper tool">
 2. ...
-QUESTION: Is it ok to install these helper tools? Reply yes to continue or no to cancel.
+QUESTION: Approve installing these tools? Reply YES to proceed or NO to cancel.
 WAITING_FOR_CONFIRMATION: YES
 
-#### Output when user says NO (or unclear)
+### D) User says NO (or unclear)
+Exactly 3 lines:
+- `INSTALLATION CANCELLED`
+- `MESSAGE: No changes were made.`
+- `CHANGES_MADE: NO`
 
-INSTALLATION CANCELLED
-MESSAGE: No problem — I didn’t install anything. You can run this again anytime if you change your mind.
-CHANGES_MADE: NO
-
-#### Output when user says YES and all installs succeed
+### E) User says YES and all installs succeed
+Exactly this structure:
 
 INSTALLATION COMPLETE
 INSTALLED:
-- <tool/package 1>
-- <tool/package 2>
-MESSAGE: All set — the helper tools are installed and ready. Continuing to build your skill.
+- <item 1>
+- <item 2>
+MESSAGE: Tools installed and verified.
 CHANGES_MADE: YES
 
-#### Output when an install fails
+### F) Install fails
+Exactly this structure:
 
 INSTALLATION FAILED
-FAILED STEP: <which tool/package>
-MESSAGE: I couldn’t finish installing one of the helper tools, so I’ve stopped here. Nothing else will be installed.
+FAILED STEP: <item>
+REASON: <one-line reason>
 CHANGES_MADE: PARTIAL
 
-## Use
+## Deterministic workflow (must follow)
 
-Describe what the skill does and when to use it.
+### Tooling
+- `exec`
 
-## Inputs
+### Global caps (hard limits)
+- Max install steps: **10**
+- Max command length per step: **400** characters
+- Per-command timeout: **300** seconds
 
-- Describe required inputs.
+### Boundary rules (privacy + consent + disallowed)
 
-## Outputs
+Consent:
+- Never run installs unless the user explicitly replied YES.
 
-- Describe outputs and formats.
+Disallowed commands (hard reject; do not execute):
+- Any command containing `sudo`
+- Any command containing `rm -rf` or `mkfs`
+- Any command that pipes remote content into a shell, including patterns like `curl ... | sh`, `wget ... | bash`
+- Any command that edits shell profiles (`.bashrc`, `.zshrc`) or writes outside `/Users/igorsilva/clawd/` (this stage must not modify user dotfiles)
+
+Secrets:
+- Do not print, request, or embed API tokens.
+- If a verification command in the report contains an obvious token header (e.g., `X-Subscription-Token:`), do not execute it; treat verification as failed and stop with `INSTALLATION FAILED`.
+
+Network:
+- Allowed only as part of the exact install commands provided by the report.
+- Do not add extra network calls.
+
+### Step 1 — Parse the audit report
+1) Extract `SKILL NAME`, `TRIGGER`, and `VERDICT`.
+2) If `VERDICT` is missing or not one of the allowed values → output `AUDIT INCOMPLETE` block.
+
+### Step 2 — Branch by verdict
+
+#### 2A) ALL TOOLS READY
+- Emit output A.
+
+#### 2B) AUDIT INCOMPLETE
+- Emit output B.
+
+#### 2C) TOOLS MISSING
+1) Parse the `INSTALL PLAN` into ordered steps.
+   - Each step must have a tool/package name label and an exact command.
+2) If there are 0 steps → output:
+   - `AUDIT INCOMPLETE`
+   - `MESSAGE: I couldn’t find an INSTALL PLAN. I didn’t install anything.`
+   - `NEXT: RETRY`
+3) If steps > 10 → output:
+   - `INSTALLATION FAILED`
+   - `FAILED STEP: (plan)`
+   - `REASON: plan_too_large. Max 10 install steps.`
+   - `CHANGES_MADE: NO`
+
+### Step 3 — Determine whether to ask or install
+- If the input does not contain a YES reply → emit output C (confirmation) and stop.
+- If the input contains a YES reply → proceed to Step 4.
+- Otherwise (explicit NO/unclear) → emit output D.
+
+### Step 4 — Safety check commands
+For each install step command:
+- If command length > 400 → fail.
+- If command matches any disallowed pattern → fail.
+
+On failure, emit output F with:
+- `REASON: disallowed_command. Refusing to run install command.`
+
+### Step 5 — Execute installs sequentially
+For each step in order:
+1) Run the install command exactly as given using `exec`.
+2) If the command exits non-zero → emit output F and stop.
+
+### Step 6 — Verify installations
+Verification must be deterministic and must not invent checks.
+
+Rules:
+- If the report includes an explicit `VERIFY:` command for a tool, execute it (subject to the same disallowed-command rules).
+- If the report does not include `VERIFY:` for a tool, treat verification as `UNKNOWN` and fail with:
+  - `REASON: verification_missing. Report did not provide verify command.`
+
+If any verify command contains a token header like `X-Subscription-Token:` → fail with:
+- `REASON: verification_requires_secret. Refusing to run token-bearing verification command.`
+
+### Step 7 — Emit completion
+If all installs and verifies succeed, emit output E.
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+If the input is missing a parseable audit report, output exactly:
+- `AUDIT INCOMPLETE`
+- `MESSAGE: I couldn’t confirm tool status. I didn’t install anything.`
+- `NEXT: RETRY`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/tool-installer <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral: ALL TOOLS READY is one-line**
+   - Run: `/tool-installer <TOOL AUDIT REPORT with VERDICT: ALL TOOLS READY>`
+   - Expected output is exactly one line:
+     - `ALL TOOLS READY: Everything needed is already installed. Continuing.`
 
-2. **Negative case: invalid input**
-   - Run: `/tool-installer <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: AUDIT INCOMPLETE emits the 3-line block**
+   - Run: `/tool-installer <TOOL AUDIT REPORT with VERDICT: AUDIT INCOMPLETE>`
+   - Expected output is exactly:
+     - `AUDIT INCOMPLETE`
+     - `MESSAGE: I couldn’t confirm tool status. I didn’t install anything.`
+     - `NEXT: RETRY`
 
-3. **Structural validator**
+3. **Behavioral: TOOLS MISSING (turn 1) asks for confirmation**
+   - Run: `/tool-installer <TOOL AUDIT REPORT with VERDICT: TOOLS MISSING and INSTALL PLAN>`
+   - Expected output contains:
+     - `INSTALL CONFIRMATION`
+     - `WAITING_FOR_CONFIRMATION: YES`
+
+4. **Behavioral: unclear reply cancels safely (turn 2)**
+   - Run: `/tool-installer <same report>\nUSER_REPLY: maybe`
+   - Expected output is exactly:
+     - `INSTALLATION CANCELLED`
+     - `MESSAGE: No changes were made.`
+     - `CHANGES_MADE: NO`
+
+5. **Behavioral: disallowed command is rejected without executing**
+   - Run: `/tool-installer <TOOLS MISSING report + USER_REPLY: yes + INSTALL PLAN command contains sudo>`
+   - Expected output contains:
+     - `INSTALLATION FAILED`
+     - `REASON: disallowed_command. Refusing to run install command.`
+
+6. **Behavioral: token-bearing verification is refused**
+   - Run: `/tool-installer <TOOLS MISSING report + USER_REPLY: yes + VERIFY command contains X-Subscription-Token:>`
+   - Expected output contains:
+     - `INSTALLATION FAILED`
+     - `REASON: verification_requires_secret. Refusing to run token-bearing verification command.`
+
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
-  ~/clawd/skills/tool-installer/SKILL.md
+  /Users/igorsilva/clawd/skills/tool-installer/SKILL.md
+```
+Expected: `PASS`.
+
+8. **No invented tools**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
+  /Users/igorsilva/clawd/skills/tool-installer/SKILL.md
 ```
 Expected: `PASS`.

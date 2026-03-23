@@ -1,149 +1,152 @@
 ---
 name: session-logs
-description: "# session-logs"
+description: "Trigger: /session-logs <query>. Search local OpenClaw JSONL session transcripts under ~/.clawdbot/agents/<agentId>/sessions/ and return matching snippets with file + line hints (no secrets)."
 ---
 
 # session-logs
 
-Search your complete conversation history stored in session JSONL files. Use this when a user references older/parent conversations or asks what was said before.
+## Trigger contract
 
-## Trigger
+Trigger when the user asks to search prior conversations and provides either:
+- `/session-logs <keyword-or-phrase>`
+- `/session-logs session=<session-id> | <keyword-or-phrase>`
+- `/session-logs day=YYYY-MM-DD | <keyword-or-phrase>`
 
-Use this skill when the user asks about prior chats, parent conversations, or historical context that isn’t in memory files.
-
-## Location
-
-Session logs live at: `~/.clawdbot/agents/<agentId>/sessions/` (use the `agent=<id>` value from the system prompt Runtime line).
-
-- **`sessions.json`** - Index mapping session keys to session IDs
-- **`<session-id>.jsonl`** - Full conversation transcript per session
-
-## Structure
-
-Each `.jsonl` file contains messages with:
-- `type`: "session" (metadata) or "message"
-- `timestamp`: ISO timestamp
-- `message.role`: "user", "assistant", or "toolResult"
-- `message.content[]`: Text, thinking, or tool calls (filter `type=="text"` for human-readable content)
-- `message.usage.cost.total`: Cost per response
-
-## Common Queries
-
-### List all sessions by date and size
-```bash
-for f in ~/.clawdbot/agents/<agentId>/sessions/*.jsonl; do
-  date=$(head -1 "$f" | jq -r '.timestamp' | cut -dT -f1)
-  size=$(ls -lh "$f" | awk '{print $5}')
-  echo "$date $size $(basename $f)"
-done | sort -r
-```
-
-### Find sessions from a specific day
-```bash
-for f in ~/.clawdbot/agents/<agentId>/sessions/*.jsonl; do
-  head -1 "$f" | jq -r '.timestamp' | grep -q "2026-01-06" && echo "$f"
-done
-```
-
-### Extract user messages from a session
-```bash
-jq -r 'select(.message.role == "user") | .message.content[]? | select(.type == "text") | .text' <session>.jsonl
-```
-
-### Search for keyword in assistant responses
-```bash
-jq -r 'select(.message.role == "assistant") | .message.content[]? | select(.type == "text") | .text' <session>.jsonl | rg -i "keyword"
-```
-
-### Get total cost for a session
-```bash
-jq -s '[.[] | .message.usage.cost.total // 0] | add' <session>.jsonl
-```
-
-### Daily cost summary
-```bash
-for f in ~/.clawdbot/agents/<agentId>/sessions/*.jsonl; do
-  date=$(head -1 "$f" | jq -r '.timestamp' | cut -dT -f1)
-  cost=$(jq -s '[.[] | .message.usage.cost.total // 0] | add' "$f")
-  echo "$date $cost"
-done | awk '{a[$1]+=$2} END {for(d in a) print d, "$"a[d]}' | sort -r
-```
-
-### Count messages and tokens in a session
-```bash
-jq -s '{
-  messages: length,
-  user: [.[] | select(.message.role == "user")] | length,
-  assistant: [.[] | select(.message.role == "assistant")] | length,
-  first: .[0].timestamp,
-  last: .[-1].timestamp
-}' <session>.jsonl
-```
-
-### Tool usage breakdown
-```bash
-jq -r '.message.content[]? | select(.type == "toolCall") | .name' <session>.jsonl | sort | uniq -c | sort -rn
-```
-
-### Search across ALL sessions for a phrase
-```bash
-rg -l "phrase" ~/.clawdbot/agents/<agentId>/sessions/*.jsonl
-```
-
-## Tips
-
-- Sessions are append-only JSONL (one JSON object per line)
-- Large sessions can be several MB - use `head`/`tail` for sampling
-- The `sessions.json` index maps chat providers (discord, whatsapp, etc.) to session IDs
-- Deleted sessions have `.deleted.<timestamp>` suffix
-
-## Fast text-only hint (low noise)
-
-```bash
-jq -r 'select(.type=="message") | .message.content[]? | select(.type=="text") | .text' ~/.clawdbot/agents/<agentId>/sessions/<id>.jsonl | rg 'keyword'
-```
+Rules:
+- Query must be non-empty.
+- This skill reads local session logs only; it does not call the web.
 
 ## Use
 
-Describe what the skill does and when to use it.
+Use this skill to find what was said in older chats when that context is not in current memory. It searches OpenClaw session JSONL transcripts and returns short, human-readable text snippets.
 
 ## Inputs
 
-- Describe required inputs.
+One plain-text query.
+
+Optional filters:
+- `session=<session-id>`: restrict to a single `.jsonl` session file
+- `day=YYYY-MM-DD`: restrict to sessions whose first timestamp matches the day (best-effort)
+
+Examples:
+- `/session-logs whatsapp`
+- `/session-logs day=2026-03-23 | BSATauqhG5V6hBQaS2y0_SSNf8i1fVe`
+- `/session-logs session=abcd-1234.jsonl | gateway restart`
 
 ## Outputs
 
-- Describe outputs and formats.
+Plain text with this exact structure:
+
+SESSION_LOG_SEARCH
+QUERY: <query>
+FILTER: <none|session=...|day=...>
+RESULTS:
+- FILE: <path>
+  HITS: <n>
+  SNIPPETS:
+  1) <single-line snippet>
+  2) <single-line snippet>
+
+Constraints:
+- Max 5 files returned.
+- Max 3 snippets per file.
+- Snippets must be text-only (from message.content.type=="text").
+- Do not output tool calls or tokens; redact any substring matching `X-Subscription-Token:` or `Authorization:` by replacing the value with `[REDACTED]`.
+
+## Deterministic workflow (must follow)
+
+### Tooling
+- `exec`
+
+### Global caps (hard limits)
+- Max files scanned: **200**
+- Max results files returned: **5**
+- Max snippets per file: **3**
+- Max snippet length: **240** characters
+
+### Boundary rules (privacy + safety)
+
+- Only read from: `~/.clawdbot/agents/*/sessions/`.
+- Never write, edit, or delete logs.
+- Do not output secrets/tokens; always redact.
+- Only extract human-readable text content (ignore tool call payloads).
+
+### Step 1 — Resolve log directory
+The log directory pattern is:
+- `~/.clawdbot/agents/*/sessions/`
+
+If no matching directory exists or no `.jsonl` files exist, fail.
+
+### Step 2 — Build a deterministic search command
+Search strategy:
+
+1) Find candidate files:
+- If `session=` provided, scan only that file.
+- Else scan up to 200 `.jsonl` files under the sessions directory.
+- If `day=` provided, keep only files whose first line `.timestamp` starts with that date.
+
+2) Extract text lines (jq):
+- Use jq to output only text content:
+  - `select(.type=="message") | .message.content[]? | select(.type=="text") | .text`
+
+3) Search for query:
+- Use ripgrep case-insensitive:
+  - `rg -n -i --fixed-string "<query>"`
+
+All of the above is executed via `exec` using a single bash command pipeline.
+
+### Step 3 — Post-process into report
+- For each matched file, count hits.
+- Emit up to 3 snippets (single-line, trimmed, max 240 chars).
+- Redact any token-like headers.
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+Return exactly one line and nothing else:
+
+- Missing query:
+  - `ERROR: missing_query. Usage: /session-logs <keyword-or-phrase>`
+
+- No session logs:
+  - `ERROR: no_session_logs. Expected ~/.clawdbot/agents/*/sessions/*.jsonl to exist.`
+
+- No matches:
+  - `ERROR: no_matches. No session log entries matched the query.`
 
 ## Toolset
 
-- `read`
-- `write`
-- `edit`
 - `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: happy path**
-   - Run: `/session-logs <example-input>`
-   - Expected: produces the documented output shape.
+1. **Behavioral (negative): missing query**
+   - Run: `/session-logs`
+   - Expected output (exact): `ERROR: missing_query. Usage: /session-logs <keyword-or-phrase>`
 
-2. **Negative case: invalid input**
-   - Run: `/session-logs <bad-input>`
-   - Expected: returns the exact documented error string and stops.
+2. **Behavioral: output header is stable**
+   - Run: `/session-logs gateway`
+   - Expected: output starts with `SESSION_LOG_SEARCH` and includes `QUERY:` and `RESULTS:`.
 
-3. **Structural validator**
+3. **Behavioral: respects max files returned**
+   - Run: `/session-logs the`
+   - Expected: at most 5 `FILE:` blocks appear.
+
+4. **Behavioral: redacts token headers**
+   - Run: `/session-logs X-Subscription-Token:`
+   - Expected: no snippet contains the literal token value after `X-Subscription-Token:`; it must show `[REDACTED]`.
+
+5. **Behavioral (negative): no matches returns exact error**
+   - Run: `/session-logs this-string-should-not-exist-1234567890`
+   - Expected output (exact): `ERROR: no_matches. No session log entries matched the query.`
+
+6. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/session-logs/SKILL.md
 ```
 Expected: `PASS`.
 
-4. **No invented tools**
+7. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/session-logs/SKILL.md
