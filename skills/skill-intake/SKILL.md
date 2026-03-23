@@ -1,6 +1,6 @@
 ---
 name: skill-intake
-description: "Pipeline stage 1: turn a plain-English skill request into a strict intake schema, or ask one consolidated clarification question for missing required fields."
+description: "Pipeline stage 1: run a duplicate-skill check, then turn a plain-English skill request into a strict intake schema (or ask one consolidated clarification question)."
 ---
 
 # skill-intake (internal)
@@ -15,15 +15,13 @@ Accepted invocation patterns:
 - Internal (preferred): orchestrator calls `skill-intake` with the user’s raw request text.
 - Manual debug (operator only): `/skill-intake <paste user request>`
 
-If the input is empty/whitespace, return `INTAKE_STATUS: CLARIFICATION_NEEDED` with the exact missing list and question defined below.
+If the input is empty/whitespace, return `INTAKE_STATUS: CLARIFICATION_NEEDED`.
 
 ## Use
 
-Use this stage to extract deterministic requirements from a user’s request without designing implementation details. It outputs either:
-- a complete, parseable intake schema, or
-- one consolidated clarifying question that requests all missing required fields at once.
+Use this stage to extract deterministic requirements from a user’s request **without** designing implementation details.
 
-This stage does not call tools, does not browse, and does not invent features.
+New hard rule: **duplicate/overlap check runs first**. If a similar skill already exists, this stage must stop and ask Igor whether to proceed.
 
 ## Inputs
 
@@ -37,12 +35,26 @@ Examples:
 
 Exactly one of the following envelopes (and nothing else):
 
-### Output A — Clarification needed
+### Output A — Overlap check confirmation required (must run first)
+INTAKE_STATUS: CLARIFICATION_NEEDED
+MISSING: OVERLAP_CHECK_CONFIRMATION
+OVERLAPS:
+- <skill-name> | similarity=<high|medium|low> | why=<one line>
+QUESTION: <one sentence ending with ?>
+
+Rules:
+- Emit Output A **before** producing any COMPLETE schema if any overlap is detected.
+- The QUESTION must ask Igor to choose exactly one:
+  - proceed anyway
+  - improve an existing skill (name it)
+  - cancel
+
+### Output B — Clarification needed (normal)
 INTAKE_STATUS: CLARIFICATION_NEEDED
 MISSING: <comma-separated list of missing required fields>
 QUESTION: <one question that asks for all missing fields at once>
 
-### Output B — Complete
+### Output C — Complete
 INTAKE_STATUS: COMPLETE
 SKILL_NAME: <kebab-case-name>
 TRIGGER: <exact trigger phrase>
@@ -64,11 +76,44 @@ Hard constraints:
 
 ## Deterministic workflow (must follow)
 
-Tools used: none.
+Tools used: `read`, `exec`.
 
-### Step 1 — Normalize and sanity-check input
+### Step 0 — Normalize and sanity-check input
 - Trim leading/trailing whitespace.
-- If empty after trimming: go to Output A.
+- If empty after trimming: emit Output B with `MISSING:` including `SKILL_NAME,TRIGGER,PURPOSE,INPUT,OUTPUT_FORMAT,OUTPUT_LENGTH,TOOLS_NEEDED,STEPS` and a single consolidated QUESTION.
+
+### Step 1 — Duplicate/overlap check (mandatory, must run before schema)
+
+Goal: avoid building a duplicate skill.
+
+1) Scan all skills:
+   - Use `exec` to list skill directories under `/Users/igorsilva/clawd/skills/`.
+2) For each `<skill>/SKILL.md`:
+   - Use `read` to load the file.
+   - Extract the YAML frontmatter `name` and `description`.
+3) Compare the user request to existing skills using this deterministic heuristic:
+   - Normalize both strings: lowercase; remove punctuation; split into tokens.
+   - Compute overlap score = count(shared tokens) excluding stopwords: `the,a,an,to,of,and,or,for,with,on,in`.
+   - Flag overlap if ANY of these is true:
+     - the request explicitly names an existing skill trigger (e.g. `/summarize`) OR
+     - overlap score >= 6 OR
+     - overlap score >= 4 AND the request contains the same core verb+noun pair implied by description (e.g., "summarize url", "build skill", "improve skills").
+
+Similarity label:
+- high: overlap score >= 8 OR explicitly same trigger
+- medium: overlap score 6–7
+- low: overlap score 4–5 (only if also matches a core verb+noun pair)
+
+4) If any overlaps are found:
+   - Emit Output A.
+   - Include up to 5 overlaps, sorted by similarity (high→low).
+   - QUESTION must be exactly one sentence ending with `?`, asking:
+     - proceed anyway
+     - improve an existing skill (choose one)
+     - cancel
+
+Hard rule:
+- If Output A is emitted, **stop**. Do not produce any COMPLETE schema until Igor explicitly says “yes, proceed anyway”.
 
 ### Step 2 — Extract candidate fields from the request
 Derive the following from the text if explicitly stated or strongly implied:
@@ -99,15 +144,15 @@ Required fields to be considered complete:
 - STEPS
 
 Clarification rule:
-- If any required field cannot be determined from the request without guessing, emit Output A.
+- If any required field cannot be determined from the request without guessing, emit Output B.
 - `MODE` is never considered missing.
 
-### Step 5 — Construct Output A (one consolidated question)
+### Step 5 — Construct Output B (one consolidated question)
 If clarification is needed:
 - `MISSING:` must list every missing required field.
 - `QUESTION:` must be exactly one sentence ending with `?` that asks for all missing fields.
 
-### Step 6 — Construct Output B
+### Step 6 — Construct Output C
 If complete:
 - Generate `SKILL_NAME` as kebab-case derived from a short skill title in the request.
 - If user did not provide a trigger, set `TRIGGER: /<SKILL_NAME>`.
@@ -116,61 +161,50 @@ If complete:
 
 ## Failure modes
 
-This stage does not emit `ERROR:` strings. The only non-complete outcome is `INTAKE_STATUS: CLARIFICATION_NEEDED`.
+This stage does not emit `ERROR:` strings. Non-complete outcomes are `INTAKE_STATUS: CLARIFICATION_NEEDED`.
 
 ## Boundary rules (privacy + safety)
 
 - Do not request secrets, tokens, passwords, or personal data unless the skill itself explicitly requires it.
 - Do not design implementation commands or write code; only requirements.
 - Do not add features not explicitly requested.
-- No tool calls, no network, no filesystem writes.
+- Duplicate check reads SKILL.md files locally only; do not use network.
 
 ## Toolset
 
-- (none)
+- `read`
+- `exec`
 
 ## Acceptance tests
 
-1. **Behavioral: empty input triggers clarification**
+1. **Overlap check blocks duplicate build**
+   - Run: `/skill-intake Create a /summarize command that summarizes URLs and local files.`
+   - Expected: `INTAKE_STATUS: CLARIFICATION_NEEDED` with `MISSING: OVERLAP_CHECK_CONFIRMATION` and `OVERLAPS:` including `summarize`.
+
+2. **Overlap check asks proceed/improve/cancel**
+   - Run: `/skill-intake Build a skill that improves existing SKILL.md files to pass validators.`
+   - Expected: Output A with a QUESTION that asks whether to proceed anyway, improve an existing skill, or cancel.
+
+3. **Behavioral: empty input triggers clarification**
    - Run: `/skill-intake "   "`
-   - Expected output contains exactly:
-     - `INTAKE_STATUS: CLARIFICATION_NEEDED`
-     - `MISSING:` includes `SKILL_NAME`.
+   - Expected: `INTAKE_STATUS: CLARIFICATION_NEEDED`.
 
-2. **Behavioral: MODE is always present**
-   - Run: `/skill-intake Make a command that summarizes a URL into bullet points.`
-   - Expected: output contains a `MODE:` line in either COMPLETE or CLARIFICATION_NEEDED state.
+4. **Behavioral: MODE is always present in COMPLETE output**
+   - Run: `/skill-intake Create /sumurl that takes one https URL and outputs 5 bullet points.`
+   - Expected: if COMPLETE, output contains `MODE:`.
 
-3. **Behavioral: consolidated single-question clarification**
-   - Run: `/skill-intake Build me a tool to help with my business.`
-   - Expected:
-     - `INTAKE_STATUS: CLARIFICATION_NEEDED`
-     - `QUESTION:` is exactly one line ending with `?`.
-
-4. **Behavioral: complete schema shape is exact**
+5. **Behavioral: complete schema shape is exact**
    - Run: `/skill-intake Create /sumurl that takes one https URL and outputs 5 bullet points and 3 quotes, no outside facts.`
-   - Expected:
-     - `INTAKE_STATUS: COMPLETE`
-     - Contains fields: `SKILL_NAME:`, `TRIGGER:`, `PURPOSE:`, `MODE:`, `TOOLS_NEEDED:`, `INPUT:`, `OUTPUT_FORMAT:`, `OUTPUT_LENGTH:`, and `STEPS:`.
+   - Expected: if COMPLETE, contains fields: `SKILL_NAME:`, `TRIGGER:`, `PURPOSE:`, `MODE:`, `TOOLS_NEEDED:`, `INPUT:`, `OUTPUT_FORMAT:`, `OUTPUT_LENGTH:`, and `STEPS:`.
 
-5. **Behavioral: kebab-case SKILL_NAME**
-   - Run: `/skill-intake Create a skill called "URL Argument Summarizer" that summarizes a URL.`
-   - Expected:
-     - If COMPLETE, `SKILL_NAME:` matches `^[a-z0-9]+(-[a-z0-9]+)*$`.
-
-6. **Behavioral (negative): no feature invention**
-   - Run: `/skill-intake Summarize a URL into bullets.`
-   - Expected:
-     - Output does not mention unrelated tools like `cron` or `sessions_send` unless explicitly requested.
-
-7. **Structural validator**
+6. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/skill-intake/SKILL.md
 ```
 Expected: `PASS`.
 
-8. **No invented tools**
+7. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/skill-intake/SKILL.md
