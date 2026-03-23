@@ -125,7 +125,8 @@ Create (in working notes) four buckets and fill each with 3–10 bullets:
 **Actions:**
 - Run:
   - `/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py <path>`
-  - `/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py <path>`
+- `/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py <path>`
+- (Optional runner) `/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/build_skill.py --name <skill> --goal "..." --out-dir ~/clawd/skills/<skill>`
 
 **Exit criteria:**
 - PASS → State 5
@@ -188,9 +189,17 @@ Common failure patterns (and how to guardrail):
    ```
    Expected: `PASS`.
 
-3. **Behavioral: FSM is bounded and EPIC-aligned**
-   - Run: `/skillmd-builder-agent` on a small request (“create a skill that reads a txt and outputs JSON”).
-   - Expected: the produced SKILL.md includes explicit boundaries, at least 1 behavioral acceptance test, and the process stops after ≤3 repair iterations.
+3. **Behavioral: build_skill runner produces a valid SKILL.md (end-to-end)**
+```bash
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/build_skill.py \
+  --name file-summarizer \
+  --goal "read a local text file and output a 3-5 sentence summary with key topics" \
+  --out-dir /Users/igorsilva/clawd/skills/file-summarizer
+```
+Expected:
+- script exits 0
+- it writes `/Users/igorsilva/clawd/skills/file-summarizer/SKILL.md`
+- it prints validator PASS results
 
 4. **Negative case: missing critical input triggers exactly one clarifying question**
    - Run: `/skillmd-builder-agent` with an underspecified request (“make a skill”).
