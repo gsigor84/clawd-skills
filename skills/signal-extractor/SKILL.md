@@ -1,5 +1,4 @@
 ---
----
 name: signal-extractor
 description: "Stage 3 of /intel. Fetch every URL from a SOURCE MAP and extract concrete, vector-tagged signals with strict anti-hallucination, redaction, and bounded fetching."
 ---
@@ -222,14 +221,46 @@ A structured plain-text report with:
 
 ## Failure modes
 
+Hard-stop failures (priority HIGH):
 - Missing/invalid SOURCE MAP:
   - `ERROR: invalid_source_map. Provide full digital-scout output with INTELLIGENCE TARGET and SOURCE MAP.`
-
 - Too many vectors/URLs:
   - `ERROR: source_map_too_large. Max 25 vectors and 75 URLs.`
-
 - Malformed SOURCE MAP:
   - `ERROR: malformed_source_map. Each vector must include PRIORITY and at least one URL.`
+
+Partial/blocked states (priority MEDIUM):
+- Not a hard-stop in this skill’s public contract, but treat high failure rates as “partial” for logging:
+  - if a run completes structurally but yields `EXTRACTION QUALITY: FAILED` for all URLs, treat as `status: partial` for logging purposes.
+
+### Structured failure logging (ERR entries)
+
+Write ERR entries for:
+- Any hard-stop failure (an `ERROR: ...` output) → priority HIGH
+- Any completed run where all URLs are `EXTRACTION QUALITY: FAILED` → priority MEDIUM
+
+Append to:
+- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+
+ID format:
+- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+
+Entry fields (consistent schema):
+- `stage:` `signal-extractor`
+- `priority:` `high|medium`
+- `status:` `hard_stop|partial`
+- `reason:` one-line reason
+- `suggested_fix:` one line
+- `context:`
+  - `intelligence_target:` extracted target
+  - `vectors_total:`
+  - `urls_total:`
+  - `urls_failed:`
+  - `urls_succeeded:`
+  - `playwright_used_count:`
+  - `allowed_domains:` if present; else empty
+
+Do not copy full page contents into ERR entries.
 
 ## Boundary rules (privacy + safety)
 
@@ -243,57 +274,56 @@ A structured plain-text report with:
 ## Toolset
 
 - `web_fetch`
+- `write`
 - `exec`
 
 ## Acceptance tests
 
-1) **Negative: missing SOURCE MAP**
+1. **Negative: missing SOURCE MAP**
    - Input: `hello` (no INTELLIGENCE TARGET / SOURCE MAP).
    - Expected output is exactly:
      - `ERROR: invalid_source_map. Provide full digital-scout output with INTELLIGENCE TARGET and SOURCE MAP.`
 
-2) **Negative: too many URLs**
+2. **Negative: too many URLs**
    - Input: a SOURCE MAP containing 76 URLs.
    - Expected output is exactly:
      - `ERROR: source_map_too_large. Max 25 vectors and 75 URLs.`
 
-3) **Behavioral: blocked localhost URL still reported (no skip)**
-   - Input fixture:
-     - INTELLIGENCE TARGET: `ExampleCo`
-     - SOURCE MAP includes one vector with `URL: http://127.0.0.1/private`
+3. **Behavioral: blocked localhost URL still reported (no skip)**
+   - Run: `/signal-extractor <paste a digital-scout SOURCE MAP containing URL: http://127.0.0.1/private>`
    - Expected in output:
      - That URL appears under SIGNAL REPORT.
      - `EXTRACTION QUALITY: FAILED`
      - `FAILURE REASON: ERROR`
      - `SIGNALS:` followed by `- (none)`
 
-4) **Behavioral: allowlist blocks out-of-scope domains**
+4. **Behavioral: allowlist blocks out-of-scope domains**
    - Input fixture includes:
      - `ALLOWED_DOMAINS: example.com`
      - a URL `https://not-example.com/x`
    - Expected:
      - That URL is present and marked `FAILED` with `FAILURE REASON: ERROR` and `SIGNALS: - (none)`.
 
-5) **Behavioral: structure and ordering is stable**
+5. **Behavioral: structure and ordering is stable**
    - Input fixture with 2 vectors and 3 URLs total.
    - Expected:
      - Vectors appear in the same order as SOURCE MAP.
      - Exactly 3 `URL:` lines appear in the output.
      - Each URL appears exactly once.
 
-6) **Behavioral: redaction skips secret-like signals**
+6. **Behavioral: redaction skips secret-like signals**
    - Given a fetched page text containing `api key`/`token`-style strings, expected:
      - No signal line includes those secret markers.
      - If all candidate signals are removed by redaction, source becomes `FAILED` with `FAILURE REASON: EMPTY`.
 
-7) **Structural validator**
+7. **Structural validator**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py \
   /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md
 ```
 Expected: `PASS`.
 
-8) **No invented tools**
+8. **No invented tools**
 ```bash
 /opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py \
   /Users/igorsilva/clawd/skills/signal-extractor/SKILL.md

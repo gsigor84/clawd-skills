@@ -140,6 +140,30 @@ Emit `TANDEM_RESULT` with actions taken and findings.
 
 Return exactly one of these lines and nothing else:
 
+### Structured failure logging (ERR entries)
+
+On any emitted `ERROR: ...` failure mode, append one structured entry to:
+- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+
+ID format:
+- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+
+Priority mapping:
+- Hard-stop failures (any `ERROR:` line) → `priority: high`
+
+Entry fields (consistent schema):
+- `stage:` `tandem`
+- `priority:` `high`
+- `status:` `hard_stop`
+- `reason:` the exact `ERROR: ...` string
+- `suggested_fix:` one line
+- `context:`
+  - `active_context_url:` value from `GET /active-tab/context` (or empty)
+  - `requested_url:` if provided by the user; else empty
+  - `task:` first 120 chars of the user task
+
+Do not include the Tandem API token in the ERR entry.
+
 - Missing token:
   - `ERROR: missing_token. Expected ~/.tandem/api-token to exist and be non-empty.`
 
@@ -161,6 +185,7 @@ Return exactly one of these lines and nothing else:
 ## Toolset
 
 - `read`
+- `write`
 - `exec`
 
 ## Acceptance tests

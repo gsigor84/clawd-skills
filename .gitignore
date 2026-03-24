@@ -9,6 +9,9 @@ __pycache__/
 **/__pycache__/
 *.pyc
 .tmp/
+
+# Editor/backup files
+*.bak
 tmp/
 tmp_biblio/
 tmp_biblio_full/

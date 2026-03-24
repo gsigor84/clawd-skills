@@ -36,10 +36,122 @@ except Exception:  # pragma: no cover
 LOG_DIR_DEFAULT = "/Users/igorsilva/clawd/tmp/logs"
 BASE_DEFAULT = "http://127.0.0.1:8765"
 TOKEN_PATH_DEFAULT = os.path.expanduser("~/.tandem/api-token")
+LEARNINGS_ERRORS_PATH = Path("/Users/igorsilva/clawd/.learnings/ERRORS.md")
 
 
 def utc_now_iso() -> str:
     return dt.datetime.now(dt.timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+def utc_today() -> str:
+    d = dt.datetime.now(dt.timezone.utc).date()
+    return d.isoformat()
+
+
+def next_err_id(existing_text: str) -> str:
+    ymd = dt.datetime.now(dt.timezone.utc).strftime("%Y%m%d")
+    ids = re.findall(rf"\bERR-{ymd}-(\d{{3}})\b", existing_text)
+    n = (max([int(x) for x in ids]) + 1) if ids else 1
+    return f"ERR-{ymd}-{n:03d}"
+
+
+def update_or_append_err(
+    *,
+    pattern_key: str,
+    summary: str,
+    error_lines: list[str],
+    context_lines: list[str],
+    suggested_fix_lines: list[str],
+    priority: str = "high",
+    area: str = "infra",
+) -> None:
+    """Write a structured ERR entry to ~/clawd/.learnings/ERRORS.md.
+
+    If an entry with the same Pattern-Key exists, increment Recurrence-Count
+    and update Last-Seen instead of creating a duplicate.
+    """
+    LEARNINGS_ERRORS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    existing = ""
+    if LEARNINGS_ERRORS_PATH.exists():
+        existing = LEARNINGS_ERRORS_PATH.read_text(encoding="utf-8", errors="ignore")
+    else:
+        existing = "# Errors Log\n\n---\n\n"
+
+    today = utc_today()
+
+    # Try to find existing block containing Pattern-Key.
+    key_pat = re.compile(rf"^\s*-\s*Pattern-Key:\s*{re.escape(pattern_key)}\s*$", re.M)
+    m = key_pat.search(existing)
+    if m:
+        # Update the nearest preceding '## [' header block by scanning outward.
+        start = existing.rfind("## [", 0, m.start())
+        end = existing.find("\n---\n", m.end())
+        if start == -1:
+            start = 0
+        if end == -1:
+            end = len(existing)
+        block = existing[start:end]
+
+        # Update recurrence count
+        rc_re = re.compile(r"^\s*-\s*Recurrence-Count:\s*(\d+)\s*$", re.M)
+        rc_m = rc_re.search(block)
+        if rc_m:
+            rc = int(rc_m.group(1)) + 1
+            block2 = rc_re.sub(f"- Recurrence-Count: {rc}", block, count=1)
+        else:
+            # Insert after Pattern-Key line if missing
+            block2 = re.sub(
+                rf"(^\s*-\s*Pattern-Key:\s*{re.escape(pattern_key)}\s*$)",
+                rf"\1\n- Recurrence-Count: 2",
+                block,
+                flags=re.M,
+                count=1,
+            )
+
+        # Update Last-Seen
+        ls_re = re.compile(r"^\s*-\s*Last-Seen:\s*(\d{4}-\d{2}-\d{2})\s*$", re.M)
+        if ls_re.search(block2):
+            block3 = ls_re.sub(f"- Last-Seen: {today}", block2, count=1)
+        else:
+            block3 = block2 + f"\n- Last-Seen: {today}\n"
+
+        LEARNINGS_ERRORS_PATH.write_text(existing[:start] + block3 + existing[end:], encoding="utf-8")
+        return
+
+    # Append new entry
+    err_id = next_err_id(existing)
+    entry = [
+        f"## [{err_id}] notebooklm-fetcher",
+        "",
+        f"**Logged**: {utc_now_iso()}",
+        f"**Priority**: {priority}",
+        "**Status**: pending",
+        f"**Area**: {area}",
+        "",
+        "### Summary",
+        summary.strip(),
+        "",
+        "### Error",
+        *[f"- {ln}" for ln in error_lines if ln.strip()],
+        "",
+        "### Context",
+        *[f"- {ln}" for ln in context_lines if ln.strip()],
+        "",
+        "### Suggested Fix",
+        *[f"- {ln}" for ln in suggested_fix_lines if ln.strip()],
+        "",
+        "### Metadata",
+        "- Source: error",
+        "- Tags: notebooklm, browser-automation, selector-drift, silent-failure",
+        f"- Pattern-Key: {pattern_key}",
+        "- Recurrence-Count: 1",
+        f"- First-Seen: {today}",
+        f"- Last-Seen: {today}",
+        "",
+        "---",
+        "",
+    ]
+    LEARNINGS_ERRORS_PATH.write_text(existing + "\n".join(entry), encoding="utf-8")
 
 
 def log_line(log_path: Path, prompt_number: int, event: str, status: str, detail: str = "") -> None:
@@ -446,6 +558,23 @@ def main() -> int:
     except Exception as e:
         meta["result"].update({"status": "blocked", "partial": False, "error": f"tandem_status_failed: {e}"})
         write_json(meta_path, meta)
+        update_or_append_err(
+            pattern_key="harden.tandem.connection_failure",
+            summary="Tandem connection failure: /status failed (NotebookLM fetcher cannot reach Tandem).",
+            error_lines=[f"tandem_status_failed: {e}"],
+            context_lines=[
+                f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                f"Tandem base: {args.base}",
+                f"Notebook URL: {args.notebook_url or 'none'}",
+                f"Run ID: {run_id}",
+                f"Log: {log_path}",
+            ],
+            suggested_fix_lines=[
+                "Check Tandem server is running and reachable at base URL",
+                "Verify ~/.tandem/api-token is valid",
+                "Restart OpenClaw gateway + Tandem if needed",
+            ],
+        )
         return 2
 
     if args.notebook_url:
@@ -455,6 +584,22 @@ def main() -> int:
         except Exception as e:
             meta["result"].update({"status": "error", "partial": False, "error": f"navigate_failed: {e}"})
             write_json(meta_path, meta)
+            update_or_append_err(
+                pattern_key="harden.notebooklm.response_timeout_or_partial",
+                summary="NotebookLM fetcher navigation/network idle wait failed (timeout or partial load).",
+                error_lines=[f"navigate_failed: {e}"],
+                context_lines=[
+                    f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                    f"Notebook URL: {args.notebook_url}",
+                    f"Run ID: {run_id}",
+                    f"Artifacts: {meta_path}",
+                ],
+                suggested_fix_lines=[
+                    "Increase networkidle wait tolerance or switch to element-based readiness",
+                    "Retry navigate once before failing",
+                    "Capture screenshot+snapshot for diagnosis",
+                ],
+            )
             return 3
 
     # Clear chat for isolation (best-effort). If it fails, continue and rely on "new copy button" detection.
@@ -541,6 +686,23 @@ def main() -> int:
     if not copy_ref:
         partial = True
         meta["result"]["error"] = "copy_button_not_found"
+        update_or_append_err(
+            pattern_key="harden.notebooklm_copy_button_selector_drift",
+            summary="NotebookLM fetcher failed to locate the Copy model response button and produced partial output.",
+            error_lines=["copy_button_not_found"],
+            context_lines=[
+                f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                f"Notebook URL: {args.notebook_url or 'none'}",
+                f"Run ID: {run_id}",
+                f"Max checks: {args.max_checks} (timeout waiting for Copy button)",
+                f"Artifacts: {meta_path}",
+            ],
+            suggested_fix_lines=[
+                "Update selector strategy (prefer role/name-based queries over brittle snapshot ordering)",
+                "Add fallback UI path to copy (context menu / alternate copy affordance)",
+                "Fail hard (exit non-zero) when Copy button is missing to stop downstream placeholder propagation",
+            ],
+        )
     else:
         # Sentinel-based capture to prevent re-saving stale clipboard text.
         sentinel = f"__NOTEBOOKLM_CLIPBOARD_SENTINEL__:{run_id}__"
@@ -571,9 +733,64 @@ def main() -> int:
                 raw = ""
                 partial = True
                 meta["result"]["error"] = "clipboard_stale_or_empty"
+                update_or_append_err(
+                    pattern_key="harden.notebooklm.placeholder_output_detected",
+                    summary="NotebookLM fetcher detected placeholder/empty output after clicking Copy (clipboard stale or empty).",
+                    error_lines=["clipboard_stale_or_empty"],
+                    context_lines=[
+                        f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                        f"Notebook URL: {args.notebook_url or 'none'}",
+                        f"Run ID: {run_id}",
+                        f"Copy ref: {copy_ref or 'none'}",
+                        f"Artifacts: {meta_path}",
+                    ],
+                    suggested_fix_lines=[
+                        "Increase retry/backoff around clipboard capture",
+                        "Capture and persist raw clipboard types (txt/html/rtf) for diagnosis",
+                        "Hard-fail when clipboard is stale/empty to prevent downstream placeholder propagation",
+                    ],
+                )
         except Exception as e:
             partial = True
             meta["result"]["error"] = f"clipboard_capture_failed: {e}"
+            update_or_append_err(
+                pattern_key="harden.notebooklm.clipboard_capture_failed",
+                summary="NotebookLM fetcher failed during clipboard capture after clicking Copy.",
+                error_lines=[f"clipboard_capture_failed: {e}"],
+                context_lines=[
+                    f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                    f"Notebook URL: {args.notebook_url or 'none'}",
+                    f"Run ID: {run_id}",
+                    f"Copy ref: {copy_ref or 'none'}",
+                    f"Artifacts: {meta_path}",
+                ],
+                suggested_fix_lines=[
+                    "Check pbpaste/pbcopy availability and permissions",
+                    "Add screenshot+snapshot capture at point of failure",
+                    "Consider alternative extraction path if clipboard is unreliable",
+                ],
+            )
+
+    # Placeholder output detection (defensive): treat obvious placeholders as failure.
+    if raw and re.search(r"\bplaceholder\b", raw, flags=re.I):
+        partial = True
+        meta["result"]["error"] = "placeholder_output_detected"
+        update_or_append_err(
+            pattern_key="harden.notebooklm.placeholder_output_detected",
+            summary="NotebookLM fetcher detected placeholder output in captured response.",
+            error_lines=["placeholder_output_detected"],
+            context_lines=[
+                f"Operation: notebooklm-fetcher fetch_clipboard.py --prompt-number {args.prompt_number}",
+                f"Notebook URL: {args.notebook_url or 'none'}",
+                f"Run ID: {run_id}",
+                f"Artifacts: {meta_path}",
+            ],
+            suggested_fix_lines=[
+                "Treat placeholder markers as hard failures (exit non-zero) to stop downstream processing",
+                "Capture screenshot+snapshot at failure point for selector/debug",
+            ],
+        )
+        raw = ""
 
     if raw:
         write_text(response_path, raw + "\n")

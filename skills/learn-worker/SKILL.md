@@ -95,7 +95,40 @@ Describe what the skill does and when to use it.
 
 ## Failure modes
 
-- List hard blockers and expected exact error strings when applicable.
+Hard-stop failures (priority HIGH):
+- Input path missing or file not found/unreadable.
+- Worker run fails to produce a saved study guide path.
+- Returned saved path does not exist on disk.
+
+Partial/blocked states (priority MEDIUM):
+- `learn-worker busy; wait for completion` (single-flight lock already held).
+- Main-session lock files detected in Step 3 (informational), if they correlate with repeated wedges.
+
+### Structured failure logging (ERR entries)
+
+On any hard-stop failure or partial/blocked stop, append one structured entry to:
+- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+
+ID format:
+- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+
+Priority mapping:
+- Hard-stop failure → `priority: high`
+- Partial/blocked stop → `priority: medium`
+
+Entry fields (consistent schema):
+- `stage:` `learn-worker`
+- `priority:` `high|medium`
+- `status:` `hard_stop|partial|blocked`
+- `reason:` one-line reason
+- `suggested_fix:` one line
+- `context:`
+  - `input_path:` the user-provided path (or empty)
+  - `lockdir:` `/Users/igorsilva/clawd/.learn-worker.lockdir`
+  - `main_session_locks_present:` `yes|no|unknown`
+  - `returned_saved_path:` if any
+
+Do not include source file contents in ERR entries.
 
 ## Toolset
 

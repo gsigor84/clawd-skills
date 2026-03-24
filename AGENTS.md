@@ -6,6 +6,7 @@
 - Never answer research questions from memory alone — always show evidence from tools first.
 
 ### Memory
+- Before acting on any non-trivial request, run `memory_search` first (then `memory_get` for exact snippets) and use those notes as the source of truth.
 - After important sessions, summarize key findings → ~/clawd/MEMORY.md
 - Review ~/clawd/.learnings/ before major tasks
 

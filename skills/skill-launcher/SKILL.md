@@ -116,6 +116,30 @@ Example inputs must be generic placeholders that do not contain secrets.
 
 Return exactly one of these lines and nothing else:
 
+### Structured failure logging (ERR entries)
+
+On any emitted `ERROR: ...` failure mode, append one structured entry to:
+- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+
+ID format:
+- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+
+Priority mapping:
+- Hard-stop failures (any `ERROR:` line) → `priority: high`
+
+Entry fields (consistent schema):
+- `stage:` `skill-launcher`
+- `priority:` `high`
+- `status:` `hard_stop`
+- `reason:` the exact `ERROR: ...` string
+- `suggested_fix:` one line
+- `context:`
+  - `deployed_path:` extracted PATH
+  - `trigger:` extracted TRIGGER
+  - `gateway_restart_cmd:` `openclaw gateway restart` (or fallback)
+
+Do not print or log the full SKILL.md contents.
+
 - Invalid input:
   - `ERROR: invalid_deploy_confirmation. Expected DEPLOY_STATUS: COMPLETE with PATH and TRIGGER.`
 
@@ -137,6 +161,7 @@ Return exactly one of these lines and nothing else:
 ## Toolset
 
 - `read`
+- `write`
 - `exec`
 
 ## Acceptance tests

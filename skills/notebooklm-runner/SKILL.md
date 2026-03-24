@@ -59,10 +59,41 @@ Notes:
 
 ## Failure modes / Hard blockers
 
-- Tandem not running / unreachable (`127.0.0.1:8765`) → fetcher returns blocked.
-- NotebookLM UI changes (selectors not found / copy button not found) → fetcher returns partial; runner stops.
-- Clipboard capture returns sentinel/empty repeatedly → fetcher returns partial; runner stops.
+Hard-stop failures (priority HIGH):
+- Tandem not running / unreachable (`127.0.0.1:8765`) → fetcher returns `blocked`; runner stops.
 - Processor fails to parse runs directory → runner stops and prints the exact error.
+
+Partial/blocked states (priority MEDIUM):
+- NotebookLM UI changes (selectors not found / copy button not found) → fetcher returns `partial`; runner stops.
+- Clipboard capture returns sentinel/empty repeatedly → fetcher returns `partial`; runner stops.
+
+### Structured failure logging (ERR entries)
+
+On any hard-stop failure or partial/blocked stop, append one structured entry to:
+- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+
+ID format:
+- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+
+Priority mapping:
+- Hard-stop failure → `priority: high`
+- Partial/blocked stop → `priority: medium`
+
+Entry fields (consistent schema):
+- `stage:` `notebooklm-runner`
+- `priority:` `high|medium`
+- `status:` `hard_stop|partial|blocked`
+- `reason:` one-line reason (use the concrete failure condition)
+- `suggested_fix:` one line
+- `context:`
+  - `notebook_url:` value passed to the runner (or `unknown`)
+  - `prompts_dir:`
+  - `runs_dir:`
+  - `progress_file:`
+  - `final_summary:`
+  - `failed_prompt_number:` if known; else `unknown`
+
+Do not include any clipboard contents or large NotebookLM outputs in the ERR entry.
 
 ## Acceptance tests
 
