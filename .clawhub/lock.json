@@ -60,6 +60,10 @@
     "open-prose": {
       "version": "1.0.0",
       "installedAt": 1772959264755
+    },
+    "agent-team-orchestration": {
+      "version": "1.0.0",
+      "installedAt": 1774466312362
     }
   }
 }

@@ -29,3 +29,11 @@ Documentation
 * If ALL SYSTEMS READY say: "all systems ready"
 * If WARNINGS DETECTED list the warnings and ask: "fix these before continuing? yes or no"
 
+## Autonomous task execution
+Before planning or executing any multi-step autonomous task (anything that runs without human supervision for more than 2-3 steps), run /autonomous-prompting to apply the principles from the research:
+- Intent engineering: encode goals, values, and boundaries before starting
+- Eval framework: define what "done correctly" looks like before executing
+- Harness design: ensure tools, memory, and proactivity are properly configured
+
+This applies to: notebooklm-runner, research-to-skill, skill-forge, any cron job, any multi-phase pipeline.
+

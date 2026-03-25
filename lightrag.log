@@ -236,3 +236,147 @@
 2026-03-25 11:53:43,954 - lightrag - WARNING - No new unique documents were found.
 2026-03-25 11:53:43,997 - lightrag - WARNING - Duplicate document detected: doc-a6ab73b3196c0a1d733e5dc9a2ba676f (unknown_source)
 2026-03-25 11:53:44,002 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:54:48,467 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 20:54:48,469 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:24,229 - lightrag - WARNING - Duplicate document detected: doc-1a0d2763dd4ef700f241e1af71f4115a (unknown_source)
+2026-03-25 20:55:24,230 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,981 - lightrag - WARNING - Duplicate document detected: doc-cecabe6eeb8829e59b91346c85de5517 (unknown_source)
+2026-03-25 20:55:58,982 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,983 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 20:55:58,984 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,986 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 20:55:58,987 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,989 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 20:55:58,990 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,992 - lightrag - WARNING - Duplicate document detected: doc-154934c2dfc317423216eb922df7f697 (unknown_source)
+2026-03-25 20:55:58,993 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:58,996 - lightrag - WARNING - Duplicate document detected: doc-d6ae6c60c75309c77bff46fbbd026332 (unknown_source)
+2026-03-25 20:55:58,997 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,000 - lightrag - WARNING - Duplicate document detected: doc-e6a18242babfca04d19940851c7fb032 (unknown_source)
+2026-03-25 20:55:59,001 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,004 - lightrag - WARNING - Duplicate document detected: doc-df103516d451df60010e08f7ee5566c6 (unknown_source)
+2026-03-25 20:55:59,005 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,009 - lightrag - WARNING - Duplicate document detected: doc-050c08015cf374045b9f53239d29071d (unknown_source)
+2026-03-25 20:55:59,010 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,012 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 20:55:59,013 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,016 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 20:55:59,017 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,021 - lightrag - WARNING - Duplicate document detected: doc-be96b5da92fc2a3a6710472046fe5ea6 (unknown_source)
+2026-03-25 20:55:59,022 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:55:59,025 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 20:55:59,026 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:56:28,667 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 20:56:28,669 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:57:57,666 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 20:57:57,668 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:57:57,671 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-25 20:57:57,673 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 20:57:57,676 - lightrag - WARNING - Duplicate document detected: doc-0b673715f22cd47ace79a7c974f84b12 (unknown_source)
+2026-03-25 20:57:57,677 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:02:53,605 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:02:53,607 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:03:24,949 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 21:03:24,950 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:03:50,859 - lightrag - WARNING - Duplicate document detected: doc-1a0d2763dd4ef700f241e1af71f4115a (unknown_source)
+2026-03-25 21:03:50,860 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,343 - lightrag - WARNING - Duplicate document detected: doc-cecabe6eeb8829e59b91346c85de5517 (unknown_source)
+2026-03-25 21:04:07,345 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,347 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:04:07,349 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,351 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 21:04:07,352 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,355 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 21:04:07,357 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,359 - lightrag - WARNING - Duplicate document detected: doc-154934c2dfc317423216eb922df7f697 (unknown_source)
+2026-03-25 21:04:07,360 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,365 - lightrag - WARNING - Duplicate document detected: doc-d6ae6c60c75309c77bff46fbbd026332 (unknown_source)
+2026-03-25 21:04:07,368 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,372 - lightrag - WARNING - Duplicate document detected: doc-e6a18242babfca04d19940851c7fb032 (unknown_source)
+2026-03-25 21:04:07,373 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,377 - lightrag - WARNING - Duplicate document detected: doc-df103516d451df60010e08f7ee5566c6 (unknown_source)
+2026-03-25 21:04:07,378 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,383 - lightrag - WARNING - Duplicate document detected: doc-050c08015cf374045b9f53239d29071d (unknown_source)
+2026-03-25 21:04:07,384 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,388 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 21:04:07,389 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,392 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:04:07,394 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,398 - lightrag - WARNING - Duplicate document detected: doc-be96b5da92fc2a3a6710472046fe5ea6 (unknown_source)
+2026-03-25 21:04:07,399 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,402 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 21:04:07,404 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,407 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-25 21:04:07,408 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:04:07,411 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 21:04:07,433 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:05:31,903 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 21:05:31,904 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:05:31,908 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-25 21:05:31,909 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:05:31,912 - lightrag - WARNING - Duplicate document detected: doc-0b673715f22cd47ace79a7c974f84b12 (unknown_source)
+2026-03-25 21:05:31,914 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:06:00,933 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:06:00,934 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:08:25,717 - lightrag - WARNING - Duplicate document detected: doc-1a0d2763dd4ef700f241e1af71f4115a (unknown_source)
+2026-03-25 21:08:25,719 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,088 - lightrag - WARNING - Duplicate document detected: doc-cecabe6eeb8829e59b91346c85de5517 (unknown_source)
+2026-03-25 21:09:06,090 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,094 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:09:06,096 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,099 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 21:09:06,101 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,104 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 21:09:06,106 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,110 - lightrag - WARNING - Duplicate document detected: doc-154934c2dfc317423216eb922df7f697 (unknown_source)
+2026-03-25 21:09:06,111 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,116 - lightrag - WARNING - Duplicate document detected: doc-d6ae6c60c75309c77bff46fbbd026332 (unknown_source)
+2026-03-25 21:09:06,117 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,122 - lightrag - WARNING - Duplicate document detected: doc-e6a18242babfca04d19940851c7fb032 (unknown_source)
+2026-03-25 21:09:06,123 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,128 - lightrag - WARNING - Duplicate document detected: doc-df103516d451df60010e08f7ee5566c6 (unknown_source)
+2026-03-25 21:09:06,129 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,134 - lightrag - WARNING - Duplicate document detected: doc-050c08015cf374045b9f53239d29071d (unknown_source)
+2026-03-25 21:09:06,136 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,140 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 21:09:06,142 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,146 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:09:06,147 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,153 - lightrag - WARNING - Duplicate document detected: doc-be96b5da92fc2a3a6710472046fe5ea6 (unknown_source)
+2026-03-25 21:09:06,155 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,159 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-25 21:09:06,161 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,165 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-25 21:09:06,167 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,171 - lightrag - WARNING - Duplicate document detected: doc-f3b3ec277c9013a7bb38e90fe503c176 (unknown_source)
+2026-03-25 21:09:06,173 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,179 - lightrag - WARNING - Duplicate document detected: doc-efee2ba59f64db6e529a482220aec396 (unknown_source)
+2026-03-25 21:09:06,181 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,186 - lightrag - WARNING - Duplicate document detected: doc-0b673715f22cd47ace79a7c974f84b12 (unknown_source)
+2026-03-25 21:09:06,187 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,193 - lightrag - WARNING - Duplicate document detected: doc-f00d73d440cef22f402869e4701cb018 (unknown_source)
+2026-03-25 21:09:06,194 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,199 - lightrag - WARNING - Duplicate document detected: doc-28b2ce4500ca79a404756e45c6bfb2ee (unknown_source)
+2026-03-25 21:09:06,201 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,206 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-25 21:09:06,208 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,213 - lightrag - WARNING - Duplicate document detected: doc-0b673715f22cd47ace79a7c974f84b12 (unknown_source)
+2026-03-25 21:09:06,215 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,220 - lightrag - WARNING - Duplicate document detected: doc-749337c8925d80452832282470167bb4 (unknown_source)
+2026-03-25 21:09:06,222 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,227 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-25 21:09:06,229 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,235 - lightrag - WARNING - Duplicate document detected: doc-30a9f15db28efd33fa3ff47f27ebaf83 (unknown_source)
+2026-03-25 21:09:06,237 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:06,243 - lightrag - WARNING - Duplicate document detected: doc-ab2674c1acfe47981b924486dfadc5f6 (unknown_source)
+2026-03-25 21:09:06,245 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:09:20,313 - lightrag - WARNING - Duplicate document detected: doc-1d12b7bea1e6a094a6c8cc71b25f380e (unknown_source)
+2026-03-25 21:09:20,315 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:11:38,407 - lightrag - WARNING - chunk-95e3fcdd88084cb34d02662c4ed1a937: LLM output format error; found 4/5 fields on RELATION `Continuous Evaluation Flywheels`~`agent testing`
+2026-03-25 21:11:38,409 - lightrag - WARNING - chunk-95e3fcdd88084cb34d02662c4ed1a937: LLM output format error; found 4/5 fields on RELATION `Stateful Enterprise Context Layers`~`agent memory`
+2026-03-25 21:12:25,975 - lightrag - WARNING - Duplicate document detected: doc-1bcb34d74adf98efc1180e6ebf6f6a62 (unknown_source)
+2026-03-25 21:12:25,978 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:12:25,984 - lightrag - WARNING - Duplicate document detected: doc-154934c2dfc317423216eb922df7f697 (unknown_source)
+2026-03-25 21:12:25,987 - lightrag - WARNING - No new unique documents were found.
+2026-03-25 21:12:25,993 - lightrag - WARNING - Duplicate document detected: doc-1d12b7bea1e6a094a6c8cc71b25f380e (unknown_source)
+2026-03-25 21:12:25,995 - lightrag - WARNING - No new unique documents were found.
