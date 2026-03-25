@@ -9,21 +9,16 @@ OpenClaw uses workspace-based prompt injection combined with event-driven hooks.
 ## Workspace Structure
 
 ```
-~/.openclaw/                      
-├── workspace/                   # Working directory
-│   ├── AGENTS.md               # Multi-agent coordination patterns
-│   ├── SOUL.md                 # Behavioral guidelines and personality
-│   ├── TOOLS.md                # Tool capabilities and gotchas
-│   ├── MEMORY.md               # Long-term memory (main session only)
-│   └── memory/                 # Daily memory files
-│       └── YYYY-MM-DD.md
-├── skills/                      # Installed skills
-│   └── <skill-name>/
-│       └── SKILL.md
-└── hooks/                       # Custom hooks
-    └── <hook-name>/
-        ├── HOOK.md
-        └── handler.ts
+~/clawd/
+├── AGENTS.md
+├── SOUL.md
+├── TOOLS.md
+├── MEMORY.md
+├── memory/
+│   └── YYYY-MM-DD.md
+└── skills/
+    └── <skill-name>/
+        └── SKILL.md
 ```
 
 ## Quick Setup
@@ -37,7 +32,7 @@ clawdhub install self-improving-agent
 Or copy manually:
 
 ```bash
-cp -r self-improving-agent ~/.openclaw/skills/
+cp -r self-improving-agent ~/clawd/skills/
 ```
 
 ### 2. Install the Hook (Optional)
@@ -45,7 +40,7 @@ cp -r self-improving-agent ~/.openclaw/skills/
 Copy the hook to OpenClaw's hooks directory:
 
 ```bash
-cp -r hooks/openclaw ~/.openclaw/hooks/self-improvement
+cp -r hooks/openclaw ~/clawd/hooks/self-improvement
 ```
 
 Enable the hook:
@@ -59,13 +54,13 @@ openclaw hooks enable self-improvement
 Create the `.learnings/` directory in your workspace:
 
 ```bash
-mkdir -p ~/.openclaw/workspace/.learnings
+mkdir -p ~/clawd/.learnings
 ```
 
 Or in the skill directory:
 
 ```bash
-mkdir -p ~/.openclaw/skills/self-improving-agent/.learnings
+mkdir -p ~/clawd/skills/self-improving-agent/.learnings
 ```
 
 ## Injected Prompt Files

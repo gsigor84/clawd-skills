@@ -116,29 +116,49 @@ Example inputs must be generic placeholders that do not contain secrets.
 
 Return exactly one of these lines and nothing else:
 
-### Structured failure logging (ERR entries)
+### Deterministic ERR logging via /self-improving-agent (mandatory on failures)
 
-On any emitted `ERROR: ...` failure mode, append one structured entry to:
-- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+On any emitted `ERROR: ...` failure mode below, do this deterministically:
 
-ID format:
-- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+1) Emit the `ERROR: ...` line (as required by the Failure mode contract).
+2) Immediately call `/self-improving-agent` to log one ERR entry.
 
 Priority mapping:
-- Hard-stop failures (any `ERROR:` line) → `priority: high`
+- All failures here are hard-stop failures → `priority: high`
 
-Entry fields (consistent schema):
-- `stage:` `skill-launcher`
-- `priority:` `high`
-- `status:` `hard_stop`
+Never log secrets or large payloads:
+- Never print or log the full SKILL.md contents.
+
+#### Exact /self-improving-agent call format (ERR)
+
+Call (single line):
+- `/self-improving-agent error | <one-line summary> | details: <details> | files: skills/skill-launcher/SKILL.md`
+
+The logged ERR entry must include these fields (keep short; no payloads):
+- `Pattern-Key:` use the exact key from the mapping table below
+- `Recurrence-Count:` start at `1`
+- `First-Seen:` and `Last-Seen:` set to today
+
+Context fields to include inside the entry:
+- `stage: skill-launcher`
+- `priority: high`
+- `status: hard_stop`
 - `reason:` the exact `ERROR: ...` string
+- `deployed_path:` extracted PATH
+- `trigger:` extracted TRIGGER
+- `gateway_restart_cmd:` `openclaw gateway restart` (or fallback)
 - `suggested_fix:` one line
-- `context:`
-  - `deployed_path:` extracted PATH
-  - `trigger:` extracted TRIGGER
-  - `gateway_restart_cmd:` `openclaw gateway restart` (or fallback)
 
-Do not print or log the full SKILL.md contents.
+#### Pattern-Key mapping (use exact key)
+
+| Failure | Pattern-Key |
+|---|---|
+| `ERROR: invalid_deploy_confirmation...` | `skill-launcher:invalid_deploy_confirmation` |
+| `ERROR: skill_file_missing...` | `skill-launcher:skill_file_missing` |
+| `ERROR: skill_file_malformed...` | `skill-launcher:skill_file_malformed` |
+| `ERROR: unsafe_path...` | `skill-launcher:unsafe_path` |
+| `ERROR: gateway_restart_failed...` | `skill-launcher:gateway_restart_failed` |
+| `ERROR: gateway_unhealthy...` | `skill-launcher:gateway_unhealthy` |
 
 - Invalid input:
   - `ERROR: invalid_deploy_confirmation. Expected DEPLOY_STATUS: COMPLETE with PATH and TRIGGER.`

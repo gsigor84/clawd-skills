@@ -362,6 +362,98 @@ def find_copy_button_after_prompt(snapshot_text: str, prompt_text: str) -> Optio
     return None
 
 
+def extract_response_via_dom_snapshot(prompt_text: str, snapshot_text: str) -> str:
+    """DOM/snapshot-based fallback extraction (no clipboard).
+
+    Anchor strategy (validated):
+    - Locate the prompt heading (level=3) for this prompt.
+    - Collect StaticText nodes after it.
+    - Stop at the next action row (Save/Copy/Rate) OR Query box.
+
+    Notes:
+    - NotebookLM headings usually contain the first line of the prompt.
+    - We match using a normalised first-line snippet to tolerate truncation.
+
+    Returns extracted response text, or "" if not found.
+    """
+    if not prompt_text or not snapshot_text:
+        return ""
+
+    first = (prompt_text.splitlines()[0] if prompt_text else "").strip()
+    if not first:
+        return ""
+
+    # Normalise and cap snippet to be robust.
+    snippet = re.sub(r"\s+", " ", first)[:120].strip().lower()
+    if not snippet:
+        return ""
+
+    lines = snapshot_text.splitlines()
+
+    def static_value(ln: str) -> Optional[str]:
+        m = re.search(r'StaticText "(.*)"', ln)
+        if not m:
+            return None
+        v = re.sub(r"\s+", " ", m.group(1)).strip()
+        return v or None
+
+    # Anchor: prefer heading level=3 that contains the snippet.
+    anchor_idx = None
+    for i, ln in enumerate(lines):
+        low = ln.lower()
+        if "level=3" in low and "heading \"" in low and snippet in low:
+            anchor_idx = i
+            break
+
+    # Fallback anchor: StaticText line containing snippet.
+    if anchor_idx is None:
+        for i, ln in enumerate(lines):
+            low = ln.lower()
+            if "statictext" in low and snippet in low:
+                anchor_idx = i
+                break
+
+    if anchor_idx is None:
+        return ""
+
+    # End boundary: next action row start (Save/Copy/Rate) or Query box.
+    end_idx = None
+    for j in range(anchor_idx + 1, len(lines)):
+        ln = lines[j]
+        if 'button "Save message to a note"' in ln:
+            end_idx = j
+            break
+        if 'button "Copy model response to clipboard"' in ln:
+            end_idx = j
+            break
+        if 'button "Rate response as good"' in ln:
+            end_idx = j
+            break
+        if 'button "Rate response as bad"' in ln:
+            end_idx = j
+            break
+        if 'textbox "Query box"' in ln:
+            end_idx = j
+            break
+
+    if end_idx is None:
+        end_idx = len(lines)
+
+    out: list[str] = []
+    for ln in lines[anchor_idx + 1 : end_idx]:
+        if "StaticText" not in ln:
+            continue
+        v = static_value(ln)
+        if not v:
+            continue
+        # Skip any echo of the prompt line.
+        if snippet and snippet in v.lower():
+            continue
+        out.append(v)
+
+    return "\n".join(out).strip()
+
+
 def crop_chat_column_inplace(png_path: Path) -> bool:
     if Image is None or not png_path.exists():
         return False
@@ -724,6 +816,12 @@ def main() -> int:
                 t.click(copy_ref)
                 time.sleep(0.85)
                 raw = pbpaste_text().strip()
+
+                # TEST HOOK (off by default): force clipboard to be treated as empty
+                # so we can validate DOM fallback deterministically.
+                if os.environ.get("NOTEBOOKLM_FORCE_EMPTY_CLIPBOARD") == "1":
+                    raw = ""
+
                 # accept only if it changed from sentinel and is non-empty
                 if raw and sentinel not in raw:
                     break
@@ -770,6 +868,23 @@ def main() -> int:
                     "Consider alternative extraction path if clipboard is unreliable",
                 ],
             )
+
+    # DOM/snapshot fallback if clipboard capture failed/stale/empty.
+    # Keep clipboard as primary (tested); this fallback is best-effort.
+    if partial and not raw and meta["result"].get("error") in (
+        "clipboard_stale_or_empty",
+        "clipboard_capture_failed",
+        "placeholder_output_detected",
+    ):
+        try:
+            snap_for_dom = t.snapshot_raw().get("snapshot", "")
+            dom_txt = extract_response_via_dom_snapshot(args.prompt_text, snap_for_dom)
+            if dom_txt and not re.search(r"\bplaceholder\b", dom_txt, flags=re.I):
+                raw = dom_txt
+                partial = False
+                meta["result"]["error"] = None
+        except Exception:
+            pass
 
     # Placeholder output detection (defensive): treat obvious placeholders as failure.
     if raw and re.search(r"\bplaceholder\b", raw, flags=re.I):

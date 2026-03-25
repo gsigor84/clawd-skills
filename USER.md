@@ -46,6 +46,16 @@
 
 ## Interests
 - Crypto, AI, tech, finance, global markets
+- Python
+- Coding / software development
+- Browser automation
+- Prompt engineering / context engineering
+- Open source
+- Productivity systems
+- Indie dev / building in public
+- LLM tooling
+- Agent-first product building
+- Multi-agent orchestration
 - Bitcoin and market-moving news always relevant
 - Not interested in: local UK transport, celebrity gossip, sports, local utility companies
 - Cambridge-based — filter out London-specific local news

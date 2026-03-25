@@ -233,34 +233,52 @@ Partial/blocked states (priority MEDIUM):
 - Not a hard-stop in this skill’s public contract, but treat high failure rates as “partial” for logging:
   - if a run completes structurally but yields `EXTRACTION QUALITY: FAILED` for all URLs, treat as `status: partial` for logging purposes.
 
-### Structured failure logging (ERR entries)
+### Deterministic ERR logging via /self-improving-agent (mandatory on failures/partials)
 
-Write ERR entries for:
-- Any hard-stop failure (an `ERROR: ...` output) → priority HIGH
-- Any completed run where all URLs are `EXTRACTION QUALITY: FAILED` → priority MEDIUM
+Write ERR entries via `/self-improving-agent` for:
 
-Append to:
-- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+Hard-stop failures (priority HIGH):
+- Any run that outputs an `ERROR: ...` line.
 
-ID format:
-- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+Partial/blocked states (priority MEDIUM):
+- Any run that completes structurally but yields `EXTRACTION QUALITY: FAILED` for **all** URLs (no signals extracted anywhere).
 
-Entry fields (consistent schema):
-- `stage:` `signal-extractor`
-- `priority:` `high|medium`
-- `status:` `hard_stop|partial`
-- `reason:` one-line reason
+Never log secrets or large payloads:
+- Do not copy fetched page contents.
+- Do not include tokens/headers.
+
+#### Exact /self-improving-agent call format (ERR)
+
+Call (single line):
+- `/self-improving-agent error | <one-line summary> | details: <details> | files: skills/signal-extractor/SKILL.md`
+
+The logged ERR entry must include these fields (keep short; no payloads):
+- `Pattern-Key:` use the exact key from the mapping table below
+- `Recurrence-Count:` start at `1`
+- `First-Seen:` and `Last-Seen:` set to today
+
+Context fields to include inside the entry:
+- `stage: signal-extractor`
+- `priority: high|medium`
+- `status: hard_stop|partial`
+- `reason:` one-line reason (include the exact ERROR line if present)
+- `intelligence_target:` extracted target
+- `vectors_total:` integer
+- `urls_total:` integer
+- `urls_failed:` integer
+- `urls_succeeded:` integer
+- `playwright_used_count:` integer
+- `allowed_domains:` if present; else empty
 - `suggested_fix:` one line
-- `context:`
-  - `intelligence_target:` extracted target
-  - `vectors_total:`
-  - `urls_total:`
-  - `urls_failed:`
-  - `urls_succeeded:`
-  - `playwright_used_count:`
-  - `allowed_domains:` if present; else empty
 
-Do not copy full page contents into ERR entries.
+#### Pattern-Key mapping (use exact key)
+
+| Condition | Pattern-Key | priority | status |
+|---|---|---|---|
+| `ERROR: invalid_source_map...` | `signal-extractor:invalid_source_map` | high | hard_stop |
+| `ERROR: source_map_too_large...` | `signal-extractor:source_map_too_large` | high | hard_stop |
+| `ERROR: malformed_source_map...` | `signal-extractor:malformed_source_map` | high | hard_stop |
+| all URLs `EXTRACTION QUALITY: FAILED` | `signal-extractor:all_urls_failed` | medium | partial |
 
 ## Boundary rules (privacy + safety)
 

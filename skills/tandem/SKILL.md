@@ -140,29 +140,50 @@ Emit `TANDEM_RESULT` with actions taken and findings.
 
 Return exactly one of these lines and nothing else:
 
-### Structured failure logging (ERR entries)
+### Deterministic ERR logging via /self-improving-agent (mandatory on failures)
 
-On any emitted `ERROR: ...` failure mode, append one structured entry to:
-- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+On any emitted `ERROR: ...` failure mode below, do this deterministically:
 
-ID format:
-- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+1) Emit the `ERROR: ...` line (as required by the Failure mode contract).
+2) Immediately call `/self-improving-agent` to log one ERR entry.
 
 Priority mapping:
-- Hard-stop failures (any `ERROR:` line) → `priority: high`
+- All failures here are hard-stop failures → `priority: high`
 
-Entry fields (consistent schema):
-- `stage:` `tandem`
-- `priority:` `high`
-- `status:` `hard_stop`
+Never log secrets:
+- Never include Tandem bearer tokens.
+- Never include full snapshots/page content.
+
+#### Exact /self-improving-agent call format (ERR)
+
+Call (single line):
+- `/self-improving-agent error | <one-line summary> | details: <details> | files: skills/tandem/SKILL.md`
+
+The logged ERR entry must include these fields (keep short; no payloads):
+- `Pattern-Key:` use the exact key from the mapping table below
+- `Recurrence-Count:` start at `1`
+- `First-Seen:` and `Last-Seen:` set to today
+
+Include these context fields inside the entry:
+- `stage: tandem`
+- `priority: high`
+- `status: hard_stop`
 - `reason:` the exact `ERROR: ...` string
-- `suggested_fix:` one line
-- `context:`
-  - `active_context_url:` value from `GET /active-tab/context` (or empty)
-  - `requested_url:` if provided by the user; else empty
-  - `task:` first 120 chars of the user task
+- `active_context_url:` from `GET /active-tab/context` (or empty)
+- `requested_url:` user-provided URL if any; else empty
+- `task:` first 120 chars of the user task
+- `suggested_fix:` one line specific to the error
 
-Do not include the Tandem API token in the ERR entry.
+#### Pattern-Key mapping (use exact key)
+
+| Failure | Pattern-Key |
+|---|---|
+| `ERROR: missing_token...` | `tandem:missing_token` |
+| `ERROR: tandem_unreachable...` | `tandem:unreachable` |
+| `ERROR: tandem_unauthorized...` | `tandem:unauthorized` |
+| `ERROR: invalid_url...` | `tandem:invalid_url` |
+| `ERROR: human_required...` | `tandem:human_required` |
+| `ERROR: snapshot_failed...` | `tandem:snapshot_failed` |
 
 - Missing token:
   - `ERROR: missing_token. Expected ~/.tandem/api-token to exist and be non-empty.`

@@ -120,6 +120,11 @@ For learning:
 ```
 ## [LRN-YYYYMMDD-XXX] learning
 
+- Pattern-Key: <string>
+- Recurrence-Count: <int>
+- First-Seen: <YYYY-MM-DD>
+- Last-Seen: <YYYY-MM-DD>
+
 Summary: <summary>
 Details: <details or "(none)">
 Files: <files or "(none)">
@@ -131,6 +136,11 @@ For error:
 ```
 ## [ERR-YYYYMMDD-XXX] error
 
+- Pattern-Key: <string>
+- Recurrence-Count: <int>
+- First-Seen: <YYYY-MM-DD>
+- Last-Seen: <YYYY-MM-DD>
+
 Summary: <summary>
 Details: <details or "(none)">
 Files: <files or "(none)">
@@ -141,6 +151,11 @@ Files: <files or "(none)">
 For feature:
 ```
 ## [FEAT-YYYYMMDD-XXX] feature
+
+- Pattern-Key: <string>
+- Recurrence-Count: <int>
+- First-Seen: <YYYY-MM-DD>
+- Last-Seen: <YYYY-MM-DD>
 
 Summary: <summary>
 Details: <details or "(none)">

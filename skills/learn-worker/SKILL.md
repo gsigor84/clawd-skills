@@ -104,31 +104,51 @@ Partial/blocked states (priority MEDIUM):
 - `learn-worker busy; wait for completion` (single-flight lock already held).
 - Main-session lock files detected in Step 3 (informational), if they correlate with repeated wedges.
 
-### Structured failure logging (ERR entries)
+### Deterministic ERR logging via /self-improving-agent (mandatory on failures/partials)
 
-On any hard-stop failure or partial/blocked stop, append one structured entry to:
-- `/Users/igorsilva/clawd/.learnings/ERRORS.md`
+Write ERR entries via `/self-improving-agent` for:
 
-ID format:
-- `ERR-YYYYMMDD-XXX` (XXX is a zero-padded counter starting at 001 per day)
+Hard-stop failures (priority HIGH):
+- input path missing or file not found/unreadable
+- worker run fails to produce a saved study guide path
+- returned saved path does not exist on disk
 
-Priority mapping:
-- Hard-stop failure → `priority: high`
-- Partial/blocked stop → `priority: medium`
+Partial/blocked states (priority MEDIUM):
+- `learn-worker busy; wait for completion` (single-flight lock already held)
 
-Entry fields (consistent schema):
-- `stage:` `learn-worker`
-- `priority:` `high|medium`
-- `status:` `hard_stop|partial|blocked`
-- `reason:` one-line reason
+Never log secrets or large payloads:
+- Do not include source file contents.
+
+#### Exact /self-improving-agent call format (ERR)
+
+Call (single line):
+- `/self-improving-agent error | <one-line summary> | details: <details> | files: skills/learn-worker/SKILL.md`
+
+The logged ERR entry must include these fields (keep short; no payloads):
+- `Pattern-Key:` use the exact key from the mapping table below
+- `Recurrence-Count:` start at `1`
+- `First-Seen:` and `Last-Seen:` set to today
+
+Context fields to include inside the entry:
+- `stage: learn-worker`
+- `priority: high|medium`
+- `status: hard_stop|blocked`
+- `reason:` one-line reason (include any exact emitted message if applicable)
+- `input_path:` user-provided path (or empty)
+- `lockdir:` `/Users/igorsilva/clawd/.learn-worker.lockdir`
+- `main_session_locks_present:` `yes|no|unknown`
+- `returned_saved_path:` if any
 - `suggested_fix:` one line
-- `context:`
-  - `input_path:` the user-provided path (or empty)
-  - `lockdir:` `/Users/igorsilva/clawd/.learn-worker.lockdir`
-  - `main_session_locks_present:` `yes|no|unknown`
-  - `returned_saved_path:` if any
 
-Do not include source file contents in ERR entries.
+#### Pattern-Key mapping (use exact key)
+
+| Condition | Pattern-Key | priority | status |
+|---|---|---|---|
+| missing input path | `learn-worker:missing_input_path` | high | hard_stop |
+| file not found/unreadable | `learn-worker:input_file_missing` | high | hard_stop |
+| worker failed | `learn-worker:worker_failed` | high | hard_stop |
+| saved path missing | `learn-worker:saved_path_missing` | high | hard_stop |
+| busy lock held | `learn-worker:busy` | medium | blocked |
 
 ## Toolset
 

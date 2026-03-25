@@ -20,6 +20,10 @@ import sys
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+# Shared learnings logger (ERR entries)
+sys.path.insert(0, "/Users/igorsilva/clawd/tools")
+from learnings_helper import update_or_append_err  # type: ignore
+
 
 PROMPT_NAME_BY_N: Dict[int, str] = {
     1: "core-questions",
@@ -119,6 +123,25 @@ def main() -> int:
 
     for n, name, p in plan:
         if not p.exists():
+            update_or_append_err(
+                pattern_key="notebooklm-runner:missing-prompt-file",
+                summary="NotebookLM runner missing prompt file; cannot continue.",
+                error_lines=[f"missing prompt file: {p}", f"prompt_number={n}", f"prompt_name={name}"],
+                context_lines=[
+                    f"notebook_url={args.notebook_url}",
+                    f"prompts_dir={prompts_dir}",
+                    f"runs_dir={runs_dir}",
+                    f"progress_file={progress_file}",
+                    f"final_summary={final_summary}",
+                ],
+                suggested_fix_lines=[
+                    "Ensure prompts-dir contains p01.txt..p17.txt.",
+                    "Re-run notebooklm-runner after regenerating missing prompt file.",
+                ],
+                priority="high",
+                area="infra",
+                stage="notebooklm-runner",
+            )
             print(f"ERROR: missing prompt file: {p}", file=sys.stderr)
             return 2
 
@@ -142,7 +165,51 @@ def main() -> int:
                 str(args.sleep_seconds),
             ]
         )
-        if code not in (0, 1):
+        if code == 1:
+            # Fetcher signals partial/blocked completion.
+            update_or_append_err(
+                pattern_key="notebooklm-runner:fetcher-partial-or-blocked",
+                summary="NotebookLM runner stopped because fetcher returned partial/blocked.",
+                error_lines=[f"fetcher exit={code}", f"prompt_number={n}", f"prompt_name={name}"],
+                context_lines=[
+                    f"notebook_url={args.notebook_url}",
+                    f"prompts_dir={prompts_dir}",
+                    f"runs_dir={runs_dir}",
+                    f"progress_file={progress_file}",
+                    f"final_summary={final_summary}",
+                ],
+                suggested_fix_lines=[
+                    "Check Tandem is reachable at 127.0.0.1:8765.",
+                    "If NotebookLM UI drifted, update selectors in notebooklm-fetcher.",
+                    "Re-run the runner after resolving the block.",
+                ],
+                priority="medium",
+                area="infra",
+                stage="notebooklm-runner",
+            )
+            print(f"ERROR: fetcher returned partial/blocked prompt={n} exit={code}", file=sys.stderr)
+            return 3
+
+        if code != 0:
+            update_or_append_err(
+                pattern_key="notebooklm-runner:fetcher-hard-failure",
+                summary="NotebookLM runner stopped because fetcher hard-failed.",
+                error_lines=[f"fetcher exit={code}", f"prompt_number={n}", f"prompt_name={name}"],
+                context_lines=[
+                    f"notebook_url={args.notebook_url}",
+                    f"prompts_dir={prompts_dir}",
+                    f"runs_dir={runs_dir}",
+                    f"progress_file={progress_file}",
+                    f"final_summary={final_summary}",
+                ],
+                suggested_fix_lines=[
+                    "Run notebooklm-fetcher directly for the failing prompt to reproduce.",
+                    "Inspect tmp/notebooklm-runs meta.json/snapshot.json for the failing run.",
+                ],
+                priority="high",
+                area="infra",
+                stage="notebooklm-runner",
+            )
             print(f"ERROR: fetcher failed prompt={n} exit={code}", file=sys.stderr)
             return 3
 
@@ -157,10 +224,39 @@ def main() -> int:
             ]
         )
         if code2 != 0:
+            update_or_append_err(
+                pattern_key="notebooklm-runner:processor-failed",
+                summary="NotebookLM runner stopped because processor failed.",
+                error_lines=[f"processor exit={code2}", f"prompt_number={n}", f"prompt_name={name}"],
+                context_lines=[
+                    f"runs_dir={runs_dir}",
+                    f"progress_file={progress_file}",
+                ],
+                suggested_fix_lines=[
+                    "Run notebooklm-processor directly on the runs dir to reproduce.",
+                    "Check for malformed snapshot/meta files in tmp/notebooklm-runs.",
+                ],
+                priority="high",
+                area="infra",
+                stage="notebooklm-runner",
+            )
             print(f"ERROR: processor failed prompt={n} exit={code2}", file=sys.stderr)
             return 4
 
     if not progress_file.exists():
+        update_or_append_err(
+            pattern_key="notebooklm-runner:progress-file-missing",
+            summary="NotebookLM runner finished prompts but progress file was missing.",
+            error_lines=["progress file missing after run"],
+            context_lines=[f"progress_file={progress_file}", f"runs_dir={runs_dir}"],
+            suggested_fix_lines=[
+                "Re-run notebooklm-processor on the runs dir to regenerate progress.",
+                "Check filesystem permissions for the progress file path.",
+            ],
+            priority="high",
+            area="infra",
+            stage="notebooklm-runner",
+        )
         print("ERROR: progress file missing after run", file=sys.stderr)
         return 5
 
