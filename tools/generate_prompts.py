@@ -24,7 +24,19 @@ except ImportError:
     import urllib.parse
 
 
-DEFAULT_SYSTEM_MSG = """You are a research prompt engineer. Generate 17 research prompts for a NotebookLM notebook. The prompts must extract actionable techniques that an AI agent can apply to real tasks. Focus on HOW TO DO, not WHAT IS. The topic is {topic}. The goal is {goal}. Each prompt should be 2-5 sentences. Return only the prompts numbered 1-17, nothing else."""
+DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY on uploaded source documents. Your prompts must be questions that will extract actionable knowledge FROM THE SOURCES, not general knowledge about the topic.
+
+Each prompt must:
+- Ask NotebookLM to find specific techniques, frameworks, or methods FROM THE UPLOADED SOURCES
+- Reference 'the sources' or 'the authors' or 'the books' so NotebookLM knows to look in its documents
+- Extract HOW TO APPLY the knowledge, not just WHAT IT IS
+- Be tailored to the goal: {goal}
+- Be about the topic: {topic}
+
+Bad example: 'How to use mind mapping to brainstorm video concepts'
+Good example: 'From the uploaded sources, what specific techniques do the authors recommend for generating ideas when you are stuck on a creative task? How would you apply each technique to a real project right now?'
+
+Generate 17 prompts. Return only the prompts numbered 1-17."""
 
 
 class OpenAIAPIClient:
