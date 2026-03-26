@@ -271,6 +271,31 @@ What's next: Pipeline complete
 
 ---
 
+### Phase 7: REPORT GENERATION (mandatory)
+
+**Action:**
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/pipeline_report.py \
+  --skill-name "<skill-name>" \
+  --mode "notebooklm" \
+  --notebook-url "<url>"
+```
+
+For `--web-research` mode, use `--mode "web-research"` instead.
+
+**Output:** `~/clawd/tmp/skill-forge/<skill-name>/pipeline-report.md`
+
+**Handoff:**
+```
+What was done: Full pipeline report generated with all artifacts
+Where artifacts: pipeline-report.md
+How to verify: File size > 10KB indicates substantial content
+Known issues: None
+What's next: Pipeline complete
+```
+
+---
+
 ## Handoff Protocol (per agent-team-orchestration)
 
 Every phase outputs structured handoff:
@@ -291,6 +316,7 @@ Every phase outputs structured handoff:
 | 4 | Synthesis fails | 1x | Use pass1 only, note gap |
 | 5 | skillmd-builder fails | 2x | Output partial, note error |
 | 6 | Critic fails | 1x | Skip, note in state |
+| 7 | Report generation fails | 1x | Skip, log error |
 
 ---
 
