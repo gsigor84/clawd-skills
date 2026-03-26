@@ -10,6 +10,7 @@ Orchestrate research-to-skill pipeline using agent-team-orchestration patterns. 
 ## Trigger
 
 `/skill-forge --topic <topic> --notebook-url <url> --skill-name <name>`
+`/skill-forge --topic <topic> --notebook-url <url> --skill-name <name> --creative`
 
 ## Team Structure
 
@@ -154,7 +155,31 @@ What was done: Both passes merged into single enriched summary
 Where artifacts: synthesis/enriched-summary.md, synthesis/gap-rules.md
 How to verify: File size > 100KB indicates substantial content
 Known issues: Quality depends on pass1+pass2 outputs
-What's next: Build SKILL.md
+What's next: Build SKILL.md (or Phase 4.5 with --creative)
+```
+
+---
+
+### Phase 4.5: CREATIVE EXPANSION (Reviewer, optional)
+
+**When:** Only with `--creative` flag
+
+**Prerequisite:** Phase 4 (Synthesis) must be complete
+
+**Action:**
+```bash
+# Read enriched-summary.md and run idea-generator-v2 to find non-obvious angles
+# Prompt: "Based on this research, what non-obvious angles, unexpected connections, or approaches would make a skill built from this research genuinely different from the obvious version? Find the spine. Acknowledge what the obvious version would miss."
+# Save to: ~/clawd/tmp/skill-forge/<skill-name>/creative-expansion.md
+```
+
+**Handoff:**
+```
+What was done: Creative expansion via idea-generator-v2, finding non-obvious angles
+Where artifacts: creative-expansion.md
+How to verify: Check for spine + unexpected angles identified
+Known issues: Depends on idea-generator-v2 being available
+What's next: Build SKILL.md with both enriched-summary.md AND creative-expansion.md
 ```
 
 ---
@@ -163,6 +188,9 @@ What's next: Build SKILL.md
 
 **Action:**
 ```bash
+# If --creative flag used:
+# Build SKILL.md from BOTH synthesis/enriched-summary.md AND creative-expansion.md
+# Else:
 # Use sessions_spawn with skillmd-builder-agent
 # Task: Build SKILL.md from synthesis/enriched-summary.md
 # Save to: ~/clawd/skills/<skill-name>/SKILL.md
