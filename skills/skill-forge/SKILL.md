@@ -9,9 +9,14 @@ Orchestrate research-to-skill pipeline using agent-team-orchestration patterns. 
 
 ## Trigger
 
-`/skill-forge --topic <topic> --notebook-url <url> --skill-name <name>`
-`/skill-forge --topic <topic> --notebook-url <url> --skill-name <name> --creative`
-`/skill-forge --topic <topic> --skill-name <name> --web-research`
+`/skill-forge --topic <topic> --goal <goal> --notebook-url <url> --skill-name <name>`
+`/skill-forge --topic <topic> --goal <goal> --notebook-url <url> --skill-name <name> --creative`
+`/skill-forge --topic <topic> --goal <goal> --skill-name <name> --web-research`
+`/skill-forge --topic <topic> --notebook-url <url> --skill-name <name>` (legacy without goal)
+
+### --goal flag (required for goal-driven prompts)
+
+When `--goal` is passed, Phase 0.5 runs first to generate goal-tailored prompts before Phase 1.
 
 ### --web-research mode
 
@@ -95,13 +100,46 @@ When `--web-research` is specified, the pipeline uses web research instead of No
 
 ## Pipeline Phases
 
+### Phase 0.5: PROMPT GENERATION (when --goal flag is passed)
+
+**When:** Only with `--goal` flag
+
+**Prerequisite:** Task state created, topic and goal defined
+
+**Action:**
+```bash
+# Generate 17 goal-tailored prompts
+/opt/anaconda3/bin/python3 ~/clawd/tools/generate_prompts.py \
+  --topic "<topic>" \
+  --goal "<goal>" \
+  --output-dir "/Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/prompts"
+```
+
+**Handoff:**
+```
+What was done: 17 prompts generated and saved to prompts/p01.txt...p17.txt
+Where artifacts: prompts/p01.txt...p17.txt
+How to verify: Check all 17 files exist with non-empty content
+Known issues: Depends on OPENAI_API_KEY
+What's next: Phase 1 uses these prompts instead of default notebooklm-prompts
+```
+
+---
+
 ### Phase 1: BASELINE EXTRACTION (Builder)
 
 **Action:**
 ```bash
+# If --goal was passed, use generated prompts; otherwise use default prompts
+if [ -d "/Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/prompts" ]; then
+  PROMPTS_DIR="/Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/prompts"
+else
+  PROMPTS_DIR="/Users/igorsilva/clawd/tmp/notebooklm-prompts"
+fi
+
 /opt/anaconda3/bin/python3 ~/clawd/skills/notebooklm-runner/scripts/run_notebooklm_runner.py \
   --notebook-url "<url>" \
-  --prompts-dir "/Users/igorsilva/clawd/tmp/notebooklm-prompts" \
+  --prompts-dir "${PROMPTS_DIR}" \
   --runs-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1" \
   --progress-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1/progress.md" \
   --final-summary "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1/summary.md"
