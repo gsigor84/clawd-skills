@@ -11,6 +11,42 @@ Orchestrate research-to-skill pipeline using agent-team-orchestration patterns. 
 
 `/skill-forge --topic <topic> --notebook-url <url> --skill-name <name>`
 `/skill-forge --topic <topic> --notebook-url <url> --skill-name <name> --creative`
+`/skill-forge --topic <topic> --skill-name <name> --web-research`
+
+### --web-research mode
+
+When `--web-research` is specified, the pipeline uses web research instead of NotebookLM:
+
+**Differences from NotebookLM mode:**
+- **Phase 1:** Uses `~/clawd/tools/web_research.py` to fetch arXiv papers, then `~/clawd/tools/corpus_prompter.py` to run 17 prompts against the corpus
+- **Phase 3:** Uses `corpus_prompter.py` again on gap analysis results
+- **No notebook URL required**
+
+**Phase 1 (Baseline via web research):**
+```bash
+# Step 1: Search arXiv and generate corpus
+/opt/anaconda3/bin/python3 ~/clawd/tools/web_research.py \
+  --topic "<topic>" \
+  --limit 10 \
+  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1"
+
+# Step 2: Run 17 prompts against the corpus
+/opt/anaconda3/bin/python3 ~/clawd/tools/corpus_prompter.py \
+  --corpus-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1/research-corpus.md" \
+  --prompts-dir "/Users/igorsilva/clawd/tmp/notebooklm-prompts" \
+  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1" \
+  --model gpt-4o-mini
+```
+
+**Phase 3 (Deep extraction via web research):**
+```bash
+# Run corpus_prompter.py on gap prompts
+/opt/anaconda3/bin/python3 ~/clawd/tools/corpus_prompter.py \
+  --corpus-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/synthesis/enriched-summary.md" \
+  --prompts-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/gaps" \
+  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass2" \
+  --model gpt-4o-mini
+```
 
 ## Team Structure
 
@@ -169,8 +205,15 @@ What's next: Build SKILL.md (or Phase 4.5 with --creative)
 **Action:**
 ```bash
 # Read enriched-summary.md and run idea-generator-v2 to find non-obvious angles
-# Prompt: "Based on this research, what non-obvious angles, unexpected connections, or approaches would make a skill built from this research genuinely different from the obvious version? Find the spine. Acknowledge what the obvious version would miss."
-# Save to: ~/clawd/tmp/skill-forge/<skill-name>/creative-expansion.md
+# First, copy enriched-summary to a temp location accessible by idea-generator
+cp /Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/synthesis/enriched-summary.md \
+   /Users/igorsilva/clawd/tmp/idea-generator-context.md
+
+# Run idea-generator-v2 skill via sessions_spawn
+sessions_spawn:
+  runtime: "acp"
+  agentId: "idea-generator-v2"
+  task: "Based on the research corpus at /Users/igorsilva/clawd/tmp/idea-generator-context.md, identify non-obvious angles, unexpected connections, and approaches that would make a skill built from this research genuinely different from the obvious version. Find the spine - the one-sentence statement of what this work is really about. Save output to /Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/creative-expansion.md"
 ```
 
 **Handoff:**
@@ -188,12 +231,11 @@ What's next: Build SKILL.md with both enriched-summary.md AND creative-expansion
 
 **Action:**
 ```bash
-# If --creative flag used:
-# Build SKILL.md from BOTH synthesis/enriched-summary.md AND creative-expansion.md
-# Else:
-# Use sessions_spawn with skillmd-builder-agent
-# Task: Build SKILL.md from synthesis/enriched-summary.md
-# Save to: ~/clawd/skills/<skill-name>/SKILL.md
+# Build SKILL.md using skillmd-builder-agent
+sessions_spawn:
+  runtime: "acp"
+  agentId: "skillmd-builder-agent"
+  task: "Build a SKILL.md from /Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/synthesis/enriched-summary.md. Save to ~/clawd/skills/<skill-name>/SKILL.md. Use the research content to define: name, description, use cases, inputs, outputs, step-by-step procedure, failure_modes, toolset, and acceptance tests."
 ```
 
 **Handoff:**
@@ -211,9 +253,11 @@ What's next: Run critic review
 
 **Action:**
 ```bash
-# Use sessions_spawn with self-improving-skill-builder
-# Task: Review ~/clawd/skills/<skill-name>/SKILL.md
-# Propose improvements
+# Run self-improving-skill-builder to validate and improve the SKILL.md
+sessions_spawn:
+  runtime: "acp"
+  agentId: "self-improving-skill-builder"
+  task: "Run /improve-skills --targets <skill-name> --skills-dir ~/clawd/skills"
 ```
 
 **Handoff:**
