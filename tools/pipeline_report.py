@@ -19,7 +19,25 @@ from datetime import datetime
 BASE_DIR = os.path.expanduser("~/clawd")
 TMP_BASE = os.path.join(BASE_DIR, "tmp", "skill-forge")
 SKILLS_DIR = os.path.join(BASE_DIR, "skills")
-PROMPTS_DIR = os.path.join(BASE_DIR, "tmp", "notebooklm-prompts")
+DEFAULT_PROMPTS_DIR = os.path.join(BASE_DIR, "tmp", "notebooklm-prompts")
+
+
+def resolve_prompts_dir(skill_dir: str, task_state):
+    """Resolve prompts directory in priority order:
+    1) task-state.json promptsDir
+    2) ~/clawd/tmp/skill-forge/<skill-name>/prompts/
+    3) default ~/clawd/tmp/notebooklm-prompts/
+    """
+    if isinstance(task_state, dict):
+        pd = (task_state.get("promptsDir") or "").strip()
+        if pd and os.path.isdir(os.path.expanduser(pd)):
+            return os.path.expanduser(pd)
+
+    skill_prompts = os.path.join(skill_dir, "prompts")
+    if os.path.isdir(skill_prompts):
+        return skill_prompts
+
+    return DEFAULT_PROMPTS_DIR
 
 
 def read_file(path):
@@ -165,7 +183,8 @@ def generate_report(skill_name, mode="notebooklm", notebook_url=""):
     if os.path.isdir(research_pass1):
         pass1_dir = research_pass1
     
-    prompts = list_prompts(PROMPTS_DIR)
+    prompts_dir = resolve_prompts_dir(skill_dir, task_state)
+    prompts = list_prompts(prompts_dir)
     responses = list_responses(pass1_dir)
     
     lines.append("### Prompts sent:")
