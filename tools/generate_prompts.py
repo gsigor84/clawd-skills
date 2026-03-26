@@ -24,19 +24,36 @@ except ImportError:
     import urllib.parse
 
 
-DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY on uploaded source documents. Your prompts must be questions that will extract actionable knowledge FROM THE SOURCES, not general knowledge about the topic.
+DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY from uploaded source documents.
+
+Generate 17 prompts, one for each of these specific angles:
+
+1. Core techniques for idea generation from the sources
+2. How to overcome fear and resistance using the authors' methods
+3. Daily habits and rituals recommended by the authors
+4. How to apply source techniques specifically to: {goal}
+5. What the authors say about starting when you have nothing
+6. How to organize and store creative material
+7. Techniques for finding the core theme or spine of a project
+8. What to do when you are completely stuck
+9. How the authors define "good enough" vs perfectionism
+10. Techniques for stealing and remixing ideas ethically
+11. How to maintain momentum across a long project
+12. What the authors say about collaboration vs solo work
+13. How to evaluate if an idea is worth pursuing
+14. Physical and environmental techniques for creativity
+15. How to apply source wisdom to: {goal} specifically
+16. What the authors say about shipping and finishing
+17. Synthesis — combine all source wisdom into one actionable framework for: {goal}
 
 Each prompt must:
-- Ask NotebookLM to find specific techniques, frameworks, or methods FROM THE UPLOADED SOURCES
-- Reference 'the sources' or 'the authors' or 'the books' so NotebookLM knows to look in its documents
-- Extract HOW TO APPLY the knowledge, not just WHAT IT IS
-- Be tailored to the goal: {goal}
+- Ask NotebookLM to find specific techniques FROM THE UPLOADED SOURCES
+- Reference 'the sources' or 'the authors' or 'the books'
+- Extract HOW TO APPLY the knowledge to {goal}, not just WHAT IT IS
+- Be tailored to its specific angle from the list above
 - Be about the topic: {topic}
 
-Bad example: 'How to use mind mapping to brainstorm video concepts'
-Good example: 'From the uploaded sources, what specific techniques do the authors recommend for generating ideas when you are stuck on a creative task? How would you apply each technique to a real project right now?'
-
-Generate 17 prompts. Return only the prompts numbered 1-17."""
+Generate exactly 17 prompts, numbered 1-17. Each prompt should be 1-3 sentences."""
 
 
 class OpenAIAPIClient:
