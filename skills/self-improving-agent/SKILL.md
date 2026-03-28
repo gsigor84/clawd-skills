@@ -35,11 +35,12 @@ Required:
 
 Optional:
 - `details:` — free text (may span multiple sentences)
+- `goal:` — what you were trying to accomplish when this happened (optional, one line)
 - `files:` — comma-separated paths (informational; not opened)
 
 Examples:
 - `/self-improving-agent learning | Validator failed because acceptance tests were placeholders | details: Rewrite tests with exact expected outputs | files: skills/tool-installer/SKILL.md`
-- `/self-improving-agent error | openclaw status failed | details: gateway unreachable (missing scope: operator.read)`
+- `/self-improving-agent error | notebooklm froze | details: page freeze after 8 min | goal: building creativity-toolkit-v3 with skill-forge`
 - `/self-improving-agent feature | Add allowlist support to signal-extractor | details: optional ALLOWED_DOMAINS line in input`
 
 ## Outputs
@@ -124,6 +125,7 @@ For learning:
 - Recurrence-Count: <int>
 - First-Seen: <YYYY-MM-DD>
 - Last-Seen: <YYYY-MM-DD>
+- User-Goal: <goal or "(none)">
 
 Summary: <summary>
 Details: <details or "(none)">
@@ -140,6 +142,7 @@ For error:
 - Recurrence-Count: <int>
 - First-Seen: <YYYY-MM-DD>
 - Last-Seen: <YYYY-MM-DD>
+- User-Goal: <goal or "(none)">
 
 Summary: <summary>
 Details: <details or "(none)">
@@ -156,6 +159,7 @@ For feature:
 - Recurrence-Count: <int>
 - First-Seen: <YYYY-MM-DD>
 - Last-Seen: <YYYY-MM-DD>
+- User-Goal: <goal or "(none)">
 
 Summary: <summary>
 Details: <details or "(none)">
@@ -202,8 +206,10 @@ Return exactly one line and nothing else:
      - `PATH: /Users/igorsilva/clawd/.learnings/LEARNINGS.md`
 
 3. **Behavioral: error logs to ERRORS.md**
-   - Run: `/self-improving-agent error | something failed`
-   - Expected: `PATH: /Users/igorsilva/clawd/.learnings/ERRORS.md`
+   - Run: `/self-improving-agent error | something failed | goal: validate new node-connect skill`
+   - Expected:
+     - `PATH: /Users/igorsilva/clawd/.learnings/ERRORS.md`
+     - Logged entry contains `User-Goal: validate new node-connect skill`
 
 4. **Behavioral: feature logs to FEATURE_REQUESTS.md**
    - Run: `/self-improving-agent feature | add x`

@@ -380,3 +380,442 @@
 2026-03-25 21:12:25,987 - lightrag - WARNING - No new unique documents were found.
 2026-03-25 21:12:25,993 - lightrag - WARNING - Duplicate document detected: doc-1d12b7bea1e6a094a6c8cc71b25f380e (unknown_source)
 2026-03-25 21:12:25,995 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:19,412 - lightrag - WARNING - Duplicate document detected: doc-28babca231cfbe1d7430271169335aec (unknown_source)
+2026-03-26 15:22:19,413 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:47,483 - lightrag - WARNING - Duplicate document detected: doc-4d16028289e3971481c525d229e27157 (unknown_source)
+2026-03-26 15:22:47,484 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:47,485 - lightrag - WARNING - Duplicate document detected: doc-3012359c3118e564d9ced18cd5dfb2ac (unknown_source)
+2026-03-26 15:22:47,486 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:47,489 - lightrag - WARNING - Duplicate document detected: doc-6b70782ee8043c40323799d2910521eb (unknown_source)
+2026-03-26 15:22:47,489 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:47,492 - lightrag - WARNING - Duplicate document detected: doc-1d12b7bea1e6a094a6c8cc71b25f380e (unknown_source)
+2026-03-26 15:22:47,493 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:22:47,495 - lightrag - WARNING - Duplicate document detected: doc-52816eabc1caa38bab822ebfbda6337a (unknown_source)
+2026-03-26 15:22:47,496 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 15:23:34,570 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Big Magic`~`creativity strategies`
+2026-03-26 15:23:34,571 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `The Artist's Way`~`creativity strategies`
+2026-03-26 15:23:34,571 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `The Creative Habit`~`creativity strategies`
+2026-03-26 15:23:34,571 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Steal Like an Artist Journal`~`creativity strategies`
+2026-03-26 15:23:34,571 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Start-Up Rituals`~`coding productivity`
+2026-03-26 15:23:34,571 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Combinatory Play`~`coding strategies`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Mastery`~`coding progression`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Failing Productively`~`learning process`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Waiting for the Lightning Bolt`~`creative process`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Overplanning / Perfectionism`~`coding progress`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `The Tormented Coder`~`creative mindset`
+2026-03-26 15:23:34,572 - lightrag - WARNING - chunk-8900e7fcfb874ecb67b53fc75a0dbc5a: LLM output format error; found 4/5 fields on RELATION `Bypassing the Inner Critic`~`idea generation`
+2026-03-26 21:12:15,206 - lightrag - ERROR - Embedding func: Error in decorated function for task 5551494272_859566.126125457: 'OPENAI_API_KEY'
+2026-03-26 21:12:15,219 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1979, in process_document
+    await asyncio.gather(*first_stage_tasks)
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/kg/nano_vector_db_impl.py", line 124, in upsert
+    embeddings_list = await asyncio.gather(*embedding_tasks)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 503, in __call__
+    result = await self.func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 1016, in wait_func
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 720, in worker
+    result = await asyncio.wait_for(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 142, in async_wrapped
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 58, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 110, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 78, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/__init__.py", line 390, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 61, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 805, in openai_embed
+    openai_async_client = create_openai_async_client(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 157, in create_openai_async_client
+    api_key = os.environ["OPENAI_API_KEY"]
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 679, in __getitem__
+KeyError: 'OPENAI_API_KEY'
+
+2026-03-26 21:12:15,219 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-26 21:12:15,222 - lightrag - WARNING - Duplicate document detected: doc-7a7de41c576abecec1664436ca08af4c (unknown_source)
+2026-03-26 21:12:15,222 - lightrag - WARNING - No new unique documents were found.
+2026-03-26 21:12:15,225 - lightrag - ERROR - Embedding func: Error in decorated function for task 5580081664_859566.295277528: 'OPENAI_API_KEY'
+2026-03-26 21:12:15,226 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1979, in process_document
+    await asyncio.gather(*first_stage_tasks)
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/kg/nano_vector_db_impl.py", line 124, in upsert
+    embeddings_list = await asyncio.gather(*embedding_tasks)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 503, in __call__
+    result = await self.func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 1016, in wait_func
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 720, in worker
+    result = await asyncio.wait_for(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 142, in async_wrapped
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 58, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 110, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 78, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/__init__.py", line 390, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 61, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 805, in openai_embed
+    openai_async_client = create_openai_async_client(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 157, in create_openai_async_client
+    api_key = os.environ["OPENAI_API_KEY"]
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 679, in __getitem__
+KeyError: 'OPENAI_API_KEY'
+
+2026-03-26 21:12:15,226 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-26 21:12:15,231 - lightrag - WARNING - No document chunks to process
+2026-03-26 21:12:15,233 - lightrag - ERROR - Embedding func: Error in decorated function for task 5580083776_859566.302710768: 'OPENAI_API_KEY'
+2026-03-26 21:12:15,235 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1979, in process_document
+    await asyncio.gather(*first_stage_tasks)
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/kg/nano_vector_db_impl.py", line 124, in upsert
+    embeddings_list = await asyncio.gather(*embedding_tasks)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 503, in __call__
+    result = await self.func(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 1016, in wait_func
+    return await future
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/utils.py", line 720, in worker
+    result = await asyncio.wait_for(
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 489, in wait_for
+    return fut.result()
+           ^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 142, in async_wrapped
+    return await fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 58, in __call__
+    do = await self.iter(retry_state=retry_state)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 110, in iter
+    result = await action(retry_state)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 78, in inner
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/__init__.py", line 390, in <lambda>
+    self._add_action_func(lambda rs: rs.outcome.result())
+                                     ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 449, in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/concurrent/futures/_base.py", line 401, in __get_result
+    raise self._exception
+  File "/opt/anaconda3/lib/python3.11/site-packages/tenacity/_asyncio.py", line 61, in __call__
+    result = await fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 805, in openai_embed
+    openai_async_client = create_openai_async_client(
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/llm/openai.py", line 157, in create_openai_async_client
+    api_key = os.environ["OPENAI_API_KEY"]
+              ~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 679, in __getitem__
+KeyError: 'OPENAI_API_KEY'
+
+2026-03-26 21:12:15,235 - lightrag - ERROR - Failed to extract document 1/2: unknown_source
+2026-03-26 21:12:15,236 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-26 21:12:15,238 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-26 21:12:15,238 - lightrag - ERROR - Failed to extract document 2/2: unknown_source
+2026-03-27 22:50:41,820 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:50:41,822 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:50:41,829 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:50:41,829 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:50:41,832 - lightrag - WARNING - Duplicate document detected: doc-e5cf1cf6f8720f8500f65bcf7123bcfd (unknown_source)
+2026-03-27 22:50:41,833 - lightrag - WARNING - No new unique documents were found.
+2026-03-27 22:50:41,836 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:50:41,837 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:50:41,838 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:50:41,838 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:50:41,851 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:50:41,905 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:50:41,906 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:50:41,906 - lightrag - ERROR - Failed to extract document 1/2: unknown_source
+2026-03-27 22:54:58,856 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:54:58,858 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:54:58,864 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:54:58,865 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:54:58,868 - lightrag - WARNING - Duplicate document detected: doc-e5cf1cf6f8720f8500f65bcf7123bcfd (unknown_source)
+2026-03-27 22:54:58,869 - lightrag - WARNING - No new unique documents were found.
+2026-03-27 22:54:58,871 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:54:58,872 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:54:58,873 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:54:58,873 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:54:58,885 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:54:58,938 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:54:58,939 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:54:58,939 - lightrag - ERROR - Failed to extract document 1/2: unknown_source
+2026-03-27 22:57:04,513 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:57:04,515 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:57:04,521 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:57:04,521 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:57:04,523 - lightrag - WARNING - Duplicate document detected: doc-e5cf1cf6f8720f8500f65bcf7123bcfd (unknown_source)
+2026-03-27 22:57:04,524 - lightrag - WARNING - No new unique documents were found.
+2026-03-27 22:57:04,526 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:57:04,527 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:57:04,527 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:57:04,527 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 22:57:04,540 - lightrag - WARNING - No document chunks to process
+2026-03-27 22:57:04,589 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 22:57:04,590 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 22:57:04,591 - lightrag - ERROR - Failed to extract document 1/2: unknown_source
+2026-03-27 23:01:38,487 - lightrag - WARNING - No document chunks to process
+2026-03-27 23:01:38,489 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 23:01:38,495 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 23:01:38,495 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 23:01:38,497 - lightrag - WARNING - Duplicate document detected: doc-e5cf1cf6f8720f8500f65bcf7123bcfd (unknown_source)
+2026-03-27 23:01:38,498 - lightrag - WARNING - No new unique documents were found.
+2026-03-27 23:01:38,500 - lightrag - WARNING - No document chunks to process
+2026-03-27 23:01:38,501 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 23:01:38,502 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 23:01:38,502 - lightrag - ERROR - Failed to extract document 1/1: unknown_source
+2026-03-27 23:01:38,515 - lightrag - WARNING - No document chunks to process
+2026-03-27 23:01:38,565 - lightrag - ERROR - Failed to extract entities and relationships: Set of Tasks/Futures is empty.
+2026-03-27 23:01:38,566 - lightrag - ERROR - Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 1987, in process_document
+    chunk_results = await entity_relation_task
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2281, in _process_extract_entities
+    raise e
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/lightrag.py", line 2266, in _process_extract_entities
+    chunk_results = await extract_entities(
+                    ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/site-packages/lightrag/operate.py", line 3044, in extract_entities
+    done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/anaconda3/lib/python3.11/asyncio/tasks.py", line 418, in wait
+    raise ValueError('Set of Tasks/Futures is empty.')
+ValueError: Set of Tasks/Futures is empty.
+
+2026-03-27 23:01:38,566 - lightrag - ERROR - Failed to extract document 1/2: unknown_source
+2026-03-27 23:02:08,737 - lightrag - WARNING - chunk-7a970b600a07208f04d90f0b45eea4de: LLM output format error; found 4/5 fields on RELATION `The Chaos Arranger`~`mental clarity, organization`
+2026-03-27 23:02:08,737 - lightrag - WARNING - chunk-7a970b600a07208f04d90f0b45eea4de: LLM output format error; found 4/5 fields on RELATION `The Mental Static Dump`~`mental focus, creativity`

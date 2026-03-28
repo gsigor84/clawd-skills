@@ -1,0 +1,1285 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"><key id="d13" for="edge" attr.name="truncate" attr.type="string"/>
+<key id="d12" for="edge" attr.name="created_at" attr.type="long"/>
+<key id="d11" for="edge" attr.name="file_path" attr.type="string"/>
+<key id="d10" for="edge" attr.name="source_id" attr.type="string"/>
+<key id="d9" for="edge" attr.name="keywords" attr.type="string"/>
+<key id="d8" for="edge" attr.name="description" attr.type="string"/>
+<key id="d7" for="edge" attr.name="weight" attr.type="double"/>
+<key id="d6" for="node" attr.name="truncate" attr.type="string"/>
+<key id="d5" for="node" attr.name="created_at" attr.type="long"/>
+<key id="d4" for="node" attr.name="file_path" attr.type="string"/>
+<key id="d3" for="node" attr.name="source_id" attr.type="string"/>
+<key id="d2" for="node" attr.name="description" attr.type="string"/>
+<key id="d1" for="node" attr.name="entity_type" attr.type="string"/>
+<key id="d0" for="node" attr.name="entity_id" attr.type="string"/>
+<graph edgedefault="undirected"><node id="Studio">
+  <data key="d0">Studio</data>
+  <data key="d1">other</data>
+  <data key="d2">Studio is a source of content used for educational or informative purposes.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Audio Overview">
+  <data key="d0">Audio Overview</data>
+  <data key="d1">other</data>
+  <data key="d2">Audio Overview is a format that provides auditory information on a subject.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="BETA">
+  <data key="d0">BETA</data>
+  <data key="d1">other</data>
+  <data key="d2">BETA refers to a version of a product that is being tested before its final release.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Slide Deck">
+  <data key="d0">Slide Deck</data>
+  <data key="d1">other</data>
+  <data key="d2">Slide Deck is a presentation format that includes a series of slides for visual communication.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Video Overview">
+  <data key="d0">Video Overview</data>
+  <data key="d1">other</data>
+  <data key="d2">Video Overview is a format that delivers information through a visual and auditory medium.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Mind Map">
+  <data key="d0">Mind Map</data>
+  <data key="d1">other</data>
+  <data key="d2">Mind Map is a diagram used to represent words, ideas, or concepts linked around a central concept.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Reports">
+  <data key="d0">Reports</data>
+  <data key="d1">other</data>
+  <data key="d2">Reports are detailed documents that provide information and analysis on a particular subject.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Flashcards">
+  <data key="d0">Flashcards</data>
+  <data key="d1">other</data>
+  <data key="d2">Flashcards are a study aid that helps in memorizing information through spaced repetition.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Quiz">
+  <data key="d0">Quiz</data>
+  <data key="d1">other</data>
+  <data key="d2">Quiz is an assessment tool that tests knowledge on a specific subject area.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Infographic">
+  <data key="d0">Infographic</data>
+  <data key="d1">other</data>
+  <data key="d2">Infographic is a visual representation of information or data designed to present information quickly and clearly.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Data Table">
+  <data key="d0">Data Table</data>
+  <data key="d1">other</data>
+  <data key="d2">Data Table is a structured format that organizes data in rows and columns for easy analysis.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="NotebookLM">
+  <data key="d0">NotebookLM</data>
+  <data key="d1">other</data>
+  <data key="d2">NotebookLM is a tool that may provide notes or references, but can be inaccurate, requiring verification of its responses.</data>
+  <data key="d3">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652486</data>
+  <data key="d6"></data>
+</node>
+<node id="Authors">
+  <data key="d0">Authors</data>
+  <data key="d1">person</data>
+  <data key="d2">The authors are individuals who propose core techniques for idea generation in various sources.</data>
+  <data key="d3">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652496</data>
+  <data key="d6"></data>
+</node>
+<node id="Sources">
+  <data key="d0">Sources</data>
+  <data key="d1">content</data>
+  <data key="d2">The sources refer to materials or references containing suggested techniques for idea generation.</data>
+  <data key="d3">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652496</data>
+  <data key="d6"></data>
+</node>
+<node id="Core Techniques">
+  <data key="d0">Core Techniques</data>
+  <data key="d1">concept</data>
+  <data key="d2">Core techniques are methods or strategies for generating ideas presented by the authors.</data>
+  <data key="d3">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652496</data>
+  <data key="d6"></data>
+</node>
+<node id="Innovative Ideas">
+  <data key="d0">Innovative Ideas</data>
+  <data key="d1">concept</data>
+  <data key="d2">Innovative ideas are creative concepts that can be developed using the suggested techniques for a video project.</data>
+  <data key="d3">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652496</data>
+  <data key="d6"></data>
+</node>
+<node id="Video Project">
+  <data key="d0">Video Project</data>
+  <data key="d1">content</data>
+  <data key="d2">The video project is the current personal endeavor where the suggested techniques for brainstorming will be applied.</data>
+  <data key="d3">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652496</data>
+  <data key="d6"></data>
+</node>
+<node id="The Creative Habit">
+  <data key="d0">The Creative Habit</data>
+  <data key="d1">content</data>
+  <data key="d2">The Creative Habit is a work that provides various exercises and techniques to enhance creative thinking and problem-solving.&lt;SEP&gt;The Creative Habit is a book that provides various creative exercises and techniques to overcome blocks and enhance creativity.&lt;SEP&gt;The Creative Habit is a framework that discusses the importance of self-reliance and individual responsibility in collaborative processes.&lt;SEP&gt;The Creative Habit is a book by Twyla Tharp that provides insights and exercises for developing creative habits and overcoming blocks.&lt;SEP&gt;The Creative Habit is a book that provides insights and exercises to develop creative habits and overcome mental barriers.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-9eb663934a3ed47aa6b9e9a91e67a150&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-7d6577a0585d9b51783360fe50194d32&lt;SEP&gt;chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="The Aggressive Idea Quota">
+  <data key="d0">The Aggressive Idea Quota</data>
+  <data key="d1">method</data>
+  <data key="d2">The Aggressive Idea Quota is a creative exercise that encourages rapid idea generation under a time constraint.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="The Coin Chaos Resolution">
+  <data key="d0">The Coin Chaos Resolution</data>
+  <data key="d1">method</data>
+  <data key="d2">The Coin Chaos Resolution is a technique to reorganize scattered thoughts through the physical manipulation of small objects.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="The 20-Question Excavation">
+  <data key="d0">The 20-Question Excavation</data>
+  <data key="d1">method</data>
+  <data key="d2">The 20-Question Excavation is a strategy for exploring a topic by formulating twenty specific questions before engaging with the material.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="The Boundary Defense Letter">
+  <data key="d0">The Boundary Defense Letter</data>
+  <data key="d1">method</data>
+  <data key="d2">The Boundary Defense Letter is a process of addressing and setting limits with feelings of fear or anxiety to protect creative work.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="The &quot;Dress for the Affair&quot; Refresh">
+  <data key="d0">The "Dress for the Affair" Refresh</data>
+  <data key="d1">method</data>
+  <data key="d2">The "Dress for the Affair" Refresh is an action taken to revitalize one's physical and mental state to foster inspiration.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="Trigger">
+  <data key="d0">Trigger</data>
+  <data key="d1">concept</data>
+  <data key="d2">Trigger refers to the underlying cause of feeling paralyzed or anxious about creative tasks, typically relating to fears or uncertainties.&lt;SEP&gt;Trigger is a concept referring to specific circumstances or cues that prompt the use of different creative methods.&lt;SEP&gt;Trigger refers to the specific conditions or feelings that prompt the use of various creative methods in The Creative Habit.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="Timer">
+  <data key="d0">Timer</data>
+  <data key="d1">concept</data>
+  <data key="d2">Timer represents a concept related to creating structure in the creative process, indicating a specific duration for tasks.&lt;SEP&gt;Timer denotes the time duration set for each creative method or exercise to maintain focus and structure.&lt;SEP&gt;Timer is a concept used in the exercises to define the time limits for completing tasks and fostering rapid idea generation.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652538</data>
+  <data key="d6"></data>
+</node>
+<node id="Steps">
+  <data key="d0">Steps</data>
+  <data key="d1">method</data>
+  <data key="d2">Steps outline a process for managing fear in creative work by acknowledging its presence and setting boundaries.&lt;SEP&gt;Steps outlines the sequential actions or procedures to follow in executing a particular creative method.&lt;SEP&gt;Steps outline the specific actions to be taken for each exercise in The Creative Habit, guiding users through the creative process.&lt;SEP&gt;Steps outline a series of actions to perform for creative exercises aimed at enhancing productivity and overcoming mental blocks.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Template">
+  <data key="d0">Template</data>
+  <data key="d1">concept</data>
+  <data key="d2">Template provides a structured format for expressing the relationship between creativity and the presence of fear.&lt;SEP&gt;Template is a predefined structure that guides the documentation of the outcomes of each creative method.&lt;SEP&gt;Template is a structured format provided in The Creative Habit to help users organize their ideas or responses effectively.&lt;SEP&gt;Template provides standardized phrases or structures to guide participants in their writing or creative processes.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Failure-Mode Fix">
+  <data key="d0">Failure-Mode Fix</data>
+  <data key="d1">concept</data>
+  <data key="d2">Failure-Mode Fix refers to strategies intended to address potential challenges or obstacles that may arise during the application of creative methods.&lt;SEP&gt;Failure-Mode Fix provides strategies for managing overwhelming fear during creative processes by changing physical locations.&lt;SEP&gt;Failure-Mode Fix refers to strategies provided in various exercises to overcome potential pitfalls during creative tasks.&lt;SEP&gt;Failure-Mode Fix suggests alternative strategies to address challenges that may arise during the creative exercises in The Creative Habit.&lt;SEP&gt;The Failure-Mode Fix provides strategies for overcoming obstacles when one cannot leave their workspace, encouraging tidiness and posture adjustment.&lt;SEP&gt;Failure-Mode Fix is a strategy to simplify complicated explanations or processes by using basic language or visual aids.&lt;SEP&gt;Failure-mode fix suggests alternative strategies to employ when participants encounter resistance or obstacles during creative tasks.</data>
+  <data key="d3">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce&lt;SEP&gt;chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-9eb663934a3ed47aa6b9e9a91e67a150&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b&lt;SEP&gt;chunk-8160382cd709adb42688285242ef8fab&lt;SEP&gt;chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Verb Embodiment">
+  <data key="d0">Verb Embodiment</data>
+  <data key="d1">method</data>
+  <data key="d2">Verb Embodiment is a creative technique for overcoming mental blocks by acting out action verbs physically to stimulate new ideas.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Micro-Chaos Arranging">
+  <data key="d0">Micro-Chaos Arranging</data>
+  <data key="d1">method</data>
+  <data key="d2">Micro-Chaos Arranging is a method of visually simulating problem resolution by rearranging small objects into harmonious patterns.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The 20-Question Probe">
+  <data key="d0">The 20-Question Probe</data>
+  <data key="d1">method</data>
+  <data key="d2">The 20-Question Probe is a strategy for overcoming blank page syndrome by generating a list of rapid-fire questions related to a topic.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Lexical Edge-Scratching">
+  <data key="d0">Lexical Edge-Scratching</data>
+  <data key="d1">method</data>
+  <data key="d2">Lexical Edge-Scratching involves exploring dictionary definitions of a project’s core word and its adjacent words to find unexpected connections.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The 5-Way Rewrite">
+  <data key="d0">The 5-Way Rewrite</data>
+  <data key="d1">method</data>
+  <data key="d2">The 5-Way Rewrite is a technique for rephrasing sentences by creating new context around a struggling core message.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="20-Minute Image Tear">
+  <data key="d0">20-Minute Image Tear</data>
+  <data key="d1">method</data>
+  <data key="d2">20-Minute Image Tear is an activity aimed at generating visual inspiration by cutting and arranging images from magazines.&lt;SEP&gt;The 20-Minute Image Tear is a creativity method involving tearing images from magazines for visual inspiration in a project.</data>
+  <data key="d3">chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The Artist's Way Workbook">
+  <data key="d0">The Artist's Way Workbook</data>
+  <data key="d1">content</data>
+  <data key="d2">The Artist's Way Workbook is a resource that features exercises aimed at improving one's creative processes and mindset.&lt;SEP&gt;The Artist's Way Workbook is a resource that emphasizes the importance of witnessing without fixing, facilitating personal sharing and growth.&lt;SEP&gt;The Artist's Way Workbook is a companion guide to The Artist's Way by Julia Cameron, offering exercises for fostering creativity and addressing self-doubt.&lt;SEP&gt;The Artist's Way Workbook is a resource that includes methods and techniques for enhancing creativity and self-expression.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-7d6577a0585d9b51783360fe50194d32&lt;SEP&gt;chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Twenty-Minute Visual Mashup">
+  <data key="d0">Twenty-Minute Visual Mashup</data>
+  <data key="d1">method</data>
+  <data key="d2">The Twenty-Minute Visual Mashup is a creative exercise that involves gathering and arranging visual materials rapidly to spark inspiration.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Twenty-Question Primer">
+  <data key="d0">Twenty-Question Primer</data>
+  <data key="d1">method</data>
+  <data key="d2">The Twenty-Question Primer is a technique for generating questions to guide and inspire thought processes before starting a project.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Physical Verb Translation">
+  <data key="d0">Physical Verb Translation</data>
+  <data key="d1">method</data>
+  <data key="d2">Physical Verb Translation is a physical exercise aimed at breaking mental blocks through embodied action.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Do a Verb Physical Reset">
+  <data key="d0">Do a Verb Physical Reset</data>
+  <data key="d1">method</data>
+  <data key="d2">Do a Verb Physical Reset is a technique that encourages movement through acting out a verb to overcome stagnation.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Aggressive Idea Quota">
+  <data key="d0">Aggressive Idea Quota</data>
+  <data key="d1">method</data>
+  <data key="d2">The Aggressive Idea Quota is a brainstorming exercise that involves generating a large number of ideas in a short time to unlock creativity.</data>
+  <data key="d3">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="Source Snippet">
+  <data key="d0">Source Snippet</data>
+  <data key="d1">content</data>
+  <data key="d2">Source Snippet is a reference from "Big Magic - Elizabeth Gilbert," discussing managing creativity and fear.&lt;SEP&gt;Source snippet refers to quoted material from influential works that support the outlined exercises and provide context.</data>
+  <data key="d3">chunk-cbdaf67f545ba6445a0c79806926980f&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The Expansive Egg">
+  <data key="d0">The Expansive Egg</data>
+  <data key="d1">method</data>
+  <data key="d2">The Expansive Egg is a physical exercise that encourages movement and relaxation to foster creativity.</data>
+  <data key="d3">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The 20-Question Micro-Dive">
+  <data key="d0">The 20-Question Micro-Dive</data>
+  <data key="d1">method</data>
+  <data key="d2">The 20-Question Micro-Dive is a creative strategy designed to generate specific inquiries to clarify and deepen understanding of a topic.</data>
+  <data key="d3">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652539</data>
+  <data key="d6"></data>
+</node>
+<node id="The Passenger-Seat Demotion">
+  <data key="d0">The Passenger-Seat Demotion</data>
+  <data key="d1">method</data>
+  <data key="d2">The Passenger-Seat Demotion involves acknowledging fears while asserting control over decision-making in creative processes.</data>
+  <data key="d3">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Shrink-and-Expand Reset">
+  <data key="d0">The Shrink-and-Expand Reset</data>
+  <data key="d1">method</data>
+  <data key="d2">The Shrink-and-Expand Reset is a technique to break a mental block by physically changing body positions to release tension and foster creativity.</data>
+  <data key="d3">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Name">
+  <data key="d0">Name</data>
+  <data key="d1">concept</data>
+  <data key="d2">Name is a placeholder concept for a method addressing anxiety in creative tasks, seeking to set boundaries with fear.</data>
+  <data key="d3">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Order from Chaos (Coin Arrangement)">
+  <data key="d0">Order from Chaos (Coin Arrangement)</data>
+  <data key="d1">method</data>
+  <data key="d2">Order from Chaos (Coin Arrangement) is a technique for overcoming overwhelm by physically arranging small objects to spark creativity.</data>
+  <data key="d3">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Big Magic">
+  <data key="d0">Big Magic</data>
+  <data key="d1">content</data>
+  <data key="d2">Big Magic is a source of inspiration that encourages clarity and purpose in creative work through simple explanations.&lt;SEP&gt;Big Magic is a creative guide that explores the nature of inspiration and the creative process, highlighting the importance of presenting oneself to inspiration.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab&lt;SEP&gt;chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Ten-Year-Old Clarity Check">
+  <data key="d0">Ten-Year-Old Clarity Check</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Ten-Year-Old Clarity Check is a method used to regain focus by simplifying the explanation of work goals to a child's understanding.&lt;SEP&gt;The Ten-Year-Old Clarity Check focuses on simplifying goals and intentions by explaining them as if to a child.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab&lt;SEP&gt;chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="First Impulse Retrieval">
+  <data key="d0">First Impulse Retrieval</data>
+  <data key="d1">concept</data>
+  <data key="d2">First Impulse Retrieval is a technique to reconnect with the initial idea or feeling that inspired a project.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="True North Calibration">
+  <data key="d0">True North Calibration</data>
+  <data key="d1">concept</data>
+  <data key="d2">True North Calibration is a process of aligning project goals with core emotional values to guide decision-making.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Objective Validation Check">
+  <data key="d0">Objective Validation Check</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Objective Validation Check is a method to gain external perspectives on creative work when feeling stuck.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Witness-Only Sync">
+  <data key="d0">Witness-Only Sync</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Witness-Only Sync is a collaborative process where one person shares challenges while others listen without offering solutions.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Spine">
+  <data key="d0">The Spine</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Spine refers to the guiding intention or core message that an individual aims to clarify during a project.</data>
+  <data key="d3">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Current State Template">
+  <data key="d0">Current State Template</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Current State Template helps individuals assess their sluggishness or staleness and outlines actions for refreshing themselves.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Blurt-to-Affirmation Flip">
+  <data key="d0">The Blurt-to-Affirmation Flip</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Blurt-to-Affirmation Flip is a technique to transform negative self-talk into positive affirmations.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Negative Self-Talk">
+  <data key="d0">Negative Self-Talk</data>
+  <data key="d1">concept</data>
+  <data key="d2">Negative self-talk refers to the cycle of self-criticism and doubt that individuals may experience during work.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Positive Affirmation">
+  <data key="d0">Positive Affirmation</data>
+  <data key="d1">concept</data>
+  <data key="d2">Positive affirmation is the rephrasing of negative statements into empowering, constructive thoughts.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Aggressive Quota Sprint">
+  <data key="d0">The Aggressive Quota Sprint</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Aggressive Quota Sprint is a creative exercise designed to break through mental blocks by generating numerous uses for a mundane object.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="Timer Method">
+  <data key="d0">Timer Method</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Timer Method references setting a specific time limit for activities to promote focus and productivity.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Chaos Harmonizer">
+  <data key="d0">The Chaos Harmonizer</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Chaos Harmonizer is a method for managing overwhelming feelings by creating and resolving chaos in one's workspace.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652540</data>
+  <data key="d6"></data>
+</node>
+<node id="The Shandy Shift">
+  <data key="d0">The Shandy Shift</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Shandy Shift is a process for clearing mental blockages through personal grooming and enhancing workspace arrangement.</data>
+  <data key="d3">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="Speaker">
+  <data key="d0">Speaker</data>
+  <data key="d1">role</data>
+  <data key="d2">The Speaker is the individual who shares current roadblocks or unformed ideas during a discussion with Witnesses for a set duration.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="Witnesses">
+  <data key="d0">Witnesses</data>
+  <data key="d1">role</data>
+  <data key="d2">Witnesses are individuals who observe the Speaker without providing solutions or comments, acknowledging the Speaker's sharing through nods or simple acknowledgments.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="Teammate">
+  <data key="d0">Teammate</data>
+  <data key="d1">role</data>
+  <data key="d2">A Teammate is an individual who collaborates with the Speaker, potentially contributing their own strengths to a shared task.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="The Competitor-to-Collaborator Pivot">
+  <data key="d0">The Competitor-to-Collaborator Pivot</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Competitor-to-Collaborator Pivot is a strategy for transforming feelings of competitiveness into opportunities for collaboration during group work.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="The Chaos Arranger">
+  <data key="d0">The Chaos Arranger</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Chaos Arranger is a technique aimed at organizing physical clutter and restoring mental clarity during creative tasks.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="The Mental Static Dump">
+  <data key="d0">The Mental Static Dump</data>
+  <data key="d1">concept</data>
+  <data key="d2">The Mental Static Dump is a process for clearing distracting thoughts and grievances to regain focus and creativity.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="Individual Ownership">
+  <data key="d0">Individual Ownership</data>
+  <data key="d1">concept</data>
+  <data key="d2">Individual Ownership is a principle that emphasizes personal responsibility in the context of collaborative work, ensuring that each contributor stands by their work without relying on others to cover weaknesses.</data>
+  <data key="d3">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652541</data>
+  <data key="d6"></data>
+</node>
+<node id="Order from Chaos (Coin Arrangement">
+  <data key="d0">Order from Chaos (Coin Arrangement</data>
+  <data key="d3">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d2">Order from Chaos (Coin Arrangement) is part of a creative process alongside the 20-Minute Image Tear to inspire action.</data>
+  <data key="d1">UNKNOWN</data>
+  <data key="d4">unknown_source</data>
+  <data key="d5">1774652546</data>
+  <data key="d6"></data>
+</node>
+<edge source="Studio" target="Audio Overview">
+  <data key="d7">1.0</data>
+  <data key="d8">Studio is used as a source for creating Audio Overviews.</data>
+  <data key="d9">content source,format type</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="BETA" target="Slide Deck">
+  <data key="d7">1.0</data>
+  <data key="d8">Slide Deck is categorized as a BETA version of a presentation tool.</data>
+  <data key="d9">presentation format,testing phase</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="BETA" target="Video Overview">
+  <data key="d7">1.0</data>
+  <data key="d8">Video Overview is identified as a BETA version of a media format.</data>
+  <data key="d9">media format,testing phase</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="BETA" target="NotebookLM">
+  <data key="d7">1.0</data>
+  <data key="d8">NotebookLM is in the BETA phase and is noted for its accuracy issues.</data>
+  <data key="d9">testing phase,tool reliability</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652488</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Mind Map" target="Reports">
+  <data key="d7">1.0</data>
+  <data key="d8">Mind Map serves as a visual aid to organize information in Reports.</data>
+  <data key="d9">information representation,visual organization</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Flashcards" target="Quiz">
+  <data key="d7">1.0</data>
+  <data key="d8">Quiz is categorized alongside Flashcards as an educational assessment tool.</data>
+  <data key="d9">assessment tool,study aid</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Infographic" target="Data Table">
+  <data key="d7">1.0</data>
+  <data key="d8">Infographic serves to visually summarize content found in Data Tables.</data>
+  <data key="d9">data organization,visual representation</data>
+  <data key="d10">chunk-13d4a46d709864442bdad1f14494408d</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652487</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Authors" target="Core Techniques">
+  <data key="d7">1.0</data>
+  <data key="d8">The authors suggest core techniques that are aimed at enhancing idea generation.</data>
+  <data key="d9">idea generation,suggestion</data>
+  <data key="d10">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652497</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Sources" target="Core Techniques">
+  <data key="d7">1.0</data>
+  <data key="d8">The core techniques are derived from various sources that inform how to generate ideas.</data>
+  <data key="d9">reference,technique application</data>
+  <data key="d10">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652497</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Core Techniques" target="Innovative Ideas">
+  <data key="d7">1.0</data>
+  <data key="d8">Core techniques are utilized to generate innovative ideas for the video project.</data>
+  <data key="d9">creativity,idea development</data>
+  <data key="d10">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652497</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Core Techniques" target="Video Project">
+  <data key="d7">1.0</data>
+  <data key="d8">The core techniques are applied to brainstorm ideas for the current video project.</data>
+  <data key="d9">application,brainstorming</data>
+  <data key="d10">chunk-e5cf1cf6f8720f8500f65bcf7123bcfd</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652498</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The Aggressive Idea Quota">
+  <data key="d7">1.0</data>
+  <data key="d8">The Aggressive Idea Quota is a technique outlined in The Creative Habit to stimulate quick idea generation.</data>
+  <data key="d9">creative exercise,idea generation</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652541</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The Coin Chaos Resolution">
+  <data key="d7">1.0</data>
+  <data key="d8">The Coin Chaos Resolution is a method mentioned in The Creative Habit for achieving clarity through physical object manipulation.</data>
+  <data key="d9">creative technique,physical interaction</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652542</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The 20-Question Excavation">
+  <data key="d7">1.0</data>
+  <data key="d8">The 20-Question Excavation is one of the strategies presented in The Creative Habit for tackling creative blocks.</data>
+  <data key="d9">exploration strategy,inquiry</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652542</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The Boundary Defense Letter">
+  <data key="d7">1.0</data>
+  <data key="d8">The Boundary Defense Letter is a strategy in The Creative Habit for managing anxiety that hinders creativity.</data>
+  <data key="d9">creativity protection,emotional management</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The &quot;Dress for the Affair&quot; Refresh">
+  <data key="d7">1.0</data>
+  <data key="d8">The "Dress for the Affair" Refresh is an exercise in The Creative Habit aimed at renewing inspiration and focus.</data>
+  <data key="d9">inspiration revitalization,refresh technique</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The Artist's Way Workbook">
+  <data key="d7">1.0</data>
+  <data key="d8">The Creative Habit and The Artist's Way Workbook both serve as resources for enhancing creativity and overcoming blocks.</data>
+  <data key="d9">creative inspiration,resource connection</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Twenty-Minute Visual Mashup">
+  <data key="d7">1.0</data>
+  <data key="d8">The Twenty-Minute Visual Mashup is a technique extracted from The Creative Habit for visual creativity enhancement.</data>
+  <data key="d9">creativity technique,visual inspiration</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Twenty-Question Primer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Twenty-Question Primer is a method outlined in The Creative Habit for generating questions to inspire projects.</data>
+  <data key="d9">creativity technique,questioning method</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Physical Verb Translation">
+  <data key="d7">1.0</data>
+  <data key="d8">Physical Verb Translation is a movement-based technique mentioned in The Creative Habit to access creativity.</data>
+  <data key="d9">creativity technique,physical movement</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Do a Verb Physical Reset">
+  <data key="d7">1.0</data>
+  <data key="d8">Do a Verb Physical Reset is a method from The Creative Habit focusing on physical action to stimulate creativity.</data>
+  <data key="d9">creativity technique,physical movement</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Aggressive Idea Quota">
+  <data key="d7">1.0</data>
+  <data key="d8">The Aggressive Idea Quota is a rapid brainstorming method from The Creative Habit aimed at generating numerous creative ideas quickly.</data>
+  <data key="d9">creativity technique,rapid brainstorming</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="Steps">
+  <data key="d7">1.0</data>
+  <data key="d8">The Creative Habit is referenced to provide context and improvement techniques related to the steps in creative exercises.</data>
+  <data key="d9">reference,technique improvement</data>
+  <data key="d10">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Creative Habit" target="The Aggressive Quota Sprint">
+  <data key="d7">1.0</data>
+  <data key="d8">The Aggressive Quota Sprint exercise is discussed in The Creative Habit as a practical method for boosting creativity.</data>
+  <data key="d9">creative development,practical application</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Aggressive Idea Quota" target="Trigger">
+  <data key="d7">1.0</data>
+  <data key="d8">The Trigger relates to The Aggressive Idea Quota as it identifies the need for creative intervention when stuck on an idea.</data>
+  <data key="d9">creativity mechanism,stimulus</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652542</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Aggressive Idea Quota" target="Timer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Timer sets a definitive limit within The Aggressive Idea Quota exercise to encourage rapid ideation.</data>
+  <data key="d9">idea generation,time constraint</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652542</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Aggressive Idea Quota" target="Steps">
+  <data key="d7">1.0</data>
+  <data key="d8">The Steps provide a framework for how to execute The Aggressive Idea Quota effectively.</data>
+  <data key="d9">action guide,creative process</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Coin Chaos Resolution" target="Trigger">
+  <data key="d7">1.0</data>
+  <data key="d8">The Trigger defines the emotional state prompting The Coin Chaos Resolution, addressing feelings of overwhelm.</data>
+  <data key="d9">project control,stimulus</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652542</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Coin Chaos Resolution" target="Timer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Timer specifies the time range for executing The Coin Chaos Resolution to refocus thoughts.</data>
+  <data key="d9">organizing strategy,time duration</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The 20-Question Excavation" target="Trigger">
+  <data key="d7">1.0</data>
+  <data key="d8">The Trigger indicates the emotional barrier prompting The 20-Question Excavation to generate focused inquiries.</data>
+  <data key="d9">idea exploration,stimulus</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The 20-Question Excavation" target="Timer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Timer indicates the duration allocated for conducting The 20-Question Excavation to enhance clarity.</data>
+  <data key="d9">inquiry method,time limit</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Boundary Defense Letter" target="Trigger">
+  <data key="d7">1.0</data>
+  <data key="d8">The Trigger denotes the emotional state that leads to writing The Boundary Defense Letter as a coping mechanism.</data>
+  <data key="d9">anxiety management,stimulus</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Boundary Defense Letter" target="Timer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Timer indicates the brief duration for engaging with The Boundary Defense Letter to address fears.</data>
+  <data key="d9">emotional resolution,time constraint</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The &quot;Dress for the Affair&quot; Refresh" target="Trigger">
+  <data key="d7">1.0</data>
+  <data key="d8">The Trigger describes the condition that necessitates The "Dress for the Affair" Refresh to regain inspiration.</data>
+  <data key="d9">rejuvenation strategy,stimulus</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The &quot;Dress for the Affair&quot; Refresh" target="Timer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Timer indicates the timeline set for implementing The "Dress for the Affair" Refresh to rekindle creativity.</data>
+  <data key="d9">refresh process,time range</data>
+  <data key="d10">chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Trigger" target="Timer">
+  <data key="d7">2.0</data>
+  <data key="d8">The concept of Trigger is linked to Timer, emphasizing the need for structure and constraint during creative tasks.&lt;SEP&gt;Trigger and Timer are related as triggers specify the conditions under which creative methods should be applied within a defined time limit.</data>
+  <data key="d9">method structure,task management,time constraint,time management</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Trigger" target="Name">
+  <data key="d7">1.0</data>
+  <data key="d8">Name as a concept addresses the Trigger of feeling creatively paralyzed by anxiety and perfectionism.</data>
+  <data key="d9">anxiety management,fear response</data>
+  <data key="d10">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="Template">
+  <data key="d7">2.0</data>
+  <data key="d8">Steps serve as actionable guidelines, while Template provides a structure for documenting the results of the method.&lt;SEP&gt;Steps provide a systematic approach supported by templates to facilitate creative exercises.</data>
+  <data key="d9">execution guidelines,process guidance,structure</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="Failure-Mode Fix">
+  <data key="d7">2.0</data>
+  <data key="d8">Failure-Mode Fix suggests additional steps or strategies to overcome difficulties encountered during the implementation of other steps.&lt;SEP&gt;Failure-mode fixes are strategies integrated into steps to help overcome difficulties encountered during creative tasks.</data>
+  <data key="d9">creative process,method optimization,problem solving,problem-solving</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee&lt;SEP&gt;chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="The Expansive Egg">
+  <data key="d7">1.0</data>
+  <data key="d8">The Expansive Egg is a methodological step encouraging physical movement intended to break mental blocks and enhance creativity.</data>
+  <data key="d9">inspiration,physical movement</data>
+  <data key="d10">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="The Passenger-Seat Demotion">
+  <data key="d7">1.0</data>
+  <data key="d8">The Passenger-Seat Demotion represents a step focused on managing fear and asserting control during the creative process.</data>
+  <data key="d9">assertiveness,fear management</data>
+  <data key="d10">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="The Artist's Way Workbook">
+  <data key="d7">1.0</data>
+  <data key="d8">The Artist's Way Workbook is cited as a reference that supports the steps outlined for creative exercises.</data>
+  <data key="d9">creative process,reference</data>
+  <data key="d10">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Steps" target="The Shrink-and-Expand Reset">
+  <data key="d7">1.0</data>
+  <data key="d8">The Shrink-and-Expand Reset involves physical movements that correspond with following specific steps to break mental blocks.</data>
+  <data key="d9">mental block,physical movement</data>
+  <data key="d10">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Twenty-Minute Visual Mashup">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix for the Twenty-Minute Visual Mashup encourages using a single color when overwhelmed with choices.</data>
+  <data key="d9">creative troubleshooting,problem-solving</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Twenty-Question Primer">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix for the Twenty-Question Primer suggests using the 5 Ws to explore ideas when running out of questions.</data>
+  <data key="d9">creative troubleshooting,question generation</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Physical Verb Translation">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix for Physical Verb Translation involves modifying the movement if one feels too self-conscious during the exercise.</data>
+  <data key="d9">creative troubleshooting,self-consciousness</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Do a Verb Physical Reset">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix for Do a Verb Physical Reset suggests taking on a microscopic verb if one feels physically stuck.</data>
+  <data key="d9">creative troubleshooting,physical action</data>
+  <data key="d10">chunk-9eb663934a3ed47aa6b9e9a91e67a150</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Source Snippet">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix method is cited in the Source Snippet as a way to manage overwhelming fear during creative processes.</data>
+  <data key="d9">fear management,location change</data>
+  <data key="d10">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="The Spine">
+  <data key="d7">1.0</data>
+  <data key="d8">The Failure-Mode Fix provides a simplification method to enhance the clarity of the explanation in the Spine.</data>
+  <data key="d9">clarity enhancement,simplification method</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Failure-Mode Fix" target="Current State Template">
+  <data key="d7">1.0</data>
+  <data key="d8">The Current State Template supports the Failure-Mode Fix strategy to refresh one's mindset and environment.</data>
+  <data key="d9">overcoming obstacles,self-improvement</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Verb Embodiment" target="Micro-Chaos Arranging">
+  <data key="d7">1.0</data>
+  <data key="d8">Both Verb Embodiment and Micro-Chaos Arranging are methods aimed at enhancing creativity and resolving mental blocks.</data>
+  <data key="d9">creative techniques,problem-solving</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The 20-Question Probe" target="Lexical Edge-Scratching">
+  <data key="d7">1.0</data>
+  <data key="d8">Both The 20-Question Probe and Lexical Edge-Scratching focus on exploring ideas and concepts to stimulate further thinking.</data>
+  <data key="d9">exploration,idea generation</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652543</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The 5-Way Rewrite" target="20-Minute Image Tear">
+  <data key="d7">1.0</data>
+  <data key="d8">The 5-Way Rewrite and 20-Minute Image Tear are creative methods designed to help individuals overcome communication difficulties and enhance artistic expression.</data>
+  <data key="d9">creative expression,overcoming obstacles</data>
+  <data key="d10">chunk-f5bfa64481a8d63180f365f8cb3d39ee</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652544</data>
+  <data key="d13"></data>
+</edge>
+<edge source="20-Minute Image Tear" target="Order from Chaos (Coin Arrangement)">
+  <data key="d7">1.0</data>
+  <data key="d8">Both the 20-Minute Image Tear and Order from Chaos methods are designed to enhance creativity through structured actions.</data>
+  <data key="d9">creativity technique,visual inspiration</data>
+  <data key="d10">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="20-Minute Image Tear" target="Order from Chaos (Coin Arrangement">
+  <data key="d7">1.0</data>
+  <data key="d8">Order from Chaos (Coin Arrangement) is part of a creative process alongside the 20-Minute Image Tear to inspire action.</data>
+  <data key="d9">creative process,inspiration</data>
+  <data key="d10">chunk-324826e69646e9a60494746cffe0957b</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Artist's Way Workbook" target="The Blurt-to-Affirmation Flip">
+  <data key="d7">1.0</data>
+  <data key="d8">The Blurt-to-Affirmation Flip technique is derived from concepts in The Artist's Way Workbook, aiming to transform negative thoughts into positive affirmations.</data>
+  <data key="d9">creativity exercises,self-improvement</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Artist's Way Workbook" target="Speaker">
+  <data key="d7">1.0</data>
+  <data key="d8">The Artist's Way Workbook provides guidance for the Speaker on the importance of sharing experiences without seeking to fix them.</data>
+  <data key="d9">guidance,personal growth</data>
+  <data key="d10">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Source Snippet" target="The 20-Question Micro-Dive">
+  <data key="d7">1.0</data>
+  <data key="d8">The source snippet is referenced to enhance understanding of the purpose and execution of the 20-Question Micro-Dive method.</data>
+  <data key="d9">inspiration,technique</data>
+  <data key="d10">chunk-cbdaf67f545ba6445a0c79806926980f</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652545</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Big Magic" target="Ten-Year-Old Clarity Check">
+  <data key="d7">1.0</data>
+  <data key="d8">Big Magic inspires the method of the Ten-Year-Old Clarity Check to promote clarity and focus in creativity.</data>
+  <data key="d9">creative techniques,inspiration</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652546</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Ten-Year-Old Clarity Check" target="The Spine">
+  <data key="d7">1.0</data>
+  <data key="d8">The Spine serves as a guiding principle during the Ten-Year-Old Clarity Check to maintain project focus.</data>
+  <data key="d9">guiding principle,project focus</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Ten-Year-Old Clarity Check" target="The Shandy Shift">
+  <data key="d7">1.0</data>
+  <data key="d8">The Ten-Year-Old Clarity Check enhances the effectiveness of the Shandy Shift by clarifying goals in simple terms.</data>
+  <data key="d9">focus,goal simplification</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="First Impulse Retrieval" target="True North Calibration">
+  <data key="d7">1.0</data>
+  <data key="d8">True North Calibration complements First Impulse Retrieval by ensuring project direction aligns with emotional values.</data>
+  <data key="d9">decision alignment,emotional guidance</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="True North Calibration" target="Objective Validation Check">
+  <data key="d7">1.0</data>
+  <data key="d8">The Objective Validation Check can provide an external perspective that aids in affirming the emotional clarity sought in True North Calibration.</data>
+  <data key="d9">emotional clarity,external perspective</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Objective Validation Check" target="Witness-Only Sync">
+  <data key="d7">1.0</data>
+  <data key="d8">The Witness-Only Sync complements the Objective Validation Check by allowing team members to express challenges without judgment.</data>
+  <data key="d9">collaboration,non-judgmental listening</data>
+  <data key="d10">chunk-8160382cd709adb42688285242ef8fab</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Blurt-to-Affirmation Flip" target="Negative Self-Talk">
+  <data key="d7">1.0</data>
+  <data key="d8">The Blurt-to-Affirmation Flip addresses Negative Self-Talk by turning criticisms into uplifting affirmations.</data>
+  <data key="d9">positive transformation,self-reflection</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Aggressive Quota Sprint" target="Timer Method">
+  <data key="d7">1.0</data>
+  <data key="d8">The Aggressive Quota Sprint utilizes the Timer Method to encourage creativity under time constraints.</data>
+  <data key="d9">creativity,time management</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="The Chaos Harmonizer" target="The Shandy Shift">
+  <data key="d7">1.0</data>
+  <data key="d8">The Chaos Harmonizer complements the Shandy Shift by promoting clarity through physical and mental organization.</data>
+  <data key="d9">mental clarity,workspace organization</data>
+  <data key="d10">chunk-7d6577a0585d9b51783360fe50194d32</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652547</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Speaker" target="Witnesses">
+  <data key="d7">1.0</data>
+  <data key="d8">The Speaker shares their thoughts with Witnesses, who observe without commenting or attempting to solve the issues presented.</data>
+  <data key="d9">communication,observation</data>
+  <data key="d10">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Speaker" target="Teammate">
+  <data key="d7">1.0</data>
+  <data key="d8">The Teammate may assist the Speaker in refining their contributions while the Speaker takes total responsibility for their role.</data>
+  <data key="d9">collaboration,responsibility</data>
+  <data key="d10">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652549</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Teammate" target="The Competitor-to-Collaborator Pivot">
+  <data key="d7">1.0</data>
+  <data key="d8">The Teammate embodies strategies from the Competitor-to-Collaborator Pivot, helping the Speaker integrate strengths for joint tasks.</data>
+  <data key="d9">collaboration,strategy</data>
+  <data key="d10">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+<edge source="Teammate" target="Individual Ownership">
+  <data key="d7">1.0</data>
+  <data key="d8">The Teammate engages with the concept of Individual Ownership by ensuring their contributions are robust enough to stand alone without dependence on others.</data>
+  <data key="d9">collaboration,responsibility</data>
+  <data key="d10">chunk-7a970b600a07208f04d90f0b45eea4de</data>
+  <data key="d11">unknown_source</data>
+  <data key="d12">1774652548</data>
+  <data key="d13"></data>
+</edge>
+</graph></graphml>

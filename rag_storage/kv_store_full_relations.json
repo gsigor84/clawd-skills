@@ -1,0 +1,310 @@
+{
+  "doc-13d4a46d709864442bdad1f14494408d": {
+    "relation_pairs": [
+      [
+        "BETA",
+        "Slide Deck"
+      ],
+      [
+        "Mind Map",
+        "Reports"
+      ],
+      [
+        "Flashcards",
+        "Quiz"
+      ],
+      [
+        "BETA",
+        "NotebookLM"
+      ],
+      [
+        "Data Table",
+        "Infographic"
+      ],
+      [
+        "Audio Overview",
+        "Studio"
+      ],
+      [
+        "BETA",
+        "Video Overview"
+      ]
+    ],
+    "count": 7,
+    "create_time": 1774652488,
+    "update_time": 1774652488,
+    "_id": "doc-13d4a46d709864442bdad1f14494408d"
+  },
+  "doc-e5cf1cf6f8720f8500f65bcf7123bcfd": {
+    "relation_pairs": [
+      [
+        "Core Techniques",
+        "Innovative Ideas"
+      ],
+      [
+        "Authors",
+        "Core Techniques"
+      ],
+      [
+        "Core Techniques",
+        "Sources"
+      ],
+      [
+        "Core Techniques",
+        "Video Project"
+      ]
+    ],
+    "count": 4,
+    "create_time": 1774652498,
+    "update_time": 1774652498,
+    "_id": "doc-e5cf1cf6f8720f8500f65bcf7123bcfd"
+  },
+  "doc-ce2019fd566e051d5c1427ff83f3d095": {
+    "relation_pairs": [
+      [
+        "Teammate",
+        "The Competitor-to-Collaborator Pivot"
+      ],
+      [
+        "Failure-Mode Fix",
+        "Twenty-Minute Visual Mashup"
+      ],
+      [
+        "The Coin Chaos Resolution",
+        "Timer"
+      ],
+      [
+        "The Boundary Defense Letter",
+        "The Creative Habit"
+      ],
+      [
+        "The Aggressive Idea Quota",
+        "Trigger"
+      ],
+      [
+        "Source Snippet",
+        "The 20-Question Micro-Dive"
+      ],
+      [
+        "The 20-Question Excavation",
+        "Timer"
+      ],
+      [
+        "Speaker",
+        "The Artist's Way Workbook"
+      ],
+      [
+        "Failure-Mode Fix",
+        "Source Snippet"
+      ],
+      [
+        "The Chaos Harmonizer",
+        "The Shandy Shift"
+      ],
+      [
+        "The Aggressive Quota Sprint",
+        "Timer Method"
+      ],
+      [
+        "Steps",
+        "The Artist's Way Workbook"
+      ],
+      [
+        "Do a Verb Physical Reset",
+        "The Creative Habit"
+      ],
+      [
+        "Negative Self-Talk",
+        "The Blurt-to-Affirmation Flip"
+      ],
+      [
+        "Ten-Year-Old Clarity Check",
+        "The Shandy Shift"
+      ],
+      [
+        "The Artist's Way Workbook",
+        "The Blurt-to-Affirmation Flip"
+      ],
+      [
+        "20-Minute Image Tear",
+        "Order from Chaos (Coin Arrangement)"
+      ],
+      [
+        "Steps",
+        "The Expansive Egg"
+      ],
+      [
+        "Objective Validation Check",
+        "Witness-Only Sync"
+      ],
+      [
+        "Steps",
+        "The Creative Habit"
+      ],
+      [
+        "The Aggressive Idea Quota",
+        "Timer"
+      ],
+      [
+        "Ten-Year-Old Clarity Check",
+        "The Spine"
+      ],
+      [
+        "The \"Dress for the Affair\" Refresh",
+        "Trigger"
+      ],
+      [
+        "20-Minute Image Tear",
+        "The 5-Way Rewrite"
+      ],
+      [
+        "Steps",
+        "Template"
+      ],
+      [
+        "Individual Ownership",
+        "Teammate"
+      ],
+      [
+        "Steps",
+        "The Aggressive Idea Quota"
+      ],
+      [
+        "The Boundary Defense Letter",
+        "Trigger"
+      ],
+      [
+        "Timer",
+        "Trigger"
+      ],
+      [
+        "First Impulse Retrieval",
+        "True North Calibration"
+      ],
+      [
+        "20-Minute Image Tear",
+        "Order from Chaos (Coin Arrangement"
+      ],
+      [
+        "The \"Dress for the Affair\" Refresh",
+        "Timer"
+      ],
+      [
+        "Failure-Mode Fix",
+        "Steps"
+      ],
+      [
+        "Name",
+        "Trigger"
+      ],
+      [
+        "Speaker",
+        "Witnesses"
+      ],
+      [
+        "Steps",
+        "The Passenger-Seat Demotion"
+      ],
+      [
+        "Big Magic",
+        "Ten-Year-Old Clarity Check"
+      ],
+      [
+        "The Aggressive Quota Sprint",
+        "The Creative Habit"
+      ],
+      [
+        "The Coin Chaos Resolution",
+        "The Creative Habit"
+      ],
+      [
+        "The Boundary Defense Letter",
+        "Timer"
+      ],
+      [
+        "Physical Verb Translation",
+        "The Creative Habit"
+      ],
+      [
+        "The 20-Question Excavation",
+        "The Creative Habit"
+      ],
+      [
+        "The Artist's Way Workbook",
+        "The Creative Habit"
+      ],
+      [
+        "Steps",
+        "The Shrink-and-Expand Reset"
+      ],
+      [
+        "Do a Verb Physical Reset",
+        "Failure-Mode Fix"
+      ],
+      [
+        "Failure-Mode Fix",
+        "Physical Verb Translation"
+      ],
+      [
+        "The Creative Habit",
+        "Twenty-Question Primer"
+      ],
+      [
+        "Current State Template",
+        "Failure-Mode Fix"
+      ],
+      [
+        "Objective Validation Check",
+        "True North Calibration"
+      ],
+      [
+        "The Aggressive Idea Quota",
+        "The Creative Habit"
+      ],
+      [
+        "Micro-Chaos Arranging",
+        "Verb Embodiment"
+      ],
+      [
+        "Failure-Mode Fix",
+        "The Spine"
+      ],
+      [
+        "Speaker",
+        "Teammate"
+      ],
+      [
+        "Aggressive Idea Quota",
+        "The Creative Habit"
+      ],
+      [
+        "The Creative Habit",
+        "Twenty-Minute Visual Mashup"
+      ],
+      [
+        "The 20-Question Excavation",
+        "Trigger"
+      ],
+      [
+        "Failure-Mode Fix",
+        "Twenty-Question Primer"
+      ],
+      [
+        "The Coin Chaos Resolution",
+        "Trigger"
+      ],
+      [
+        "Lexical Edge-Scratching",
+        "The 20-Question Probe"
+      ],
+      [
+        "The \"Dress for the Affair\" Refresh",
+        "The Creative Habit"
+      ]
+    ],
+    "count": 60,
+    "create_time": 1774652549,
+    "update_time": 1774652549,
+    "_id": "doc-ce2019fd566e051d5c1427ff83f3d095"
+  }
+}

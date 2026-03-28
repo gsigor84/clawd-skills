@@ -17,6 +17,7 @@ This script:
 import argparse
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -50,10 +51,22 @@ def setup_lightrag(working_dir: str) -> None:
 
 
 def insert_documents(input_dir: str, working_dir: str, llm_model: str, embedding_model: str) -> None:
-    """Feed all text files into LightRAG."""
+    """Feed all text files into LightRAG.
+
+    Preference rule:
+    - If clean-summary.md exists alongside summary.md in input_dir, prefer clean-summary.md
+      and ignore summary.md to avoid duplicate/dirty technique blocks.
+    """
     input_path = Path(input_dir)
+
+    # Prefer clean-summary.md over summary.md when both exist
+    clean_summary = input_path / "clean-summary.md"
+    summary = input_path / "summary.md"
+
     text_files = list(input_path.glob("*.txt")) + list(input_path.glob("*.md"))
-    
+    if clean_summary.exists():
+        text_files = [p for p in text_files if p.name != "summary.md"]
+
     if not text_files:
         print(f"WARNING: No text files found in {input_dir}")
         return
@@ -115,39 +128,98 @@ if __name__ == "__main__":
         os.unlink(script_path)
 
 
+UI_NOISE_STOPLIST = {
+    # NotebookLM UI elements
+    "reports",
+    "infographic",
+    "flashcards",
+    "quiz",
+    "mind map",
+    "data table",
+    "audio overview",
+    "slide deck",
+    "video overview",
+    "studio",
+    "add note",
+    "notebooklm",
+
+    # Field-label junk that leaks into entity extraction
+    "name",
+    "trigger",
+    "timer",
+    "steps",
+    "template",
+    "failure-mode fix",
+    "source",
+    "source snippet",
+
+    # Generic / unhelpful hubs
+    "author",
+    "authors",
+    "sources",
+
+    # Run-context placeholders
+    "beta",
+    "current video project",
+    "current task",
+    "current project",
+}
+
+
+def _squash_spaces(s: str) -> str:
+    return re.sub(r"\s+", " ", str(s).strip())
+
+
+def is_ui_noise(entity: str) -> bool:
+    return _squash_spaces(entity).casefold() in UI_NOISE_STOPLIST
+
+
 def load_entities_and_relations(working_dir: str) -> Tuple[Set[str], List[Tuple[str, str]], Dict[str, int]]:
-    """Load entities and relations from LightRAG JSON storage."""
+    """Load entities and relations from LightRAG JSON storage, filtering UI noise entities."""
     # Check both rag_storage subdirectory and direct working_dir
     storage_path = Path(working_dir) / "rag_storage"
     if not (storage_path / "kv_store_full_entities.json").exists():
         storage_path = Path(working_dir)
     entities_file = storage_path / "kv_store_full_entities.json"
     relations_file = storage_path / "kv_store_full_relations.json"
-    
+
     all_entities: Set[str] = set()
     relation_pairs: List[Tuple[str, str]] = []
     connection_counts: Dict[str, int] = Counter()
-    
+
+    filtered_entities = 0
+    filtered_relations = 0
+
     # Load entities
     if entities_file.exists():
         with open(entities_file, encoding="utf-8") as f:
             entities_data = json.load(f)
-        for doc_id, data in entities_data.items():
+        for _doc_id, data in entities_data.items():
             for entity_name in data.get("entity_names", []):
+                if is_ui_noise(entity_name):
+                    filtered_entities += 1
+                    continue
                 all_entities.add(entity_name)
-    
+
     # Load relations
     if relations_file.exists():
         with open(relations_file, encoding="utf-8") as f:
             relations_data = json.load(f)
-        for doc_id, data in relations_data.items():
+        for _doc_id, data in relations_data.items():
             for pair in data.get("relation_pairs", []):
                 if len(pair) == 2:
                     e1, e2 = pair
+                    if is_ui_noise(e1) or is_ui_noise(e2):
+                        filtered_relations += 1
+                        continue
                     relation_pairs.append((e1, e2))
                     connection_counts[e1] += 1
                     connection_counts[e2] += 1
-    
+
+    if filtered_entities or filtered_relations:
+        print(f"Filtered UI-noise entities: {filtered_entities}")
+        print(f"Filtered UI-noise relations: {filtered_relations}")
+
     return all_entities, relation_pairs, connection_counts
 
 

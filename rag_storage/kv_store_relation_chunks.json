@@ -1,0 +1,644 @@
+{
+  "Audio Overview<SEP>Studio": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "Audio Overview<SEP>Studio"
+  },
+  "BETA<SEP>Slide Deck": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "BETA<SEP>Slide Deck"
+  },
+  "Mind Map<SEP>Reports": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "Mind Map<SEP>Reports"
+  },
+  "Flashcards<SEP>Quiz": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "Flashcards<SEP>Quiz"
+  },
+  "Data Table<SEP>Infographic": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "Data Table<SEP>Infographic"
+  },
+  "BETA<SEP>Video Overview": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652487,
+    "update_time": 1774652487,
+    "_id": "BETA<SEP>Video Overview"
+  },
+  "BETA<SEP>NotebookLM": {
+    "chunk_ids": [
+      "chunk-13d4a46d709864442bdad1f14494408d"
+    ],
+    "count": 1,
+    "create_time": 1774652488,
+    "update_time": 1774652488,
+    "_id": "BETA<SEP>NotebookLM"
+  },
+  "Authors<SEP>Core Techniques": {
+    "chunk_ids": [
+      "chunk-e5cf1cf6f8720f8500f65bcf7123bcfd"
+    ],
+    "count": 1,
+    "create_time": 1774652497,
+    "update_time": 1774652497,
+    "_id": "Authors<SEP>Core Techniques"
+  },
+  "Core Techniques<SEP>Sources": {
+    "chunk_ids": [
+      "chunk-e5cf1cf6f8720f8500f65bcf7123bcfd"
+    ],
+    "count": 1,
+    "create_time": 1774652497,
+    "update_time": 1774652497,
+    "_id": "Core Techniques<SEP>Sources"
+  },
+  "Core Techniques<SEP>Innovative Ideas": {
+    "chunk_ids": [
+      "chunk-e5cf1cf6f8720f8500f65bcf7123bcfd"
+    ],
+    "count": 1,
+    "create_time": 1774652497,
+    "update_time": 1774652497,
+    "_id": "Core Techniques<SEP>Innovative Ideas"
+  },
+  "Core Techniques<SEP>Video Project": {
+    "chunk_ids": [
+      "chunk-e5cf1cf6f8720f8500f65bcf7123bcfd"
+    ],
+    "count": 1,
+    "create_time": 1774652498,
+    "update_time": 1774652498,
+    "_id": "Core Techniques<SEP>Video Project"
+  },
+  "The Aggressive Idea Quota<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652541,
+    "update_time": 1774652541,
+    "_id": "The Aggressive Idea Quota<SEP>The Creative Habit"
+  },
+  "The Coin Chaos Resolution<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652542,
+    "update_time": 1774652542,
+    "_id": "The Coin Chaos Resolution<SEP>The Creative Habit"
+  },
+  "The Aggressive Idea Quota<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652542,
+    "update_time": 1774652542,
+    "_id": "The Aggressive Idea Quota<SEP>Trigger"
+  },
+  "The Aggressive Idea Quota<SEP>Timer": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652542,
+    "update_time": 1774652542,
+    "_id": "The Aggressive Idea Quota<SEP>Timer"
+  },
+  "The 20-Question Excavation<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652542,
+    "update_time": 1774652542,
+    "_id": "The 20-Question Excavation<SEP>The Creative Habit"
+  },
+  "The Coin Chaos Resolution<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652542,
+    "update_time": 1774652542,
+    "_id": "The Coin Chaos Resolution<SEP>Trigger"
+  },
+  "Steps<SEP>The Aggressive Idea Quota": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "Steps<SEP>The Aggressive Idea Quota"
+  },
+  "The Coin Chaos Resolution<SEP>Timer": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The Coin Chaos Resolution<SEP>Timer"
+  },
+  "The Boundary Defense Letter<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The Boundary Defense Letter<SEP>The Creative Habit"
+  },
+  "The 20-Question Excavation<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The 20-Question Excavation<SEP>Trigger"
+  },
+  "The \"Dress for the Affair\" Refresh<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The \"Dress for the Affair\" Refresh<SEP>The Creative Habit"
+  },
+  "Micro-Chaos Arranging<SEP>Verb Embodiment": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "Micro-Chaos Arranging<SEP>Verb Embodiment"
+  },
+  "The Boundary Defense Letter<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The Boundary Defense Letter<SEP>Trigger"
+  },
+  "The 20-Question Excavation<SEP>Timer": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "The 20-Question Excavation<SEP>Timer"
+  },
+  "Lexical Edge-Scratching<SEP>The 20-Question Probe": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee"
+    ],
+    "count": 1,
+    "create_time": 1774652543,
+    "update_time": 1774652543,
+    "_id": "Lexical Edge-Scratching<SEP>The 20-Question Probe"
+  },
+  "20-Minute Image Tear<SEP>The 5-Way Rewrite": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee"
+    ],
+    "count": 1,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "20-Minute Image Tear<SEP>The 5-Way Rewrite"
+  },
+  "The \"Dress for the Affair\" Refresh<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "The \"Dress for the Affair\" Refresh<SEP>Trigger"
+  },
+  "Steps<SEP>Template": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee",
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 2,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "Steps<SEP>Template"
+  },
+  "The Boundary Defense Letter<SEP>Timer": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "The Boundary Defense Letter<SEP>Timer"
+  },
+  "The Artist's Way Workbook<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "The Artist's Way Workbook<SEP>The Creative Habit"
+  },
+  "Failure-Mode Fix<SEP>Steps": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee",
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 2,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "Failure-Mode Fix<SEP>Steps"
+  },
+  "The Creative Habit<SEP>Twenty-Minute Visual Mashup": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "The Creative Habit<SEP>Twenty-Minute Visual Mashup"
+  },
+  "Timer<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-f5bfa64481a8d63180f365f8cb3d39ee",
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 2,
+    "create_time": 1774652544,
+    "update_time": 1774652544,
+    "_id": "Timer<SEP>Trigger"
+  },
+  "Failure-Mode Fix<SEP>Twenty-Minute Visual Mashup": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "Failure-Mode Fix<SEP>Twenty-Minute Visual Mashup"
+  },
+  "The Creative Habit<SEP>Twenty-Question Primer": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "The Creative Habit<SEP>Twenty-Question Primer"
+  },
+  "The \"Dress for the Affair\" Refresh<SEP>Timer": {
+    "chunk_ids": [
+      "chunk-d7fecbb0e15b0c2fecb3e2017d03f5ce"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "The \"Dress for the Affair\" Refresh<SEP>Timer"
+  },
+  "Physical Verb Translation<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "Physical Verb Translation<SEP>The Creative Habit"
+  },
+  "Failure-Mode Fix<SEP>Twenty-Question Primer": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "Failure-Mode Fix<SEP>Twenty-Question Primer"
+  },
+  "Source Snippet<SEP>The 20-Question Micro-Dive": {
+    "chunk_ids": [
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "Source Snippet<SEP>The 20-Question Micro-Dive"
+  },
+  "Steps<SEP>The Expansive Egg": {
+    "chunk_ids": [
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 1,
+    "create_time": 1774652545,
+    "update_time": 1774652545,
+    "_id": "Steps<SEP>The Expansive Egg"
+  },
+  "Do a Verb Physical Reset<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Do a Verb Physical Reset<SEP>The Creative Habit"
+  },
+  "Failure-Mode Fix<SEP>Physical Verb Translation": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Failure-Mode Fix<SEP>Physical Verb Translation"
+  },
+  "Aggressive Idea Quota<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Aggressive Idea Quota<SEP>The Creative Habit"
+  },
+  "20-Minute Image Tear<SEP>Order from Chaos (Coin Arrangement)": {
+    "chunk_ids": [
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "20-Minute Image Tear<SEP>Order from Chaos (Coin Arrangement)"
+  },
+  "Steps<SEP>The Passenger-Seat Demotion": {
+    "chunk_ids": [
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Steps<SEP>The Passenger-Seat Demotion"
+  },
+  "Do a Verb Physical Reset<SEP>Failure-Mode Fix": {
+    "chunk_ids": [
+      "chunk-9eb663934a3ed47aa6b9e9a91e67a150"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Do a Verb Physical Reset<SEP>Failure-Mode Fix"
+  },
+  "Name<SEP>Trigger": {
+    "chunk_ids": [
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Name<SEP>Trigger"
+  },
+  "20-Minute Image Tear<SEP>Order from Chaos (Coin Arrangement": {
+    "chunk_ids": [
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "20-Minute Image Tear<SEP>Order from Chaos (Coin Arrangement"
+  },
+  "Steps<SEP>The Artist's Way Workbook": {
+    "chunk_ids": [
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Steps<SEP>The Artist's Way Workbook"
+  },
+  "Big Magic<SEP>Ten-Year-Old Clarity Check": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652546,
+    "update_time": 1774652546,
+    "_id": "Big Magic<SEP>Ten-Year-Old Clarity Check"
+  },
+  "Failure-Mode Fix<SEP>Source Snippet": {
+    "chunk_ids": [
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Failure-Mode Fix<SEP>Source Snippet"
+  },
+  "First Impulse Retrieval<SEP>True North Calibration": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "First Impulse Retrieval<SEP>True North Calibration"
+  },
+  "Objective Validation Check<SEP>True North Calibration": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Objective Validation Check<SEP>True North Calibration"
+  },
+  "Ten-Year-Old Clarity Check<SEP>The Spine": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Ten-Year-Old Clarity Check<SEP>The Spine"
+  },
+  "Steps<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-cbdaf67f545ba6445a0c79806926980f"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Steps<SEP>The Creative Habit"
+  },
+  "Negative Self-Talk<SEP>The Blurt-to-Affirmation Flip": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Negative Self-Talk<SEP>The Blurt-to-Affirmation Flip"
+  },
+  "Objective Validation Check<SEP>Witness-Only Sync": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Objective Validation Check<SEP>Witness-Only Sync"
+  },
+  "The Aggressive Quota Sprint<SEP>Timer Method": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "The Aggressive Quota Sprint<SEP>Timer Method"
+  },
+  "Steps<SEP>The Shrink-and-Expand Reset": {
+    "chunk_ids": [
+      "chunk-324826e69646e9a60494746cffe0957b"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Steps<SEP>The Shrink-and-Expand Reset"
+  },
+  "The Chaos Harmonizer<SEP>The Shandy Shift": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "The Chaos Harmonizer<SEP>The Shandy Shift"
+  },
+  "Failure-Mode Fix<SEP>The Spine": {
+    "chunk_ids": [
+      "chunk-8160382cd709adb42688285242ef8fab"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "Failure-Mode Fix<SEP>The Spine"
+  },
+  "The Artist's Way Workbook<SEP>The Blurt-to-Affirmation Flip": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652547,
+    "update_time": 1774652547,
+    "_id": "The Artist's Way Workbook<SEP>The Blurt-to-Affirmation Flip"
+  },
+  "The Aggressive Quota Sprint<SEP>The Creative Habit": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "The Aggressive Quota Sprint<SEP>The Creative Habit"
+  },
+  "Speaker<SEP>Witnesses": {
+    "chunk_ids": [
+      "chunk-7a970b600a07208f04d90f0b45eea4de"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Speaker<SEP>Witnesses"
+  },
+  "Ten-Year-Old Clarity Check<SEP>The Shandy Shift": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Ten-Year-Old Clarity Check<SEP>The Shandy Shift"
+  },
+  "Current State Template<SEP>Failure-Mode Fix": {
+    "chunk_ids": [
+      "chunk-7d6577a0585d9b51783360fe50194d32"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Current State Template<SEP>Failure-Mode Fix"
+  },
+  "Teammate<SEP>The Competitor-to-Collaborator Pivot": {
+    "chunk_ids": [
+      "chunk-7a970b600a07208f04d90f0b45eea4de"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Teammate<SEP>The Competitor-to-Collaborator Pivot"
+  },
+  "Speaker<SEP>The Artist's Way Workbook": {
+    "chunk_ids": [
+      "chunk-7a970b600a07208f04d90f0b45eea4de"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Speaker<SEP>The Artist's Way Workbook"
+  },
+  "Individual Ownership<SEP>Teammate": {
+    "chunk_ids": [
+      "chunk-7a970b600a07208f04d90f0b45eea4de"
+    ],
+    "count": 1,
+    "create_time": 1774652548,
+    "update_time": 1774652548,
+    "_id": "Individual Ownership<SEP>Teammate"
+  },
+  "Speaker<SEP>Teammate": {
+    "chunk_ids": [
+      "chunk-7a970b600a07208f04d90f0b45eea4de"
+    ],
+    "count": 1,
+    "create_time": 1774652549,
+    "update_time": 1774652549,
+    "_id": "Speaker<SEP>Teammate"
+  }
+}

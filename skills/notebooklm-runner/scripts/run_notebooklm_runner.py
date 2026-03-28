@@ -111,12 +111,29 @@ def main() -> int:
     progress_file = Path(args.progress_file)
     final_summary = Path(args.final_summary)
 
-    plan = [(n, PROMPT_NAME_BY_N[n], prompts_dir / f"p{n:02d}.txt") for n in range(1, 18)]
+    # Build plan from actual prompt files present, rather than assuming p01..p17.
+    # This allows running subsets (e.g. gap prompts p01..p08) without creating dummy files.
+    prompt_files = sorted(
+        prompts_dir.glob("p[0-9][0-9].txt"),
+        key=lambda p: int(re.search(r"p(\d{2})\.txt$", p.name).group(1)),  # type: ignore
+    )
+    plan: List[Tuple[int, str, Path]] = []
+    for p in prompt_files:
+        m = re.search(r"p(\d{2})\.txt$", p.name)
+        if not m:
+            continue
+        n = int(m.group(1))
+        name = PROMPT_NAME_BY_N.get(n, f"prompt-{n:02d}")
+        plan.append((n, name, p))
 
     if args.dry_run:
         for n, name, p in plan:
             print(f"{n:02d} {name} -> {p}")
         return 0
+
+    if not plan:
+        print(f"ERROR: no prompt files found in {prompts_dir} (expected pNN.txt)", file=sys.stderr)
+        return 2
 
     fetcher = Path("/Users/igorsilva/clawd/skills/notebooklm-fetcher/scripts/fetch_clipboard.py")
     processor = Path("/Users/igorsilva/clawd/skills/notebooklm-processor/scripts/process_runs.py")

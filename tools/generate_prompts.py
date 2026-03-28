@@ -26,32 +26,40 @@ except ImportError:
 
 DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY from uploaded source documents.
 
-Generate 17 prompts, one for each of these specific angles:
+Generate 17 prompts, one for each of these specific angles.
 
-1. Core techniques for idea generation from the sources
-2. How to overcome fear and resistance using the authors' methods
-3. Daily habits and rituals recommended by the authors
-4. How to apply source techniques specifically to: {goal}
-5. What the authors say about starting when you have nothing
-6. How to organize and store creative material
-7. Techniques for finding the core theme or spine of a project
-8. What to do when you are completely stuck
-9. How the authors define "good enough" vs perfectionism
-10. Techniques for stealing and remixing ideas ethically
-11. How to maintain momentum across a long project
-12. What the authors say about collaboration vs solo work
-13. How to evaluate if an idea is worth pursuing
-14. Physical and environmental techniques for creativity
-15. How to apply source wisdom to: {goal} specifically
-16. What the authors say about shipping and finishing
-17. Synthesis — combine all source wisdom into one actionable framework for: {goal}
+IMPORTANT constraints for this prompt set:
+- Prefer **in-session micro-protocols** (5–30 minutes) usable mid-task.
+- Avoid daily routines/rituals. Do NOT recommend Morning Pages or Artist Dates (mention at most one optional fallback across all prompts, and only if strictly necessary).
+- Output should force: Protocol name / Trigger / Timer / Steps / Template / Failure-mode fix.
+
+Angles:
+
+1. Core idea-generation techniques → convert to in-session micro-protocols
+2. Overcome fear/resistance → in-session intervention protocol
+3. In-session warm-up / activation / entry into flow (NOT daily habits)
+4. Apply source techniques to {goal} → translate into in-session protocol templates
+5. Starting from nothing / blank slate → 5–30 min start protocol
+6. Organise and store creative material → lightweight system + retrieval protocol
+7. Find core theme/spine → timed spine-finding protocol
+8. Completely stuck → unblock protocol (motion/constraint/idea quota)
+9. "Good enough" vs perfectionism → shipping threshold + stop rules protocol
+10. Ethical stealing/remixing → swipe→transform protocol + checks
+11. Maintain momentum across long projects → in-session momentum restart + next-step locking
+12. Collaboration vs solo → collaboration protocol (roles, boundaries, cadence) without relying on daily routines
+13. Evaluate ideas worth pursuing → decision protocol + criteria
+14. Physical/environmental boosts → workspace reset protocol (10–20 min)
+15. Apply source wisdom to {goal} → minimal viable protocol library (3–5 protocols)
+16. Shipping/finishing → finishing sprint protocol + deadlines
+17. Synthesis → one operating system of in-session micro-protocols for {goal}
 
 Each prompt must:
 - Ask NotebookLM to find specific techniques FROM THE UPLOADED SOURCES
 - Reference 'the sources' or 'the authors' or 'the books'
-- Extract HOW TO APPLY the knowledge to {goal}, not just WHAT IT IS
+- Extract HOW TO APPLY (as a micro-protocol), not just WHAT IT IS
 - Be tailored to its specific angle from the list above
 - Be about the topic: {topic}
+- Prefer **in-session** protocols (5–30 min). Avoid daily routine/ritual answers.
 
 Generate exactly 17 prompts, numbered 1-17. Each prompt should be 1-3 sentences."""
 

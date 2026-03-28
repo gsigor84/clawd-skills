@@ -212,7 +212,8 @@ class Tandem:
         return json.loads(p.stdout.decode("utf-8"))
 
     def snapshot_raw(self) -> Dict[str, Any]:
-        p = self._curl("GET", "/snapshot")
+        # Prefer compact snapshots (smaller/faster; enough for our selectors/parsing).
+        p = self._curl("GET", "/snapshot?compact=true")
         p.check_returncode()
         return json.loads(p.stdout.decode("utf-8"))
 
@@ -221,14 +222,27 @@ class Tandem:
         p.check_returncode()
 
     def click(self, selector: str) -> Dict[str, Any]:
-        p = self._curl("POST", "/click", {"selector": selector})
+        # Prefer snapshot-based click (stable for @e refs). Fallback to legacy /click.
+        if selector.startswith("@e"):
+            p = self._curl("POST", "/snapshot/click", {"ref": selector})
+        else:
+            p = self._curl("POST", "/click", {"selector": selector})
+        p.check_returncode()
+        return json.loads(p.stdout.decode("utf-8"))
+
+    def fill(self, selector: str, text: str) -> Dict[str, Any]:
+        # Snapshot fill uses {ref, value}.
+        if selector.startswith("@e"):
+            p = self._curl("POST", "/snapshot/fill", {"ref": selector, "value": text})
+        else:
+            # Legacy fallback
+            p = self._curl("POST", "/type", {"selector": selector, "text": text})
         p.check_returncode()
         return json.loads(p.stdout.decode("utf-8"))
 
     def type(self, selector: str, text: str) -> Dict[str, Any]:
-        p = self._curl("POST", "/type", {"selector": selector, "text": text})
-        p.check_returncode()
-        return json.loads(p.stdout.decode("utf-8"))
+        # Back-compat: route to fill()
+        return self.fill(selector, text)
 
     def find(self, by: str, value: str) -> Dict[str, Any]:
         p = self._curl("POST", "/find", {"by": by, "value": value})
@@ -694,12 +708,16 @@ def main() -> int:
             )
             return 3
 
-    # Clear chat for isolation (best-effort). If it fails, continue and rely on "new copy button" detection.
+    # Clear chat for isolation (best-effort). If it fails, continue and rely on response anchoring.
+    # IMPORTANT: do NOT mark the run partial just because this UI action isn't available.
+    # Only mark partial when response extraction/copying fails.
     try:
         clear_chat_history(t)
         log_line(log_path, args.prompt_number, "clear_chat_history", "ok", "")
     except Exception as e:
-        meta["result"].update({"status": "ok", "partial": True, "error": f"clear_chat_history_failed: {e}"})
+        # Keep going; record as warning for diagnosis.
+        if meta.get("result") and meta["result"].get("error") is None:
+            meta["result"].update({"error": f"clear_chat_history_failed: {e}"})
         log_line(log_path, args.prompt_number, "clear_chat_history", "warn", f"error={e}")
 
     snap0 = t.snapshot_raw()
@@ -718,13 +736,78 @@ def main() -> int:
     for attempt in range(1, args.click_type_retries + 1):
         try:
             t.click(q)
-            t.type(q, args.prompt_text)
+            # More reliable than keystroke typing: fill textbox via Tandem snapshot API.
+            t.fill(q, args.prompt_text)
+            # click submit as primary
             t.click(sub)
             ok_sent = True
             break
         except Exception as e:
             last_err = str(e)
             time.sleep(0.6 * attempt)
+
+    # Submission evidence gate: avoid waiting forever in "home" state.
+    # We expect either the prompt snippet to appear in the transcript OR any sign of generation/response controls.
+    submitted = False
+    if ok_sent:
+        first = (args.prompt_text.splitlines()[0] if args.prompt_text else "").strip()
+        snippet = re.sub(r"\s+", " ", first)[:64].lower() if first else ""
+        for _ in range(8):  # ~8 seconds max (short gate)
+            try:
+                s_gate = t.snapshot_raw().get("snapshot", "")
+            except Exception:
+                time.sleep(1.0)
+                continue
+            low = s_gate.lower()
+            if snippet and snippet in low:
+                submitted = True
+                break
+            # weak signals that something happened
+            if "stop" in low or "generating" in low or "thinking" in low:
+                submitted = True
+                break
+            time.sleep(1.0)
+
+        if not submitted:
+            # Refresh once and retry submission
+            try:
+                t.navigate(args.notebook_url)
+                t.wait_networkidle()
+            except Exception:
+                pass
+            snap_retry = t.snapshot_raw()
+            q2, sub2 = find_query_and_submit(snap_retry.get("snapshot", ""))
+            if q2 and sub2:
+                q, sub = q2, sub2
+                meta["selectors"].update({"query_box": q, "submit": sub})
+                try:
+                    t.click(q)
+                    t.type(q, args.prompt_text)
+                    t.click(sub)
+                except Exception as e:
+                    last_err = str(e)
+
+                # Re-check evidence after retry submission.
+                submitted = False
+                for _ in range(8):
+                    try:
+                        s_gate = t.snapshot_raw().get("snapshot", "")
+                    except Exception:
+                        time.sleep(1.0)
+                        continue
+                    low = s_gate.lower()
+                    if snippet and snippet in low:
+                        submitted = True
+                        break
+                    if "stop" in low or "generating" in low or "thinking" in low:
+                        submitted = True
+                        break
+                    time.sleep(1.0)
+
+    if ok_sent and not submitted:
+        meta["result"].update({"status": "blocked", "partial": False, "error": "submit_no_evidence"})
+        write_json(meta_path, meta)
+        return 6
 
     if not ok_sent:
         meta["result"].update({"status": "blocked", "partial": False, "error": f"click_type_failed: {last_err}"})
@@ -869,20 +952,43 @@ def main() -> int:
                 ],
             )
 
-    # DOM/snapshot fallback if clipboard capture failed/stale/empty.
-    # Keep clipboard as primary (tested); this fallback is best-effort.
+    # DOM/snapshot fallback if clipboard capture failed/stale/empty or Copy button is missing.
+    # Strategy:
+    #   1) Try to extract the model response from the DOM snapshot anchored on the prompt text.
+    #   2) If the prompt isn't present in the snapshot (e.g. prompt send failed or UI scrolled),
+    #      do NOT guess — keep partial.
     if partial and not raw and meta["result"].get("error") in (
         "clipboard_stale_or_empty",
         "clipboard_capture_failed",
         "placeholder_output_detected",
+        "copy_button_not_found",
     ):
         try:
             snap_for_dom = t.snapshot_raw().get("snapshot", "")
-            dom_txt = extract_response_via_dom_snapshot(args.prompt_text, snap_for_dom)
-            if dom_txt and not re.search(r"\bplaceholder\b", dom_txt, flags=re.I):
+
+            # Guard: only attempt DOM extraction if we can see the prompt anchor.
+            first = (args.prompt_text.splitlines()[0] if args.prompt_text else "").strip()
+            snippet = re.sub(r"\s+", " ", first)[:64].lower() if first else ""
+            if snippet and any(("statictext" in ln.lower() and snippet in ln.lower()) for ln in snap_for_dom.splitlines()):
+                dom_txt = extract_response_via_dom_snapshot(args.prompt_text, snap_for_dom)
+            else:
+                dom_txt = ""
+
+            # Reject obvious UI chrome captures.
+            ui_chrome = (
+                re.search(r"\bNotebookLM can be inaccurate\b", dom_txt)
+                or re.search(r"\bAudio Overview\b", dom_txt)
+                or re.search(r"\bSlide deck\b", dom_txt)
+                or re.search(r"\bMind Map\b", dom_txt)
+            )
+
+            if dom_txt and not ui_chrome and not re.search(r"\bplaceholder\b", dom_txt, flags=re.I):
                 raw = dom_txt
                 partial = False
                 meta["result"]["error"] = None
+            else:
+                partial = True
+                meta["result"]["error"] = meta["result"].get("error") or "dom_extract_failed"
         except Exception:
             pass
 
