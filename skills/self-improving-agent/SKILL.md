@@ -8,7 +8,7 @@ description: "Trigger: /self-improving-agent <type> | <summary>. Append one stru
 ## Trigger contract
 
 Trigger when the user (or an orchestrator) sends:
-- `/self-improving-agent <type> | <summary> [| details: <optional>] [| files: <optional>]`
+- `/self-improving-agent <type> | <summary> [| details: <optional>] [| goal: <optional>] [| files: <optional>] [| status: <optional>]`
 
 Where:
 - `<type>` is one of: `learning` | `error` | `feature`
@@ -37,6 +37,7 @@ Optional:
 - `details:` — free text (may span multiple sentences)
 - `goal:` — what you were trying to accomplish when this happened (optional, one line)
 - `files:` — comma-separated paths (informational; not opened)
+- `status:` — `pending` or `resolved` (optional; default: `pending`)
 
 Examples:
 - `/self-improving-agent learning | Validator failed because acceptance tests were placeholders | details: Rewrite tests with exact expected outputs | files: skills/tool-installer/SKILL.md`
@@ -130,6 +131,7 @@ For learning:
 Summary: <summary>
 Details: <details or "(none)">
 Files: <files or "(none)">
+Status: <status or "pending">
 
 ---
 ```
@@ -147,6 +149,7 @@ For error:
 Summary: <summary>
 Details: <details or "(none)">
 Files: <files or "(none)">
+Status: <status or "pending">
 
 ---
 ```
@@ -164,6 +167,7 @@ For feature:
 Summary: <summary>
 Details: <details or "(none)">
 Files: <files or "(none)">
+Status: <status or "pending">
 
 ---
 ```

@@ -309,6 +309,32 @@ What's next: Pipeline complete
 
 ---
 
+### Phase 6.5: LIVE EXECUTION TEST (Critic)
+
+**Action:**
+After the Critic phase, run a live execution test on the built skill:
+
+1. **Identify the trigger command** — extract from SKILL.md `## Trigger` section
+2. **Run with a simple test input** — invoke the script or tool the skill builds
+3. **Verify real content** — check that output is non-empty, non-error, non-placeholder
+4. **Check description promise** — confirm output matches what the SKILL.md description claims
+5. **Log result** — write EXECUTION_TEST: PASS or EXECUTION_TEST: FAIL with specifics to task-state.json
+
+**Failure handling:**
+- If FAIL: add specific issues to task-state.json, send WhatsApp notification to Igor
+- Do NOT block pipeline — flag for review, continue to Phase 7
+
+**Handoff:**
+```
+What was done: Live execution test complete
+Where artifacts: task-state.json (execution_test result)
+How to verify: Check EXECUTION_TEST entry in state file
+Known issues: [list issues if FAIL]
+What's next: Phase 7 Report Generation
+```
+
+---
+
 ### Phase 7: REPORT GENERATION (mandatory)
 
 **Action:**

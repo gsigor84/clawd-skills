@@ -24,54 +24,50 @@ except ImportError:
     import urllib.parse
 
 
-DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY from uploaded source documents.
+DEFAULT_SYSTEM_MSG = """You are a research prompt engineer designing questions for NotebookLM — a tool that answers questions based ONLY on uploaded source documents.
 
-Generate 17 prompts, one for each of these specific angles.
+Your job is to generate 17 research prompts that extract actionable knowledge from the sources specifically for this goal:
 
-IMPORTANT constraints for this prompt set:
-- Prefer **in-session micro-protocols** (5–30 minutes) usable mid-task.
-- Avoid daily routines/rituals. Do NOT recommend Morning Pages or Artist Dates (mention at most one optional fallback across all prompts, and only if strictly necessary).
-- Output should force: Protocol name / Trigger / Timer / Steps / Template / Failure-mode fix.
-
-Angles:
-
-1. Core idea-generation techniques → convert to in-session micro-protocols
-2. Overcome fear/resistance → in-session intervention protocol
-3. In-session warm-up / activation / entry into flow (NOT daily habits)
-4. Apply source techniques to {goal} → translate into in-session protocol templates
-5. Starting from nothing / blank slate → 5–30 min start protocol
-6. Organise and store creative material → lightweight system + retrieval protocol
-7. Find core theme/spine → timed spine-finding protocol
-8. Completely stuck → unblock protocol (motion/constraint/idea quota)
-9. "Good enough" vs perfectionism → shipping threshold + stop rules protocol
-10. Ethical stealing/remixing → swipe→transform protocol + checks
-11. Maintain momentum across long projects → in-session momentum restart + next-step locking
-12. Collaboration vs solo → collaboration protocol (roles, boundaries, cadence) without relying on daily routines
-13. Evaluate ideas worth pursuing → decision protocol + criteria
-14. Physical/environmental boosts → workspace reset protocol (10–20 min)
-15. Apply source wisdom to {goal} → minimal viable protocol library (3–5 protocols)
-16. Shipping/finishing → finishing sprint protocol + deadlines
-17. Synthesis → one operating system of in-session micro-protocols for {goal}
+TOPIC: {topic}
+GOAL: {goal}
 
 Each prompt must:
-- Ask NotebookLM to find specific techniques FROM THE UPLOADED SOURCES
-- Reference 'the sources' or 'the authors' or 'the books'
-- Extract HOW TO APPLY (as a micro-protocol), not just WHAT IT IS
-- Be tailored to its specific angle from the list above
-- Be about the topic: {topic}
-- Prefer **in-session** protocols (5–30 min). Avoid daily routine/ritual answers.
+- Ask NotebookLM to find specific techniques, frameworks, or insights FROM THE UPLOADED SOURCES
+- Reference 'the sources' or 'the authors' or 'the books' so NotebookLM searches its documents
+- Extract HOW TO APPLY the knowledge to the goal, not just WHAT IT IS
+- Be completely tailored to the topic and goal above
+- Cover a different angle of the topic — no two prompts should overlap
 
-Generate exactly 17 prompts, numbered 1-17. Each prompt should be 1-3 sentences."""
+Cover these 17 angles:
+1. Core concepts and frameworks relevant to the goal
+2. How the sources define the problem the goal is trying to solve
+3. Key techniques that directly support the goal
+4. What the authors say about failure modes related to the goal
+5. How to get started implementing the goal
+6. Metrics and signals for knowing if the goal is being achieved
+7. Patterns the authors identify that are most relevant to the goal
+8. What the sources say about obstacles and how to overcome them
+9. Real-world examples from the sources that illustrate the goal
+10. How to apply the core concepts to the specific context of the goal
+11. What the sources say about learning and adaptation related to the goal
+12. Connections between different concepts in the sources relevant to the goal
+13. What the authors recommend as the most important thing to do first
+14. Edge cases and exceptions the sources mention
+15. How the sources suggest measuring progress toward the goal
+16. What makes this goal hard and how the sources address that difficulty
+17. Synthesis — how to combine all source wisdom into one actionable approach for the goal
+
+Generate exactly 17 prompts numbered 1-17. Each prompt should be 2-4 sentences. Return only the prompts, nothing else."""
 
 
 class OpenAIAPIClient:
     """Simple OpenAI API client using requests."""
-    
+
     def __init__(self, api_key, model="gpt-4o-mini"):
         self.api_key = api_key
         self.model = model
         self.base_url = "https://api.openai.com/v1"
-    
+
     def chat(self, messages):
         url = f"{self.base_url}/chat/completions"
         headers = {
@@ -83,9 +79,9 @@ class OpenAIAPIClient:
             "messages": messages,
             "temperature": 0.7
         }
-        
+
         req = urllib.request.Request(url, data=json.dumps(data).encode("utf-8"), headers=headers, method="POST")
-        
+
         try:
             with urllib.request.urlopen(req, timeout=120) as response:
                 result = json.loads(response.read().decode("utf-8"))
@@ -99,9 +95,9 @@ def generate_prompts(topic, goal, model="gpt-4o-mini"):
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OPENAI_API_KEY environment variable is required")
-    
+
     system_msg = DEFAULT_SYSTEM_MSG.format(topic=topic, goal=goal)
-    
+
     user_msg = f"""Generate 17 research prompts for a NotebookLM notebook.
 
 Topic: {topic}
@@ -140,7 +136,7 @@ def parse_prompts(prompts_text):
     lines = prompts_text.strip().split("\n")
     current_num = None
     current_text = []
-    
+
     for line in lines:
         line = line.strip()
         # Check for numbered prompt (1., 2., etc.)
@@ -148,7 +144,7 @@ def parse_prompts(prompts_text):
             # Save previous prompt
             if current_num is not None and current_text:
                 prompts[f"{current_num:02d}"] = " ".join(current_text)
-            
+
             # Parse new prompt number
             parts = line.split(".", 1)
             try:
@@ -161,11 +157,11 @@ def parse_prompts(prompts_text):
         elif current_num is not None:
             # Continuation of previous prompt
             current_text.append(line)
-    
+
     # Save last prompt
     if current_num is not None and current_text:
         prompts[f"{current_num:02d}"] = " ".join(current_text)
-    
+
     return prompts
 
 
@@ -175,34 +171,34 @@ def main():
     parser.add_argument("--goal", required=True, help="What the skill should DO for the user")
     parser.add_argument("--output-dir", required=True, help="Output directory for prompts")
     parser.add_argument("--model", default="gpt-4o-mini", help="OpenAI model to use")
-    
+
     args = parser.parse_args()
-    
+
     # Create output directory
     os.makedirs(args.output_dir, exist_ok=True)
-    
+
     print(f"Generating prompts for topic: {args.topic}")
     print(f"Goal: {args.goal}")
-    
+
     # Generate prompts
     prompts_text = generate_prompts(args.topic, args.goal, args.model)
-    
+
     # Parse prompts
     prompts = parse_prompts(prompts_text)
-    
+
     print(f"\nGenerated {len(prompts)} prompts:")
-    
+
     # Write prompts to files
     for num in range(1, 18):
         filename = f"p{num:02d}.txt"
         filepath = os.path.join(args.output_dir, filename)
         content = prompts.get(f"{num:02d}", "")
-        
+
         with open(filepath, "w", encoding="utf-8") as f:
             f.write(content)
-        
+
         print(f"  {filename}: {content[:60]}..." if len(content) > 60 else f"  {filename}: {content}")
-    
+
     print(f"\nPrompts saved to: {args.output_dir}")
 
 

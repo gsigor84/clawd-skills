@@ -23,12 +23,12 @@ Input parsing:
 
 ## Deterministic agent workflow
 
-### Step 1 — Classify notification type
+### Step 1 - Classify notification type
 - If mode is `done|completion` → type = completion.
 - If mode is `halt|stopped` → type = halt.
 - Otherwise → Failure modes.
 
-### Step 2 — Construct WhatsApp message (exact templates)
+### Step 2 - Construct WhatsApp message (exact templates)
 
 Completion message template:
 - `✅ Batch done. <summary>`
@@ -41,10 +41,10 @@ Notes handling:
 
 ### Step 3 — Send WhatsApp message
 
-Use `exec` to run OpenClaw’s message CLI (do not call vendor APIs directly):
+Use `exec` to run OpenClaw's message CLI (do not call vendor APIs directly):
 
 ```bash
-npx --yes openclaw message send \
+OPENCLAW_GATEWAY_TOKEN="nGAnv9-os_c7BGgi3uN1H42nZwe53CZH5J9AJfxt1uk" npx --yes openclaw message send \
   --channel whatsapp \
   --target +447533464436 \
   --message "<constructed-message>"
@@ -53,7 +53,7 @@ npx --yes openclaw message send \
 Hard rule:
 - Send exactly one WhatsApp message per invocation.
 
-### Step 4 — Return local confirmation
+### Step 4 - Return local confirmation
 Return exactly one line:
 - `OK: notified`
 
@@ -62,7 +62,7 @@ Return exactly one line:
 - Do not send messages to any number other than `+447533464436`.
 - Do not include sensitive content (file contents, API keys, tokens) in the outbound message.
 - Do not attach media.
-- If the constructed message exceeds 240 characters, truncate the `<summary>` to fit and append `…`.
+- If the constructed message exceeds 240 characters, truncate the `<summary>` to fit and append `...`.
 
 ## Use
 

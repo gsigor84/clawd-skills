@@ -37,3 +37,36 @@ Before planning or executing any multi-step autonomous task (anything that runs 
 
 This applies to: notebooklm-runner, research-to-skill, skill-forge, any cron job, any multi-phase pipeline.
 
+## Automatic failure logging (mandatory)
+When ANY tool call fails, errors out, or returns a non-success response — before handling it conversationally — immediately log it via self-improving-agent:
+
+/self-improving-agent error | <tool name> failed: <error summary> | details: <exact error message> | goal: <what I was trying to accomplish>
+
+This applies to:
+- sessions_send failures
+- exec command failures
+- API errors (429, 401, 403, 500)
+- File read/write failures
+- Any "needs credentials" or "not found" errors
+- Any tool that returns an error code
+
+Do NOT skip logging because the error seems minor or handleable. Log first, then handle.
+
+## Self-improvement loop
+After any task completes where errors were logged, run /promote-learnings to check if any patterns have reached 3+ recurrences. If patterns are promoted, automatically run /remediate-learnings with the pattern key for each promoted pattern. If the pattern is already resolved, remediate-learnings will skip it automatically. Do not wait for manual intervention — close the loop immediately.
+
+## WhatsApp notifications (mandatory)
+After every major milestone, always send a WhatsApp message to +447533464436 without waiting to be asked. A major milestone is:
+- Any phase completion (Phase 1, 2, 3, 4, 5, 6, 7 in skill-forge or research-to-skill)
+- Any long-running job completion (notebooklm-runner, gap analysis, synthesis)
+- Any error or failure that stops a pipeline
+- Any skill built or validated
+- Any cron job result
+
+Message format:
+✅ [task name] — [what completed] — [what's next]
+
+Or for failures:
+❌ [task name] — [what failed] — [what to do]
+
+Do not wait for Igor to ask for an update. Send it immediately when the milestone is reached.
