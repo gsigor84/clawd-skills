@@ -1,38 +1,6 @@
 ---
 name: openclaw-self-healing
-version: 2.0.1
-description: 4-tier autonomous self-healing system for OpenClaw Gateway with persistent learning, reasoning logs, and multi-channel alerts. Features Claude Code as Level 3 emergency doctor for AI-powered diagnosis and repair.
-metadata:
-  {
-    "openclaw":
-      {
-        "requires": { "bins": ["tmux", "claude", "jq"] },
-        "install":
-          [
-            {
-              "id": "tmux",
-              "kind": "brew",
-              "package": "tmux",
-              "bins": ["tmux"],
-              "label": "Install tmux (brew)",
-            },
-            {
-              "id": "claude",
-              "kind": "node",
-              "package": "@anthropic-ai/claude-code",
-              "bins": ["claude"],
-              "label": "Install Claude Code CLI (npm)",
-            },
-            {
-              "id": "jq",
-              "kind": "brew",
-              "package": "jq",
-              "bins": ["jq"],
-              "label": "Install jq (brew) - for metrics dashboard",
-            },
-          ],
-      },
-  }
+description: "4-tier autonomous self-healing system for OpenClaw Gateway (watchdog → healthcheck → Claude recovery → human escalation) plus recovery playbooks."
 ---
 
 # OpenClaw Self-Healing System
@@ -40,6 +8,9 @@ metadata:
 > **"The system that heals itself — or calls for help when it can't."**
 
 A 4-tier autonomous self-healing system for OpenClaw Gateway.
+
+## Use
+Run this skill to diagnose and recover from OpenClaw operational failures (gateway health, channel connectivity, and dependent local services like Tandem).
 
 ## Architecture
 
@@ -101,6 +72,56 @@ launchctl list | grep openclaw.healthcheck
 tail -f ~/openclaw/memory/healthcheck-$(date +%Y-%m-%d).log
 ```
 
+## Inputs
+- OpenClaw gateway health endpoint (`OPENCLAW_GATEWAY_URL`, default `http://localhost:18789/`)
+- Optional Discord webhook (`DISCORD_WEBHOOK_URL`)
+- Tandem status endpoint: `http://127.0.0.1:8765/status`
+
+## Outputs
+- Healthcheck logs under `~/openclaw/memory/` (healthcheck + emergency recovery)
+- Optional human escalation messages (Discord/Telegram/WhatsApp)
+
+## Failure modes
+- Gateway unhealthy / non-200: restart gateway; escalate to Claude recovery.
+- Dependencies missing: install and re-run checks.
+- Tandem status endpoint unhealthy: run Tandem auto-restart sequence.
+- Still failing after restart: log error and escalate to WhatsApp.
+
+## Acceptance tests
+
+1. Run `/openclaw-self-healing` with Tandem healthy — expected output: the system reports Tandem status OK (HTTP 200 / valid payload) and takes no restart action.
+
+1b. Run `curl -sSf http://127.0.0.1:8765/status` — expected output: non-empty status payload and exit 0.
+
+2. Negative case (Tandem recovery):
+```bash
+set -euo pipefail
+pkill -f tandem-browser || true
+sleep 3
+cd ~/clawd/tools/tandem/tandem-browser && npm start &
+sleep 10
+# Expect this to SUCCEED after restart
+curl -sSf http://127.0.0.1:8765/status
+```
+Expected output: status endpoint returns successfully.
+
+2b. Negative case (verify failure is detected):
+```bash
+set -euo pipefail
+pkill -f tandem-browser || true
+sleep 1
+# Expect this to FAIL (non-zero) while Tandem is down
+curl -sSf http://127.0.0.1:8765/status && exit 1 || echo "expected error"
+```
+Expected error message: curl fails while Tandem is not running.
+
+3. Structural validators:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py ~/clawd/skills/openclaw-self-healing/SKILL.md
+/opt/anaconda3/bin/python3 ~/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py ~/clawd/skills/openclaw-self-healing/SKILL.md
+```
+Expected output: PASS / PASS.
+
 ## Scripts
 
 | Script | Level | Description |
@@ -121,6 +142,62 @@ All settings via environment variables in `~/.openclaw/.env`:
 | `OPENCLAW_GATEWAY_URL` | `http://localhost:18789/` | Gateway health check URL |
 | `HEALTH_CHECK_MAX_RETRIES` | `3` | Restart attempts before escalation |
 | `EMERGENCY_RECOVERY_TIMEOUT` | `1800` | Claude recovery timeout (30 min) |
+
+## Toolset
+- exec
+- read
+- write
+
+## Gateway duplicate listener check (port 18789)
+
+Every 5 minutes, check if more than one process is listening on port 18789:
+
+```bash
+lsof -iTCP:18789 | grep LISTEN | wc -l
+```
+
+If count > 1:
+1. Kill all listeners: `kill -9` on all PIDs except the most recent
+2. Wait 3 seconds
+3. Run:
+```bash
+openclaw gateway restart
+```
+4. Send WhatsApp:
+`⚠️ Gateway duplicate listener detected and fixed — port 18789 restarted`
+
+## Tandem Health Check + Auto-Restart (recovery step)
+
+When Tandem health check fails (`curl http://127.0.0.1:8765/status` errors or returns unexpected data), run this recovery sequence:
+
+1. Kill existing Tandem process:
+```bash
+pkill -f tandem-browser || true
+```
+
+2. Wait 3 seconds:
+```bash
+sleep 3
+```
+
+3. Restart Tandem:
+```bash
+cd ~/clawd/tools/tandem/tandem-browser && npm start &
+```
+
+4. Wait 10 seconds:
+```bash
+sleep 10
+```
+
+5. Check status again:
+```bash
+curl -s http://127.0.0.1:8765/status
+```
+
+6. If still failing:
+- Log error details
+- Send WhatsApp to `+447533464436`
 
 ## Testing
 

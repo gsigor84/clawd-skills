@@ -13,45 +13,71 @@ Orchestrate research-to-skill pipeline using agent-team-orchestration patterns. 
 `/skill-forge --topic <topic> --goal <goal> --notebook-url <url> --skill-name <name> --creative`
 `/skill-forge --topic <topic> --goal <goal> --skill-name <name> --web-research`
 `/skill-forge --topic <topic> --notebook-url <url> --skill-name <name>` (legacy without goal)
+`/skill-forge --resume <run_id>`
+
+### Parallel trigger (multiple skills at once via ClawTeam)
+
+`/skill-forge-parallel --skills '[{"topic":"...","goal":"...","notebook_url":"...","skill_name":"..."}, ...]'`
+
+Spawns one ClawTeam worker per skill. Each worker runs the normal `/skill-forge ...` pipeline for its assigned skill.
+
+**Notes:**
+- Within a single skill, phases still have sequential dependencies (0.5 → 1 → 2 → 3 → 4 → 5 → 6 → 7), so ClawTeam doesn’t materially speed up a *single* run.
+- The win is running **multiple independent skill builds simultaneously**.
+
+**Example:**
+```bash
+clawteam spawn --team skill-forge-run \
+  --agent-name skill1 \
+  --task "/skill-forge --topic X --notebook-url Y --skill-name A"
+
+clawteam spawn --team skill-forge-run \
+  --agent-name skill2 \
+  --task "/skill-forge --topic X2 --notebook-url Y2 --skill-name B"
+```
+
+**Operational guidance:**
+- Prefer the `subprocess` backend for headless parallelism when you don’t need tmux monitoring.
+- ClawTeam has a known workspace-registry race if you spawn multiple workers at the exact same moment; if it appears, retry spawns or stagger by ~250–500ms.
 
 ### --goal flag (required for goal-driven prompts)
 
 When `--goal` is passed, Phase 0.5 runs first to generate goal-tailored prompts before Phase 1.
 
-### --web-research mode
+## Use
+Run skill-forge to build a new OpenClaw skill from research. Supports NotebookLM notebooks, web research, and creative expansion modes.
 
-When `--web-research` is specified, the pipeline uses web research instead of NotebookLM:
+## Inputs
+- topic: the subject area to research
+- goal: what the skill should accomplish (optional but recommended)
+- notebook-url: NotebookLM notebook URL (optional)
+- skill-name: name for the new skill
+- --creative: enables creative expansion phase
+- --web-research: uses web research instead of NotebookLM
 
-**Differences from NotebookLM mode:**
-- **Phase 1:** Uses `~/clawd/tools/web_research.py` to fetch arXiv papers, then `~/clawd/tools/corpus_prompter.py` to run 17 prompts against the corpus
-- **Phase 3:** Uses `corpus_prompter.py` again on gap analysis results
-- **No notebook URL required**
+## Outputs
+- ~/clawd/skills/<skill-name>/SKILL.md — the built skill
+- ~/clawd/tmp/skill-forge/<skill-name>/pipeline-report.md — full pipeline report
 
-**Phase 1 (Baseline via web research):**
-```bash
-# Step 1: Search arXiv and generate corpus
-/opt/anaconda3/bin/python3 ~/clawd/tools/web_research.py \
-  --topic "<topic>" \
-  --limit 10 \
-  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1"
+## Failure modes
+- NotebookLM timeout: restart runner from last completed prompt
+- Phase timeout: run phases manually one at a time
+- Validator FAIL: fix missing sections and re-run
+- ClawTeam registry race: retry spawn with 500ms delay between workers
 
-# Step 2: Run 17 prompts against the corpus
-/opt/anaconda3/bin/python3 ~/clawd/tools/corpus_prompter.py \
-  --corpus-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1/research-corpus.md" \
-  --prompts-dir "/Users/igorsilva/clawd/tmp/notebooklm-prompts" \
-  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1" \
-  --model gpt-4o-mini
-```
+## Acceptance tests
 
-**Phase 3 (Deep extraction via web research):**
-```bash
-# Run corpus_prompter.py on gap prompts
-/opt/anaconda3/bin/python3 ~/clawd/tools/corpus_prompter.py \
-  --corpus-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/synthesis/enriched-summary.md" \
-  --prompts-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/gaps" \
-  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass2" \
-  --model gpt-4o-mini
-```
+1. Run `/skill-forge --topic "test" --skill-name test-skill --web-research` — expected output: a valid SKILL.md file saved to ~/clawd/skills/test-skill/ containing at least 50 lines.
+
+1b. Verify run ledger created: expected output: a new run directory exists under `~/clawd/tmp/runs/skill-forge/` with `run.json` showing phase statuses.
+
+2. Run `/skill-forge-parallel` with 2 skills — expected output: 2 ClawTeam workers spawned simultaneously, each producing a valid skill file
+
+3. Run `/skill-forge --topic "test" --notebook-url "invalid-url" --skill-name test-skill` — expected error message: pipeline logs the error and exits cleanly without corrupting task-state.json
+
+4. After a successful run, verify pipeline-report.md is saved to ~/clawd/tmp/skill-forge/<skill-name>/ and contains phase completion status.
+
+4b. Resume test: interrupt a run after Phase 2 (simulate failure), then run `/skill-forge --resume <run_id>` — expected output: pipeline continues from the next phase and completes.
 
 ## Team Structure
 
@@ -68,6 +94,52 @@ When `--web-research` is specified, the pipeline uses web research instead of No
 - Need explicit quality gates and review steps
 - Want task state tracking across all 6 phases
 - Want critic review on final SKILL.md
+
+## Run ledger (durable resume) — **mandatory, enforced**
+
+Skill-forge uses a strict CLI wrapper `~/clawd/tools/ledger_event.py` (backed by `~/clawd/tools/run_ledger.py`) so ledger writes happen as real, deterministic side effects during the SKILL run.
+
+### Mandatory at run start (create run + capture run_id)
+
+**exec** (must run before Phase 0.5 / Phase 1):
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py create skill-forge '{"skill_name":"<skill-name>","topic":"<topic>","goal":"<goal>","notebook_url":"<url>"}'
+```
+Capture the printed `run_id` and store it in `task-state.json`.
+
+### Mandatory per phase (start/done/fail)
+
+For each phase `phase-X`:
+
+**Before the phase work**:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py start <run_id> phase-X skill-forge
+```
+
+**After successful completion**:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py done <run_id> phase-X skill-forge <artifact_path> [more_artifacts...]
+```
+
+**On failure (must include non-empty error)**:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py fail <run_id> phase-X skill-forge '<error_message>'
+```
+
+Invariant enforcement (implemented by ledger_event.py):
+- `done` refuses if the phase was never started
+- `fail` refuses if the phase was never started and requires a non-empty error
+- `start` refuses if the phase is already DONE
+- all commands require the run_id to exist
+
+### Resume trigger
+
+`/skill-forge --resume <run_id>`
+- Uses:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py resume <run_id> skill-forge
+```
+- Continues from the returned `next_phase`
 
 ## Task State File
 
@@ -106,6 +178,11 @@ When `--web-research` is specified, the pipeline uses web research instead of No
 
 **Prerequisite:** Task state created, topic and goal defined
 
+**Ledger (mandatory):**
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py start <run_id> phase-0.5 skill-forge
+```
+
 **Action:**
 ```bash
 # Generate 17 goal-tailored prompts
@@ -113,6 +190,12 @@ When `--web-research` is specified, the pipeline uses web research instead of No
   --topic "<topic>" \
   --goal "<goal>" \
   --output-dir "/Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/prompts"
+```
+
+**Ledger (mandatory):**
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py done <run_id> phase-0.5 skill-forge \
+  "/Users/igorsilva/clawd/tmp/skill-forge/<skill-name>/prompts"
 ```
 
 **Handoff:**
@@ -309,28 +392,47 @@ What's next: Pipeline complete
 
 ---
 
-### Phase 6.5: LIVE EXECUTION TEST (Critic)
+### Phase 6.5: LIVE EXECUTION TEST (mandatory gate)
+
+After Phase 6 (Critic), Phase 6.5 is the **mandatory evaluator gate**. It makes claims costly and truth cheap.
 
 **Action:**
-After the Critic phase, run a live execution test on the built skill:
 
-1. **Identify the trigger command** — extract from SKILL.md `## Trigger` section
-2. **Run with a simple test input** — invoke the script or tool the skill builds
-3. **Verify real content** — check that output is non-empty, non-error, non-placeholder
-4. **Check description promise** — confirm output matches what the SKILL.md description claims
-5. **Log result** — write EXECUTION_TEST: PASS or EXECUTION_TEST: FAIL with specifics to task-state.json
+1) Run skill-evaluator against the newly built skill:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/skills/skill-evaluator/skill_evaluator.py \
+  --skill-dir ~/clawd/skills/<skill-name> \
+  --out-dir ~/clawd/tmp/skill-evaluator/<skill-name> \
+  --allow-run
+```
 
-**Failure handling:**
-- If FAIL: add specific issues to task-state.json, send WhatsApp notification to Igor
-- Do NOT block pipeline — flag for review, continue to Phase 7
+2) Write evaluator report path to the run ledger as an artifact (phase-6.5).
+- Artifact: `~/clawd/tmp/skill-evaluator/<skill-name>/report.md`
+
+3) On **DETERMINISTIC FAIL**:
+- Mark the skill-forge run as **FAILED** in the ledger
+- Send WhatsApp:
+  - `❌ skill-evaluator FAIL: <skill-name> — test <id> failed — <command> — evidence: <path>`
+- Run **one** remediation pass via `/self-improving-skill-builder`
+- Re-evaluate **once**
+- If still FAIL: stop and surface to Igor
+
+4) On **MANUAL_REQUIRED**:
+- Do **not** block the skill
+- Send WhatsApp:
+  - `⚠️ skill-evaluator: <skill-name> has MANUAL_REQUIRED tests — <reason> — evidence needed: <what>`
+- Write `~/clawd/skills/<skill-name>/STATUS.md`:
+  - `UNPROVEN (MANUAL REQUIRED)`
+
+5) Only if evaluator reports **PASS**: proceed to Phase 7.
 
 **Handoff:**
 ```
-What was done: Live execution test complete
-Where artifacts: task-state.json (execution_test result)
-How to verify: Check EXECUTION_TEST entry in state file
-Known issues: [list issues if FAIL]
-What's next: Phase 7 Report Generation
+What was done: skill-evaluator gate executed
+Where artifacts: ~/clawd/tmp/skill-evaluator/<skill-name>/report.json, report.md, evidence/
+How to verify: report.json verdict == PASS (or MANUAL_REQUIRED explained)
+Known issues: failing test ids + remediation notes if any
+What's next: Phase 7 Report Generation (only after PASS)
 ```
 
 ---
@@ -390,6 +492,16 @@ Every phase outputs structured handoff:
 - **sessions_spawn**: Invoke skillmd-builder-agent, self-improving-skill-builder
 - **write**: Create task-state.json, synthesis files
 - **read**: Check outputs, verify phase completion
+
+## ClawTeam Integration (parallel runs)
+
+When using `/skill-forge-parallel`, use ClawTeam as the outer orchestrator:
+- Create a team (e.g. `skill-forge-run`)
+- Spawn one worker per requested skill payload
+- Each worker executes a full `/skill-forge ...` run end-to-end for its skill
+
+**Worker task template:**
+`/skill-forge --topic <topic> --goal <goal?> --notebook-url <url?> --skill-name <name> [--creative] [--web-research]`
 
 ---
 

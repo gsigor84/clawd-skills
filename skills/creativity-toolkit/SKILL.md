@@ -1,235 +1,206 @@
 ---
 name: creativity-toolkit
-description: "Trigger: /creativity-toolkit <task>. A collaborative creativity framework modeled on the Inklings with resonators who encourage, critics who oppose honestly, and group flow."
+description: "Trigger: /creativity-toolkit <task>. Artefact-driven Inklings-style creativity pipeline with ledgered phases, schema-validated outputs, and a mandatory Nietzschean gate."
 ---
 
 # creativity-toolkit
 
-## Description
-A collaborative creativity framework modeled on the Inklings — C.S. Lewis, J.R.R. Tolkien, Charles Williams, and Owen Barfield. Four agents (Researcher, Selector, Generator, Critic) collaborate with:
-- **Resonators** who encourage good ideas with unstinted, specific praise
-- **Critics** who oppose honestly through "dialectical swordplay" and "rational opposition"
-- **Group flow** where blended perspectives produce better output than any single agent could alone
-
-The skill implements a 6-phase pipeline that cycles through research, selection, strategic disruption, creative variation, generation, and critique — with built-in stagnation detection to trigger re-framing when progress stalls.
-
 ## Trigger
 `/creativity-toolkit <task>`
 
-## Pipeline Overview
+## Use
+Run an artefact-driven creativity pipeline that produces a single paste-ready generation prompt (Phase 8) while leaving durable evidence for every phase under `~/clawd/tmp/creativity-toolkit/<run_id>/`.
 
+This skill is designed to make creative claims **costly** and truth **cheap**: every phase writes a schema-constrained artefact, ledgered via `ledger_event.py run`.
+
+## Inputs
+- `<task>` (required): plain-English creative request.
+
+## Outputs
+Primary:
+- `~/clawd/tmp/creativity-toolkit/<run_id>/phase-8-final.md` — the final paste-ready prompt (exactly one paragraph)
+
+Supporting artefacts (schema-constrained):
+- `phase-1-research.md`
+- `phase-2-selection.md`
+- `phase-5-scamper.md`
+- `phase-6-generated.md`
+- `phase-7-critic.md`
+- `phase-65-gate.md`
+- `WARNINGS.md` (only when gate fails beyond rewrite budget)
+
+## Safe execution + determinism
+- No network calls.
+- All writes must be under `~/clawd/tmp/creativity-toolkit/<run_id>/`.
+- Stop conditions are enforced (see below).
+
+## Run ledger (mandatory)
+
+All phases are executed via the `ledger_event.py run` wrapper:
+
+- Create run:
+```bash
+run_id=$(/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py create creativity-toolkit '{"task":"<task>"}')
 ```
-RESEARCHER → SELECTOR → STAGNATION CHECK → OBLIQUE STRATEGY → SCAMPER → GENERATOR → CRITIC
-                                                    ↓ (if stagnated)
-                                              OBLIQUE STRATEGY → RE-SELECT
+
+- Run a phase (ledgered, with start/done/fail):
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/tools/ledger_event.py run "$run_id" phase-1 creativity-toolkit -- <command>
 ```
 
-## The 4 Agents
+Phase names used:
+- `phase-1` research
+- `phase-2` selection
+- `phase-5` scamper
+- `phase-6` generator
+- `phase-7` critic
+- `phase-65` gate
+- `phase-8` final
 
-### 1. RESEARCHER
-- **Role**: Gather raw material, discover analogies, find external stimuli
-- **Temperature**: 0.7 (exploratory, wide-ranging)
-- **Output**: Raw research, facts, analogies, external references, "small sparks"
-- **Handoff**: Passes candidate concepts to SELECTOR with 3-5 promising directions
+## Stop conditions (mandatory)
+- Max **2** stagnation retries (oblique strategy loops).
+- Max **2** Nietzsche Gate rewrites.
+- After budgets are exhausted: stop with `FAIL` or continue only as `DONE_WITH_WARNINGS` (see gate handling).
 
-### 2. SELECTOR
-- **Role**: Evaluate, rank, and choose the most promising directions
-- **Temperature**: 0.3 (discriminating, focused)
-- **Output**: Shortlisted concepts (1-2) with rationale
-- **Handoff**: Passes selected concept to GENERATOR with explicit rejection notes on what was discarded
+## Phase artefacts: paths + schema (mandatory)
 
-### 3. GENERATOR
-- **Role**: Produce actual creative outputs — drafts, ideas, solutions, variations
-- **Temperature**: 0.9 (associative, divergent)
-- **Output**: Multiple variations, "half-formed notions", draft concepts
-- **Handoff**: Passes raw outputs to CRITIC with "paint still wet" framing
+All artefacts are written under:
+- `ROOT=~/clawd/tmp/creativity-toolkit/<run_id>/`
 
-### 4. CRITIC
-- **Role**: Apply "brutal frankness" — rigorous, specific critique that improves work
-- **Temperature**: 0.4 (constructive, tough but fair)
-- **Output**: Specific, actionable criticism + praise for what works
-- **Handoff**: Returns to SELECTOR with revision direction OR declares complete
+### Phase 1 — Research
+- Path: `$ROOT/phase-1-research.md`
+- Schema:
+  - must contain heading `## Sparks`
+  - must contain **>= 5** bullet lines under Sparks
 
-## The Inklings Collaboration Model
+### Phase 2 — Selection
+- Path: `$ROOT/phase-2-selection.md`
+- Schema:
+  - must contain `## Selected`
+  - must contain `## Rejected`
 
-### Resonators (Built into all agents)
-- Provide **unstinted, specific praise** before criticism
-- Show genuine interest in rough, half-formed ideas
-- Apply friendly pressure: "You can do better than that. Better, please!"
-- Help push work from private sphere to public completion
+### Phase 5 — SCAMPER synthesis
+- Path: `$ROOT/phase-5-scamper.md`
+- Schema:
+  - must contain `## Synthesized_prompt`
 
-### Critics (Designated role in CRITIC phase)
-- Practice **"dialectical swordplay"** — fierce intellectual conflict without personal malice
-- Offer **specific, actionable suggestions** not just diagnoses
-- Distinguish between "I don't like this" (subjective) and "This isn't working" (objective)
-- Never cross into **dismissive condemnation** (the Hugo Dyson failure mode)
+### Phase 6 — Generated variations
+- Path: `$ROOT/phase-6-generated.md`
+- Schema:
+  - must contain `## Variations`
+  - must contain **>= 3** clearly separated variations
 
-### Group Flow Conditions
-1. **Clear but open-ended goal** — enough focus for problem-finding creativity
-2. **Deep listening** — no "writing the script in your head"
-3. **"Yes, and..." principle** — accept and build on others' ideas
-4. **Equal participation** — no dominant egos
-5. **Blended egos** — group success over individual glory
-6. **Psychological safety** — safe to share "notions" and fail
+### Phase 7 — Critic revision
+- Path: `$ROOT/phase-7-critic.md`
+- Schema:
+  - must contain `## Praise`
+  - must contain `## Critique`
+  - must contain `## Revision`
 
-## Step-by-Step Procedure
+### Phase 6.5 — Nietzsche Gate
+- Path: `$ROOT/phase-65-gate.md`
+- Schema:
+  - must contain `## Gate_result`
+  - Gate_result must be either:
+    - `PASS`
+    - `FAIL_with_reason: <one line>`
 
-### Phase 1: RESEARCHER (temperature: 0.7)
-1. Receive the creative task
-2. Conduct divergent search for:
-   - Analogies from unrelated domains
-   - Historical precedents
-   - Cross-disciplinary references
-   - "Small sparks" — fragmentary ideas worth exploring
-3. Output: Raw material bundle with 5+ promising directions
+### Phase 8 — Final prompt
+- Path: `$ROOT/phase-8-final.md`
+- Schema:
+  - must contain **exactly one paragraph**
 
-### Phase 2: SELECTOR (temperature: 0.3)
-1. Review RESEARCHER output
-2. Apply criteria: originality, resonance, feasibility, "impossible-beautiful" potential
-3. Rank and select 1-2 directions
-4. Explicitly document what was rejected and why
-5. Output: Selected concept + rejection notes
+## Nietzsche Gate — failure handling (mandatory)
 
-### Phase 3: STAGNATION CHECK
-1. Assess if current direction shows:
-   - Repetitive output
-   - Diminishing novelty
-   - Circular reasoning
-   - Energy drop
-2. If stagnated → trigger OBLIQUE STRATEGY
-3. If moving → proceed to GENERATOR
+- If gate fails: rewrite up to **2** times.
+- After 2 rewrites still FAIL:
+  - mark the run as `DONE_WITH_WARNINGS` in the ledger (operationally: record gate as FAIL and proceed)
+  - write `$ROOT/WARNINGS.md`
+  - stamp the final prompt output as:
+    - `UNPROVEN/LOW_VOLTAGE` (prefix in Phase 8 artefact)
 
-### Phase 4: OBLIQUE STRATEGY (when stagnated)
-1. Introduce strategic disruption:
-   - Random constraint injection
-   - Perspective inversion (invert assumptions)
-   - Analogy transposition (apply solution from unrelated field)
-   - "What would a beginner do?" question
-   - "What would the opposite approach be?"
-2. Output: Re-framed problem + 3+ new angles
+## Procedure (runtime: exec the Python runner)
 
-### Phase 5: SCAMPER (sub-phase before GENERATOR)
-Apply SCAMPER operators to selected concept:
-- **S**ubstitute — what if X instead of Y?
-- **C**ombine — merge with another concept?
-- **A**dapt — how does this apply elsewhere?
-- **M**odify — change scale, intensity, context?
-- **P**ut to another use — what else could this be?
-- **E**liminate — remove what?
-- **R**everse — do the opposite?
+When `/creativity-toolkit <task>` is invoked, do **not** simulate the phases in chat. Execute the deterministic runner and return the final artefact.
 
-### Phase 6: GENERATOR (temperature: 0.9)
-1. Receive selected concept + SCAMPER variations
-2. Produce multiple outputs rapidly:
-   - 3+ distinct variations
-   - Include intentionally "bad" options to normalize failure
-   - Treat as "notions" — half-formed, fluid
-3. Output: Draft concepts with explicit "still wet" framing
+1) **exec** the runner:
+```bash
+/opt/anaconda3/bin/python3 ~/clawd/skills/creativity-toolkit/creativity_toolkit.py \
+  --task "<task>"
+```
+The runner prints the absolute path to `phase-8-final.md`.
 
-### Phase 7: CRITIC (temperature: 0.4)
-1. Receive GENERATOR output
-2. Apply "brutal frankness":
-   - Start with specific praise ("This works because...")
-   - Identify specific weaknesses ("X fails because...")
-   - Offer actionable alternatives ("Try instead...")
-3. Distinguish critique of work from critique of person
-4. Either:
-   - Return to SELECTOR with revision direction (loop)
-   - Declare complete with summary
+2) Read the printed path from stdout (last line).
+
+3) **exec**:
+```bash
+cat "<printed_phase_8_path>"
+```
+
+4) Return the contents of `phase-8-final.md` as the reply.
+
+Stop conditions, phase artefacts, and ledger semantics are enforced by `creativity_toolkit.py`.
 
 ## Failure modes
+- Missing task → `ERROR: no_task_provided`
+- Any phase command fails (non-zero) → phase FAILED in ledger; stop.
+- Artefact schema missing required headings/bullets → FAIL.
+- Nietzsche Gate fails beyond rewrite budget → `DONE_WITH_WARNINGS` + WARNINGS.md + final stamped `UNPROVEN/LOW_VOLTAGE`.
 
-| Failure Mode | Symptom | Recovery |
-|--------------|---------|----------|
-| **Groupthink** | Harmony prioritized over critical analysis | Assign devil's advocate; force dissent |
-| **Production blocking** | One agent dominates, others passive | Rotate facilitation; use "brainwriting" (independent first) |
-| **Social inhibition** | Ideas withheld from fear of judgment | Increase psychological safety; normalize "dumb questions" |
-| **Dismissive condemnation** | Criticism crosses into shutdown (Hugo Dyson mode) | Reset to "care first"; rebuild trust |
-| **Stagnation loop** | Circular refinement without progress | Trigger OBLIQUE STRATEGY |
-| **Collaboration overload** | Too connected, diminishing returns | Introduce breaks; allow solo incubation |
-| **Ego-clash** | Dominant personality silences others | Enforce equal participation; blend egos |
+## Toolset
+- `exec` (phase commands via `ledger_event.py run`)
+- `write` (artefacts)
+- `read` (verify artefacts)
+- `sessions_spawn` (optional: if you implement multi-agent writing of artefacts; still must write artefacts deterministically)
 
 ## Acceptance tests
 
-1. **Behavioral (positive): generates output**
-   - Run: `/creativity-toolkit write a tagline for coffee`
-   - Expected: Contains tagline text
+1. **Behavioural (positive): artefact-driven final prompt exists**
 
-2. **Behavioral (negative): no task**
-   - Run: `/creativity-toolkit`
-   - Expected: `ERROR: no_task_provided`
+Run: `/creativity-toolkit "write a video prompt for a futuristic city"`
 
-3. **Structural validator**
 ```bash
-/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py   /Users/igorsilva/clawd/skills/creativity-toolkit/SKILL.md
+# TEST T1
+/creativity-toolkit "write a video prompt for a futuristic city"
+# EXPECT exit=0
+# EXPECT_FILE /Users/igorsilva/clawd/tmp/creativity-toolkit/<run_id>/phase-8-final.md min_bytes=250
+# MANUAL reason=run_id_unknown evidence=Capture the run_id printed by the skill and substitute it into EXPECT_FILE path.
 ```
-Expected: `PASS`
 
-4. **No invented tools**
+Expected: `phase-8-final.md` exists and contains a single paragraph of at least 50 words.
+
+2. **Behavioural (negative): missing task**
+
+Run: `/creativity-toolkit`
+
 ```bash
-/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py   /Users/igorsilva/clawd/skills/creativity-toolkit/SKILL.md
-```
-Expected: `PASS`
-
-## Example Invocation
-
-```
-/creativity-toolkit Design a new brand identity for an eco-tech startup
+# TEST T2
+/creativity-toolkit
+# EXPECT exit=2
+# MANUAL reason=stderr_match evidence=Output contains error string "no_task_provided".
 ```
 
-The pipeline will:
-1. RESEARCHER gathers analogies from nature, technology, and business history
-2. SELECTOR narrows to 1-2 promising directions
-3. STAGNATION CHECK evaluates momentum
-4. If needed, OBLIQUE STRATEGY introduces constraint: "Design for a world without color"
-5. SCAMPER applies variation operators
-6. GENERATOR produces 3+ distinct brand concepts
-7. CRITIC provides specific, actionable feedback with praise first
+Expected: error `no_task_provided`.
 
-The cycle continues until the output demonstrates group flow — creative work that no single agent could have produced alone.
-## Use
+3. **Structural: critic artefact contains required headings**
 
-Run with `/creativity-toolkit <your creative task in plain english>`. The skill runs a 6-agent pipeline that cycles through research, selection, stagnation check, oblique strategy, SCAMPER, generation, and critique — with Inklings-style collaboration.
+```bash
+# TEST T3
+# MANUAL reason=run_id_unknown evidence=After running T1, open phase-7-critic.md and confirm it contains headings ## Praise, ## Critique, ## Revision.
+```
 
-## Inputs
+4. **Structural validator**
 
-Plain english task:
-- `/creativity-toolkit write a tagline for X`
-- `/creativity-toolkit generate video prompts for Y`
-- `/creativity-toolkit create a marketing campaign for Z`
+```bash
+# TEST T4
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/validate_skillmd.py /Users/igorsilva/clawd/skills/creativity-toolkit/SKILL.md
+# EXPECT exit=0
+```
 
-No required flags — just describe your task.
+5. **No invented tools**
 
-## Outputs
-
-Plain text creative output:
-- Taglines, video prompts, campaign concepts, story ideas
-- Multiple variations ranked by originality + quality
-
-
-- `ERROR: no_task_provided` — Use `/creativity-toolkit <task>`
-- `ERROR: all_stagnated` — Try a completely different task type
-
-
-1. **Behavioral: generates output**
-   - Run: `/creativity-toolkit write a tagline for coffee`
-   - Expected: Contains tagline text
-
-2. **Structural validator**
-   - Run: `validate_skillmd.py ~/clawd/skills/creativity-toolkit/SKILL.md`
-   - Expected: `PASS`
-
-3. **No invented tools**
-   - Run: `check_no_invented_tools.py ~/clawd/skills/creativity-toolkit/SKILL.md`
-   - Expected: `PASS`
-
-## Toolset
-
-- `read` — consult research files
-- `write` — record observations
-- `sessions_spawn` — invoke sub-agents for each pipeline phase
-
-
-- `read` — consult research files
-- `write` — record creative outputs
-- `sessions_spawn` — invoke sub-agents
+```bash
+# TEST T5
+/opt/anaconda3/bin/python3 /Users/igorsilva/clawd/skills/skillmd-builder-agent/scripts/check_no_invented_tools.py /Users/igorsilva/clawd/skills/creativity-toolkit/SKILL.md
+# EXPECT exit=0
+```

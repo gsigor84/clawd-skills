@@ -114,11 +114,13 @@ if __name__ == "__main__":
         script_path = f.name
     
     try:
+        # NOTE: In practice, LightRAG insertion can exceed 5 minutes for large NotebookLM runs.
+        # This timeout is an operational safeguard; raise it when running full 17-prompt pass1 dirs.
         result = subprocess.run(
             ["/opt/anaconda3/bin/python3", script_path],
             capture_output=True,
             text=True,
-            timeout=300
+            timeout=1800
         )
         if result.returncode != 0:
             print(f"ERROR inserting documents: {result.stderr}")
