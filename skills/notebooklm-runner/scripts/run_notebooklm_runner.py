@@ -255,12 +255,24 @@ def main() -> int:
         )
         if code == 1:
             # Fetcher signals partial/blocked completion.
+            # Special-case the known NotebookLM failure where the page is ready but
+            # the copy button selector drifts. In practice, clearing chat history and
+            # resuming from the current prompt recovers the run.
+            latest_meta = sorted(runs_dir.glob(f"*_prompt-{n:02d}_{name}.meta.json"))
+            partial_error = None
+            if latest_meta:
+                try:
+                    meta = json.loads(latest_meta[-1].read_text(encoding="utf-8"))
+                    partial_error = (((meta.get("result") or {}).get("error")) if isinstance(meta, dict) else None)
+                except Exception:
+                    partial_error = None
+
             err = f"fetcher returned partial/blocked prompt={n} exit={code}"
             fail_phase(run_id, phase_name, err, pipeline_name=pipeline_name)
             update_or_append_err(
                 pattern_key="notebooklm-runner:fetcher-partial-or-blocked",
                 summary="NotebookLM runner stopped because fetcher returned partial/blocked.",
-                error_lines=[f"fetcher exit={code}", f"prompt_number={n}", f"prompt_name={name}"],
+                error_lines=[f"fetcher exit={code}", f"prompt_number={n}", f"prompt_name={name}", f"partial_error={partial_error}"],
                 context_lines=[
                     f"notebook_url={args.notebook_url}",
                     f"prompts_dir={prompts_dir}",
@@ -271,14 +283,20 @@ def main() -> int:
                 ],
                 suggested_fix_lines=[
                     "Check Tandem is reachable at 127.0.0.1:8765.",
+                    "If partial_error=copy_button_not_found: clear NotebookLM chat history, then re-run the runner with --resume --run-id <run_id>.",
                     "If NotebookLM UI drifted, update selectors in notebooklm-fetcher.",
-                    "Re-run the runner after resolving the block (use --resume).",
                 ],
                 priority="medium",
                 area="infra",
                 stage="notebooklm-runner",
             )
-            print(f"ERROR: {err}", file=sys.stderr)
+            if partial_error == "copy_button_not_found":
+                print(
+                    f"RECOVERABLE: prompt {n:02d} failed with copy_button_not_found. Clear NotebookLM chat history, then resume with: --resume --run-id {run_id}",
+                    file=sys.stderr,
+                )
+            else:
+                print(f"ERROR: {err}", file=sys.stderr)
             return 3
 
         if code != 0:

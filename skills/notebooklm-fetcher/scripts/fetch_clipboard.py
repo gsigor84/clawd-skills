@@ -645,7 +645,18 @@ def main() -> int:
         "tandem": {"base_url": args.base},
         "selectors": {"query_box": None, "submit": None, "copy_response": None},
         "checks": {"max_checks": args.max_checks, "sleep_seconds": args.sleep_seconds, "attempted": 0},
-        "result": {"status": None, "partial": False, "error": None},
+        "result": {"status": None, "partial": False, "error": None, "extraction_mode": None},
+        "recovery": {
+            "state": "NOT_STARTED",
+            "attempts": [],
+            "budget": {
+                "total_attempts_used": 0,
+                "refresh_used": 0,
+                "chat_clear_used": 0
+            },
+            "recommended_resume_action": None,
+            "recommended_command": None
+        },
         "artifacts": {
             "prompt_txt": str(prompt_path),
             "response_txt": str(response_path),
@@ -819,29 +830,61 @@ def main() -> int:
     final_snap = None
     stable_hits = 0
     last_seen = None
+    meta["recovery"]["state"] = "WAITING_FOR_RESPONSE"
 
-    for i in range(1, args.max_checks + 1):
-        meta["checks"]["attempted"] = i
+    def record_recovery(step: str, outcome: str) -> None:
+        meta["recovery"]["budget"]["total_attempts_used"] += 1
+        meta["recovery"]["attempts"].append({
+            "step": step,
+            "started_at": utc_now_iso(),
+            "ended_at": utc_now_iso(),
+            "outcome": outcome,
+        })
+
+    def probe_copy(max_checks: int) -> tuple[Optional[str], Optional[Dict[str, Any]]]:
+        local_copy_ref = None
+        local_final_snap = None
+        local_stable_hits = 0
+        local_last_seen = None
+        for i in range(1, max_checks + 1):
+            meta["checks"]["attempted"] += 1
+            try:
+                t.wait_networkidle()
+            except Exception:
+                pass
+            local_final_snap = t.snapshot_raw()
+            s_txt = local_final_snap.get("snapshot", "")
+            cur = find_copy_button_after_prompt(s_txt, args.prompt_text)
+            if cur:
+                if cur == local_last_seen:
+                    local_stable_hits += 1
+                else:
+                    local_stable_hits = 0
+                    local_last_seen = cur
+                if local_stable_hits >= 1:
+                    local_copy_ref = cur
+                    break
+            time.sleep(args.sleep_seconds)
+        return local_copy_ref, local_final_snap
+
+    copy_ref, final_snap = probe_copy(args.max_checks)
+
+    # Self-heal step 1: re-snapshot once if copy button is missing.
+    if not copy_ref:
+        meta["recovery"]["state"] = "RECOVERY_ATTEMPT"
+        record_recovery("re-snapshot", "retry_copy_detection")
+        copy_ref, final_snap = probe_copy(max(3, min(8, args.max_checks // 2 or 3)))
+
+    # Self-heal step 2: soft refresh once if still missing.
+    if not copy_ref and args.notebook_url:
         try:
+            meta["recovery"]["budget"]["refresh_used"] += 1
+            record_recovery("soft-refresh", "navigate_and_retry")
+            t.navigate(args.notebook_url)
             t.wait_networkidle()
-        except Exception:
-            pass
-        final_snap = t.snapshot_raw()
-        s_txt = final_snap.get("snapshot", "")
-
-        cur = find_copy_button_after_prompt(s_txt, args.prompt_text)
-        if cur:
-            if cur == last_seen:
-                stable_hits += 1
-            else:
-                stable_hits = 0
-                last_seen = cur
-            # require 2 stable observations to avoid transient DOM states
-            if stable_hits >= 1:
-                copy_ref = cur
-                break
-
-        time.sleep(args.sleep_seconds)
+            copy_ref, final_snap = probe_copy(max(3, min(8, args.max_checks // 2 or 3)))
+        except Exception as e:
+            record_recovery("soft-refresh", f"failed:{e}")
 
     if final_snap is None:
         final_snap = snap0
@@ -860,6 +903,8 @@ def main() -> int:
     raw = ""
     if not copy_ref:
         partial = True
+        meta["recovery"]["state"] = "BLOCKED_RECOVERABLE"
+        meta["recovery"]["recommended_resume_action"] = "resume-current-prompt"
         meta["result"]["error"] = "copy_button_not_found"
         update_or_append_err(
             pattern_key="harden.notebooklm_copy_button_selector_drift",
@@ -986,6 +1031,8 @@ def main() -> int:
                 raw = dom_txt
                 partial = False
                 meta["result"]["error"] = None
+                meta["result"]["extraction_mode"] = "dom"
+                meta["recovery"]["state"] = "DONE"
             else:
                 partial = True
                 meta["result"]["error"] = meta["result"].get("error") or "dom_extract_failed"
@@ -1013,13 +1060,21 @@ def main() -> int:
         )
         raw = ""
 
+    if raw and meta["result"].get("extraction_mode") is None:
+        meta["result"]["extraction_mode"] = "clipboard"
+        meta["recovery"]["state"] = "DONE"
+
     if raw:
         write_text(response_path, raw + "\n")
     else:
         partial = True
         write_text(response_path, "")
 
-    meta["result"].update({"status": "partial" if partial else "ok", "partial": partial})
+    meta["result"].update({"status": "blocked_recoverable" if partial else "ok", "partial": partial})
+    if partial and meta["recovery"].get("recommended_resume_action") is None:
+        meta["recovery"]["state"] = "BLOCKED_RECOVERABLE"
+        meta["recovery"]["recommended_resume_action"] = "resume-current-prompt"
+        meta["recovery"]["recommended_command"] = "Resume the existing notebooklm-runner child run for this prompt."
     write_json(meta_path, meta)
 
     return 0 if not partial else 1
