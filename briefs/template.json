@@ -1,0 +1,50 @@
+{
+  "marketing_task": "landing page hero",
+  "product": "Describe your product clearly in one line",
+  "competitive_alternatives": [
+    "What buyers use instead today",
+    "Second alternative"
+  ],
+  "unique_attributes": [
+    "What makes the product structurally different",
+    "A second differentiator"
+  ],
+  "value_claims": [
+    "Primary customer outcome",
+    "Secondary customer outcome"
+  ],
+  "proof_assets": [
+    "Case study",
+    "Metric or benchmark",
+    "Customer quote or log evidence"
+  ],
+  "target_market": "Who this is for in one precise line",
+  "market_category": "The category you want buyers to place you in",
+  "channel": "landing-hero",
+  "offer": "Book a demo",
+  "relevant_trends": [
+    "Why now"
+  ],
+  "objections": [
+    "Main objection buyers have"
+  ],
+  "measurement_goal": "Qualified demo conversion",
+  "primary_cta": "Book a demo",
+  "firmographic_constraints": [
+    "Optional firmographic constraint"
+  ],
+  "trigger_conditions": [
+    "What event makes the buyer care now"
+  ],
+  "exclusion_rules": [
+    "Who this is not for"
+  ],
+  "mandatory_terms": [
+    "Term that must appear"
+  ],
+  "banned_phrases": [
+    "revolutionary",
+    "best-in-class",
+    "all-in-one"
+  ]
+}
