@@ -1,21 +1,48 @@
 ---
 name: meaningful
-description: "# meaningful — Quick decision filter based on MEANINGFUL.md. Ask before any important action: Is this strengthening me, or just protecting the weaker version of myself?"
+description: "# meaningful — Decision filter based on MEANINGFUL.md. Run any decision through the three questions before committing."
 ---
 
 # meaningful
 
-A quick decision filter before any important action. Based on MEANINGFUL.md — Igor's personal framework for distinguishing growth from avoidance.
+A decision filter before any important action. Based on MEANINGFUL.md — Igor's personal framework for distinguishing growth from avoidance.
 
 ## Trigger
-`/meaningful <what you're about to do>`
+`/meaningful <anything — situation, decision, or action you're considering>`
 
-## Core Principle
-> A meaningful life is not one that protects the current self. A meaningful life is one that repeatedly overcomes it.
+## Two-Mode Operation
+
+### Mode 1 — Exploration (default when input is contextual/descriptive)
+
+User shares a situation without a clear decision.
+
+Skill responds:
+> "I can help filter this through your meaningful framework.
+>
+> **What specific decision are you making?**
+>
+> Based on what you shared, examples could be:
+> - Should I [action A]?
+> - Should I [action B]?
+> - Should I do nothing and wait?
+>
+> Pick one or state your own."
+
+### Mode 2 — Direct (when input contains a decision verb)
+
+Decision verbs signal Mode 2: build, create, start, stop, do, reject, pursue, abandon, wait, sell, buy, push, save, invest, learn, use
+
+Skill evaluates immediately through the three questions.
+
+## How to use
+
+1. State the decision — what are you considering?
+2. I run the three questions
+3. Verdict — Do it / Reject it / Revise it
+
+---
 
 ## The Three Questions
-
-Before doing anything, ask:
 
 **1. Is this making me stronger, or just comfortable?**
 - Does it stretch capacity, discipline, or skill?
@@ -26,53 +53,51 @@ Before doing anything, ask:
 - Is the motive to build something, or to be validated?
 
 **3. Does this compound, or does it disappear?**
-- Will this still exist/be useful after the feeling passes?
-- Does it build skill, clarity, systems, health, or character?
-- Or does it vanish the moment it's done?
+- Will this still exist after the feeling passes?
+- Does it build skill, clarity, systems, or character?
+- Or does it vanish when the mood changes?
+
+---
+
+## Verdict — Sharp Line Rule
+
+Every output ends with exactly one of:
+
+> **Do it.**
+> **Reject it.**
+> **Revise it — [specific change needed].**
+
+No hedging. The sharp sentence comes last.
 
 ---
 
 ## Quick Yes
 
-If the action:
-- Increases capacity
-- Requires discipline
-- Creates something new
-- Strengthens the body or mind
-- Remains worthwhile without recognition
-
-→ Do it.
+→ Increases capacity
+→ Requires discipline
+→ Creates something new
+→ Strengthens body or mind
+→ Remains worthwhile without recognition
 
 ## Quick No
 
-If the action:
-- Mainly protects ego
-- Exists to impress people
-- Is driven by fear of exclusion
-- Burns energy without building anything
-- Substitutes talking for doing
-- Gives relief but creates weakness
+→ Mainly protects ego
+→ Exists to impress people
+→ Driven by fear of exclusion
+→ Burns energy without building
+→ Substitutes talking for doing
+→ Gives relief but creates weakness
 
-→ Reject it.
+---
 
 ## The Final Test
 
-Ask: **If this became my pattern, what kind of person would it turn me into?**
+**If this became my pattern, what kind of person would it turn me into?**
 
 - Weaker, smaller, softer → **reject**
 - Stronger, clearer, more capable → **do it**
 
-## Daily Check
-
-Each morning ask Igor:
-1. What would the weaker version of me do today?
-2. What would the stronger version of me do today?
-3. Which one is currently in charge?
-
-Each evening ask Igor:
-1. Where did I act from strength?
-2. Where did I act from avoidance?
-3. What did I build today that still exists?
+---
 
 ## Reference
 Full framework: `~/clawd/MIND/MEANINGFUL.md`

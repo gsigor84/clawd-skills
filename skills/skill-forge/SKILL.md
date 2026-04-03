@@ -243,19 +243,21 @@ What's next: Run gap analysis
 
 **Action:**
 ```bash
-/opt/anaconda3/bin/python3 ~/clawd/tools/gap_analysis.py \
+# NetworkX-based gap analysis using co-occurrence graph
+/opt/anaconda3/bin/python3 ~/clawd/tools/skill_gap_analysis.py \
   --input-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/pass1" \
-  --output-file "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/gaps/gap-prompts.md" \
-  --working-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/gaps"
+  --output-dir "/Users/igorsilva/clawd/tmp/research-to-skill/<skill-name>/gaps" \
+  --top-gaps 8 \
+  --min-degree 3
 ```
 
 **Handoff:**
 ```
-What was done: LightRAG extracted N entities, N gap prompts generated
-Where artifacts: gaps/gap-prompts.md, gaps/p01.txt...p08.txt
+What was done: NetworkX extracted N gap keywords with structural gap scores
+Where artifacts: gaps/gap-prompts.md, gaps/gap-rules.md, gaps/gap-meta.json
 How to verify: Check for bridging + transcend questions
 Known issues: May need retry if no gaps found
-What's next: Run deep extraction on gaps
+What's next: Run deep extraction on gap prompts
 ```
 
 ---
