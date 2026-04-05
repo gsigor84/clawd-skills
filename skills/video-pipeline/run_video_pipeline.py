@@ -41,29 +41,70 @@ def run_as_creative_vision(task: str) -> str:
     return design_video_prompt_from_creative(task)
 
 
-def design_video_prompt_from_creative(task: str) -> str:
-    """Design a video prompt directly from a creative vision description."""
-    duration = 12
-    t1 = duration // 3
-    t2 = 2 * duration // 3
-    prompt = f"""Creative vision: {task}
+def design_video_prompt_from_creative(task: str, duration: int = 12) -> str:
+    """Design a video prompt directly from a creative vision description using GPT-4o-mini."""
+    import urllib.request
+    import urllib.error
+    import json as json_mod
+    import os
 
-{duration}-second cinematic. Dark night environment with neon accents.
+    system_prompt = """You are an expert AI video prompt engineer. Given a creative vision description, produce a structured video prompt ready to paste into Runway, Veo, Kling, or Sora.
 
-0–{t1}s: Opening frame. A lone figure or object is silhouetted against a vast dark sky, with faint neon city lights beginning to emerge below.
-{t1}–{t2}s: Slow descent — camera moves downward through the skyline. Neon signs flicker into view: Japanese kanji, holographic ads, rain-slicked streets reflecting coloured light.
-{t2}s–{duration}s: Wide establishing shot — city revealed in full neon sprawl. Camera holds on a striking visual anchor: a beacon, a tower, a rooftop light.
+RULES:
+- Use the EXACT creative vision provided — do not introduce unrelated themes, settings, or aesthetics
+- If the vision is "X", the output must be about X. Never default to a different setting (e.g. cyberpunk city) unless the vision EXPLICITLY contains those elements
+- Duration must match what is given or default to 12 seconds
+- Output ONLY the video prompt — no preamble, no explanation, no "here's the prompt"
 
-Camera: Slow downward drift. High altitude establishing shot transitioning to street level. Cinematic lighting — volumetric neon, wet surfaces, lens flare from holographic signs.
+STRUCTURE (use all sections):
+1. Creative vision (1 sentence summary of what the user described)
+2. Multi-shot timeline with exact timestamps (use 3 cuts: 0–Xs, Xs–Ys, Ys–Zs)
+3. Camera instructions (shot type, movement, lens, lighting)
+4. Anchor prompts (visual details to maintain consistency across shots)
+5. Audio direction (ambient sound, music mood, SFX — or silence)
+6. Mood / tone (precise emotional quality)
+7. Avoid list (known model weaknesses to prevent)
 
-Anchor: City is dense, vertical, rain-soaked. Architecture is neo-Tokyo — mix of traditional Japanese rooflines and hypermodern holographic billboards. Lighting is cyan, magenta, amber — not primary blue or white.
+TECHNIQUES TO APPLY:
+- Timestamp prompting: assign each shot to an exact time window
+- Anchor prompts: remind the model of character/environment details it may forget
+- Do NOT use text overlays, large crowds, or long continuous scenes without cuts"""
 
-Audio: Distant city hum. Rain ambience. Electronic ambient score with low bass pulse. Occasional vehicle engine from above. No dialogue.
+    user_prompt = f"""Creative vision: {task}
 
-Mood: Epic, noir, contemplative. A sense of arrival.
+Duration: {duration} seconds
 
-Avoid: Daylight. Clean dry streets. Cartoonish pastels. Text overlays. Crowds at street level. Jump cuts."""
-    return prompt
+Generate the structured video prompt:"""
+
+    payload = json_mod.dumps({
+        "model": "gpt-4o-mini",
+        "messages": [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_prompt}
+        ],
+        "max_tokens": 800,
+        "temperature": 0.7
+    }).encode()
+
+    req = urllib.request.Request(
+        "https://api.openai.com/v1/chat/completions",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {os.environ.get('OPENAI_API_KEY', '')}",
+            "Content-Type": "application/json"
+        },
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            result = json_mod.loads(resp.read())
+            return result["choices"][0]["message"]["content"]
+    except urllib.error.HTTPError as e:
+        body = e.read().decode()
+        raise RuntimeError(f"OpenAI API error {e.code}: {body}") from e
+    except Exception as e:
+        raise RuntimeError(f"Failed to generate video prompt: {e}") from e
 
 
 def run_as_marketing_brief(task: str) -> dict:
